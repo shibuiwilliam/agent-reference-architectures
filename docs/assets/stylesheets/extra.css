@@ -1,1 +1,33 @@
-/* カスタムスタイル */
+/* ── 左ナビゲーション: 選択可能/不可能の視覚的区別 ── */
+
+/* 非選択セクションヘッダ（リンクなし）: 太字・大文字風・色を薄く */
+.md-nav__item--nested > .md-nav__link:not([href]),
+.md-nav__item--nested > label.md-nav__link {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--md-default-fg-color--light);
+  text-transform: none;
+}
+
+/* 選択可能なセクションヘッダ（index ページ付き）: リンク色で明示 */
+.md-nav__item--nested > .md-nav__link[href] {
+  font-weight: 700;
+  color: var(--md-typeset-a-color);
+}
+.md-nav__item--nested > .md-nav__link[href]:hover {
+  color: var(--md-accent-fg-color);
+}
+
+/* 通常のページリンク: 標準ウェイト・リンク色 */
+.md-nav__item:not(.md-nav__item--nested) > .md-nav__link {
+  color: var(--md-default-fg-color);
+}
+.md-nav__item:not(.md-nav__item--nested) > .md-nav__link:hover {
+  color: var(--md-accent-fg-color);
+}
+
+/* アクティブなページ: アクセントカラーで強調 */
+.md-nav__item .md-nav__link--active {
+  font-weight: 600;
+  color: var(--md-accent-fg-color);
+}
