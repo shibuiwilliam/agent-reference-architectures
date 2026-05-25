@@ -1,0 +1,62 @@
+---
+title: "Tool / MCP Gateway｜ツール・MCPゲートウェイ"
+tags:
+  - "ツール・MCP・外部システム接続"
+  - "F5 入力の信頼度"
+  - "F8 説明責任・規制"
+---
+
+# #17 Tool / MCP Gateway｜ツール・MCPゲートウェイ
+
+!!! abstract "一言"
+    エージェントからツール・MCP サーバーへの接続を**単一ゲートウェイに集約**し、認可・レート制限・監査ログを一元管理する。
+
+## 概要
+
+エージェントが複数のツールや MCP サーバーに直接接続すると、認可ポリシーが散在し、呼び出し履歴の追跡が困難になる。本パターンはすべてのツール呼び出しをゲートウェイ経由に統一し、認証・認可・レート制限・入出力ログを単一レイヤーで処理する。ツール追加時もゲートウェイに登録するだけでポリシーが適用される。
+
+## 設計
+
+```mermaid
+flowchart LR
+    AG[Agent] -->|tool call| GW[Tool Gateway]
+    GW -->|authz check| POL[Policy Engine]
+    GW -->|rate limit| RL[Rate Limiter]
+    GW -->|proxy| T1[Tool A]
+    GW -->|proxy| T2[MCP Server B]
+    GW -->|proxy| T3[Tool C]
+    GW -->|audit log| LOG[(Audit Store)]
+```
+
+ゲートウェイはリバースプロキシとして動作し、各リクエストに対して (1) 認可判定、(2) レート制限、(3) 入力サニタイズ、(4) プロキシ転送、(5) レスポンスログ記録を行う。ツール定義（スキーマ・説明文）もゲートウェイが集約してエージェントに公開する。
+
+## 解決する課題
+
+ツールへの直接接続は、認可漏れ・呼び出し爆発・監査不能という3つのリスクを同時に抱える。`[F5]` プロンプトインジェクションで意図しないツールが呼ばれる攻撃面を制限し、`[F8]` すべての呼び出しを監査可能にする。また、ツール障害時の回路遮断（circuit breaker）もゲートウェイで一元化できる。
+
+## 向き / 不向き
+
+- **向き**: 複数ツール・MCP サーバーを接続する本番システム。マルチテナント環境でテナントごとのツール制限が必要な場合。
+- **不向き**: ツールが1〜2個で認可要件もないプロトタイプ段階。ゲートウェイのレイテンシが許容できない超低遅延パス。
+
+## 要素技術
+
+- MCP Gateway / MCP Proxy（公式実装）
+- API Gateway（Kong, Envoy, AWS API Gateway）をツール層に転用
+- OPA / Cedar によるポリシー判定
+- OpenTelemetry によるトレース・ログ収集
+
+## 調整（程度）
+
+- **ゲートウェイの検査深度** — 浅い（ヘッダ認可のみ）⇔ 深い（入出力の内容検査まで）/ 決め手 `[F5][F8]` / 目安: 副作用ツールは深く、読み取り専用は浅く。→ [程度ダイヤル](../../decisions/tuning-dials.md)
+
+## 関連パターン
+
+- [#18 Least-Privilege Tool Binding](18-least-privilege-tool-binding.md) — ゲートウェイが適用する権限ポリシーの設計
+- [#21 MCP Adapter Isolation](21-mcp-adapter-isolation.md) — ゲートウェイの背後で MCP アダプタをさらに分離する
+- [#32 Agent Trace](../07-observability/32-agent-trace.md) — ゲートウェイのログをトレースに統合する
+
+## 参考
+
+- MCP 仕様（Model Context Protocol）
+- API Gateway パターン（マイクロサービス設計）

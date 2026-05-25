@@ -1,0 +1,168 @@
+site_name: AIエージェント本番アーキテクチャ・パターン
+site_description: AIエージェントを本番システムへ組み込むためのアーキテクチャパターン・チューニング・選定基準の統合カタログ
+site_author: (あなたの名前 / 組織名)
+# GitHub Pages の公開URL。<user> と <repo> を自分のものに置き換える
+site_url: https://shibuiwilliam.github.io/agent-reference-architectures/
+docs_dir: docs
+
+# リポジトリ連携（右上の編集リンク・リポジトリリンク）
+repo_name: shibuiwilliam/agent-reference-architectures
+repo_url: https://github.com/shibuiwilliam/agent-reference-architectures
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: ja
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: ダークモードに切り替え
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: ライトモードに切り替え
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+
+plugins:
+  - search:
+      lang: ja
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+# ── ナビゲーション（patterns.yml と一致させること） ──
+nav:
+  - はじめに: index.md
+  - 土台:
+      - AIエージェントの特性: foundations/characteristics.md
+      - 駆動変数（フォース）: foundations/forces.md
+  - パターン:
+      - I. 実行・セッション・オーケストレーション:
+          - patterns/01-execution/index.md
+          - "#1 Request-to-Job Gateway": patterns/01-execution/01-request-to-job-gateway.md
+          - "#2 Durable Agent Session": patterns/01-execution/02-durable-agent-session.md
+          - "#3 Workflow Backbone + Agent Node": patterns/01-execution/03-workflow-backbone-agent-node.md
+          - "#4 Agent Saga": patterns/01-execution/04-agent-saga.md
+          - "#5 Time-Budgeted Agent Loop": patterns/01-execution/05-time-budgeted-agent-loop.md
+          - "#6 Interruptible Agent": patterns/01-execution/06-interruptible-agent.md
+          - "#7 Streaming Progress": patterns/01-execution/07-streaming-progress.md
+          - "#55 Deadline & Budget Cascade": patterns/01-execution/55-deadline-budget-cascade.md
+          - "#58 Sync Facade over Async Core": patterns/01-execution/58-sync-facade-over-async-core.md
+          - "#59 Workflow–Agent Spectrum Selector": patterns/01-execution/59-workflow-agent-spectrum-selector.md
+      - II. エージェント構成・分担:
+          - patterns/02-composition/index.md
+          - "#8 Planner-Executor-Reviewer": patterns/02-composition/08-planner-executor-reviewer.md
+          - "#9 Supervisor & Specialist Agents": patterns/02-composition/09-supervisor-specialist-agents.md
+          - "#10 Agent Ensemble & Debate": patterns/02-composition/10-agent-ensemble-debate.md
+          - "#11 Deterministic Core, Probabilistic Edge": patterns/02-composition/11-deterministic-core-probabilistic-edge.md
+          - "#12 Blackboard": patterns/02-composition/12-blackboard.md
+      - III. 入出力・契約化:
+          - patterns/03-io-contract/index.md
+          - "#13 Natural Language Boundary Adapter": patterns/03-io-contract/13-natural-language-boundary-adapter.md
+          - "#14 Structured Output Contract": patterns/03-io-contract/14-structured-output-contract.md
+          - "#15 Inverted Structured Output": patterns/03-io-contract/15-inverted-structured-output.md
+          - "#16 Ambiguity Negotiation": patterns/03-io-contract/16-ambiguity-negotiation.md
+      - IV. ツール・MCP・外部システム接続:
+          - patterns/04-tools-mcp/index.md
+          - "#17 Tool / MCP Gateway": patterns/04-tools-mcp/17-tool-mcp-gateway.md
+          - "#18 Least-Privilege Tool Binding": patterns/04-tools-mcp/18-least-privilege-tool-binding.md
+          - "#19 Dry-Run First Tool Execution": patterns/04-tools-mcp/19-dry-run-first-tool-execution.md
+          - "#20 Sandboxed Tool Runtime": patterns/04-tools-mcp/20-sandboxed-tool-runtime.md
+          - "#21 MCP Adapter Isolation": patterns/04-tools-mcp/21-mcp-adapter-isolation.md
+          - "#22 Anti-Corruption Layer": patterns/04-tools-mcp/22-anti-corruption-layer.md
+      - V. メモリ・コンテキスト管理:
+          - patterns/05-memory-context/index.md
+          - "#23 Layered Memory": patterns/05-memory-context/23-layered-memory.md
+          - "#24 Context Pack / Assembly": patterns/05-memory-context/24-context-pack-assembly.md
+          - "#25 Memory Write Gate": patterns/05-memory-context/25-memory-write-gate.md
+          - "#26 Forgetting and Expiration": patterns/05-memory-context/26-forgetting-and-expiration.md
+      - VI. 信頼性・検証・ガードレール・自律:
+          - patterns/06-reliability/index.md
+          - "#27 Evidence-First Answer": patterns/06-reliability/27-evidence-first-answer.md
+          - "#28 Verifier Agent / Critic": patterns/06-reliability/28-verifier-agent-critic.md
+          - "#29 Guardrail Sidecar + Self-Correction": patterns/06-reliability/29-guardrail-sidecar-self-correction.md
+          - "#30 Policy-as-Code Guardrail": patterns/06-reliability/30-policy-as-code-guardrail.md
+          - "#31 Human Approval Checkpoint": patterns/06-reliability/31-human-approval-checkpoint.md
+          - "#57 Autonomy Ladder": patterns/06-reliability/57-autonomy-ladder.md
+      - VII. 観測性・監査・評価:
+          - patterns/07-observability/index.md
+          - "#32 Agent Trace": patterns/07-observability/32-agent-trace.md
+          - "#54 Tiered (Hot/Cold) Observability": patterns/07-observability/54-tiered-observability.md
+          - "#33 Version Pinning": patterns/07-observability/33-version-pinning.md
+          - "#34 Evaluation CI/CD": patterns/07-observability/34-evaluation-ci-cd.md
+          - "#35 Production Replay": patterns/07-observability/35-production-replay.md
+          - "#36 Shadow / Canary Deployment": patterns/07-observability/36-shadow-canary-deployment.md
+      - VIII. コスト・性能・スケーリング:
+          - patterns/08-cost-scaling/index.md
+          - "#37 Semantic Gateway & Cost-Aware Router": patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md
+          - "#38 Semantic Result Cache": patterns/08-cost-scaling/38-semantic-result-cache.md
+          - "#39 Prompt Cache Optimized Context": patterns/08-cost-scaling/39-prompt-cache-optimized-context.md
+          - "#40 Fallback & Graceful Degradation": patterns/08-cost-scaling/40-fallback-graceful-degradation.md
+          - "#56 Adaptive Effort": patterns/08-cost-scaling/56-adaptive-effort.md
+      - IX. セキュリティ・マルチテナント:
+          - patterns/09-security/index.md
+          - "#41 Tenant-Isolated Agent Runtime": patterns/09-security/41-tenant-isolated-agent-runtime.md
+          - "#42 Data Boundary Firewall": patterns/09-security/42-data-boundary-firewall.md
+          - "#43 Confused-Deputy Damage Limitation": patterns/09-security/43-confused-deputy-damage-limitation.md
+          - "#44 Dual-LLM Privilege Separation": patterns/09-security/44-dual-llm-privilege-separation.md
+      - X. デプロイ・ベンダー抽象化・移行:
+          - patterns/10-deployment/index.md
+          - "#45 Agent Runtime Abstraction": patterns/10-deployment/45-agent-runtime-abstraction.md
+          - "#46 Model Behavior Compatibility Layer": patterns/10-deployment/46-model-behavior-compatibility-layer.md
+          - "#47 Agent Capability Registry": patterns/10-deployment/47-agent-capability-registry.md
+          - "#48 Strangler Fig": patterns/10-deployment/48-strangler-fig.md
+      - XI. UI/UX・人間協調:
+          - patterns/11-ux/index.md
+          - "#49 Agent Workbench": patterns/11-ux/49-agent-workbench.md
+          - "#50 Editable Plan": patterns/11-ux/50-editable-plan.md
+          - "#51 Agent-to-Human Escalation": patterns/11-ux/51-agent-to-human-escalation.md
+      - XII. 組織・ガバナンス・ライフサイクル:
+          - patterns/12-governance/index.md
+          - "#52 Agent Constitution": patterns/12-governance/52-agent-constitution.md
+          - "#53 Agent Change Management": patterns/12-governance/53-agent-change-management.md
+  - 意思決定層:
+      - 程度（チューニング）ダイヤル: decisions/tuning-dials.md
+      - 相反する仕組みの選定基準: decisions/tradeoffs.md
+      - パターンのパラメータ化: decisions/parameterization.md
+  - アンチパターン: anti-patterns.md
+  - リファレンスアーキテクチャ: reference-architectures.md
+  - パターン早見表: pattern-index.md

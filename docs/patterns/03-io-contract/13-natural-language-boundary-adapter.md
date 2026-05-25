@@ -1,0 +1,58 @@
+---
+title: "Natural Language Boundary Adapter｜自然言語境界"
+tags:
+  - "入出力・契約化"
+  - "F5 入力の信頼度"
+---
+
+# #13 Natural Language Boundary Adapter｜自然言語境界
+
+!!! abstract "一言"
+    ユーザーの自然言語入力を**構造化された意図表現**（インテント＋スロット）へ変換し、下流の決定論的処理に渡す境界層。
+
+## 概要
+
+自然言語はそのまま下流に流すと、曖昧さ・省略・インジェクションが処理ロジックを汚染する。本パターンは入力の最前段に「翻訳層」を配置し、自由文を意図（intent）・パラメータ（slots）・確信度（confidence）に分解する。下流は構造化された契約だけを受け取るため、通常のバリデーションやルーティングが適用できる。
+
+## 設計
+
+```mermaid
+flowchart LR
+    U[ユーザー] -->|自然言語| NLB[Boundary Adapter]
+    NLB -->|"{ intent, slots, confidence }"| V[Validator]
+    V -->|valid| R[Router / Executor]
+    V -->|invalid / low confidence| CL[Clarification Loop]
+    CL -->|再質問| U
+```
+
+Boundary Adapter は LLM またはルールベースの NLU で実装する。出力は固定スキーマの JSON で、下流は自然言語を一切扱わない。confidence が閾値を下回る場合は [#16 Ambiguity Negotiation](16-ambiguity-negotiation.md) へ委譲して確認を挟む。
+
+## 解決する課題
+
+自然言語をそのまま条件分岐やツール呼び出しに渡すと、意図の取り違え・プロンプトインジェクション・パラメータ欠損がそのまま副作用に直結する。境界で構造化することで `[F5]` 入力の信頼度を制御可能なレベルに引き上げ、下流コンポーネントの防御コストを下げる。
+
+## 向き / 不向き
+
+- **向き**: 明確なアクション体系がある業務（注文処理、社内ワークフロー起動、データ検索など）。入力バリエーションが多いが意図の種類は有限な場面。
+- **不向き**: 自由記述の創作・ブレインストーミングなど、意図を事前に列挙できないタスク。出力の構造化が目的なら [#14 Structured Output Contract](14-structured-output-contract.md) が適切。
+
+## 要素技術
+
+- LLM による function calling / tool_use（OpenAI Functions, Claude tool_use）
+- Rasa / Dialogflow / Amazon Lex（ルールベース NLU）
+- JSON Schema / Pydantic によるスロット定義とバリデーション
+
+## 調整（程度）
+
+- **構造化の粒度** — 粗すぎると下流で再解釈が必要 ⇔ 細かすぎると変換精度が落ち、確認ループが頻発 / 決め手 `[F5]` / 目安: 1意図あたりスロット3〜7個。→ [程度ダイヤル](../../decisions/tuning-dials.md)
+
+## 関連パターン
+
+- [#14 Structured Output Contract](14-structured-output-contract.md) — 出力側の構造化。入口と出口で対になる
+- [#16 Ambiguity Negotiation](16-ambiguity-negotiation.md) — confidence 不足時の交渉プロトコル
+- [#29 Guardrail Sidecar + Self-Correction](../06-reliability/29-guardrail-sidecar-self-correction.md) — 変換結果に対する追加検査
+
+## 参考
+
+- OpenAI Function Calling ドキュメント
+- Anthropic Tool Use ドキュメント

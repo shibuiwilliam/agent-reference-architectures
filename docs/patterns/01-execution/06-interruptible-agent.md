@@ -1,0 +1,57 @@
+---
+title: "Interruptible Agent｜中断可能エージェント"
+tags:
+  - "実行・セッション・オーケストレーション"
+  - "F4 レイテンシ予算"
+---
+
+# #6 Interruptible Agent｜中断可能エージェント
+
+!!! abstract "一言"
+    実行中のエージェントを外部から安全に停止し、方針修正や再開を可能にする。
+
+## 概要
+
+エージェントの推論ループに**中断ポイント**を設け、外部からのキャンセル信号や方針変更を受け取れるようにする。中断時は現在のステップを安全に完了（またはロールバック）した上で、状態を永続化して停止する。ユーザーが方針を修正した後、同じセッションから再開できる。「止められないエージェント」は本番運用で最も危険な存在であり、中断可能性は安全弁として必須。
+
+## 設計
+
+```mermaid
+flowchart TD
+    Loop[推論ループ] --> CP{中断ポイント}
+    CP -->|"中断信号なし"| Next[次ステップ実行]
+    Next --> Loop
+    CP -->|"中断信号あり"| Save[状態永続化]
+    Save --> Pause[一時停止 / 返却]
+    Pause -->|"再開指示"| Loop
+```
+
+各ステップ間にチェックポイントを挿入し、中断フラグ（Redis / DB / インメモリ）をポーリングまたはイベントで受信する。中断後のセッション状態は [#2 Durable Agent Session](02-durable-agent-session.md) で永続化する。
+
+## 解決する課題
+
+ユーザーが「間違った指示を出した」と気づいても、止められなければ無駄なコスト消費や誤った副作用が蓄積する。`[F4]` の観点では、ユーザーが結果を待つ間に方針を変えたくなるのは自然であり、それに応えられないとUXが著しく低下する。また運用上、暴走したエージェントを強制停止できることはインシデント対応の基本である。
+
+## 向き / 不向き
+
+- **向き**: 長時間実行タスク、対話的なエージェント、人間が途中で方針を変えうるシナリオ。マルチステップで副作用を伴う処理。
+- **不向き**: 数秒で完結する単発推論。中断のオーバーヘッド（フラグチェック）がレイテンシに見合わない超低レイテンシ要件。
+
+## 要素技術
+
+- 中断信号: Redis Pub/Sub、DB フラグ、WebSocket メッセージ、Kubernetes の graceful shutdown シグナル
+- 状態保存: [#2 Durable Agent Session](02-durable-agent-session.md) と共通のチェックポイント機構
+- UI連携: [#49 Agent Workbench](../11-ux/49-agent-workbench.md) に「停止」「方針修正」ボタンを配置
+- フレームワーク: LangGraph の `interrupt` / `Command(resume=...)` 、Temporal の Cancellation
+
+## 関連パターン
+
+- [#2 Durable Agent Session](02-durable-agent-session.md) — 中断後に再開するための状態永続化基盤
+- [#5 Time-Budgeted Agent Loop](05-time-budgeted-agent-loop.md) — 予算超過による自動的な中断の一形態
+- [#31 Human Approval Checkpoint](../06-reliability/31-human-approval-checkpoint.md) — 承認待ちは計画的な中断ポイントの一種
+- [#7 Streaming Progress](07-streaming-progress.md) — 進捗が見えるからこそユーザーは適切なタイミングで中断できる
+
+## 参考
+
+- LangGraph Human-in-the-loop ドキュメント
+- Temporal Workflow Cancellation

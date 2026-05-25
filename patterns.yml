@@ -1,0 +1,150 @@
+# patterns.yml — 59パターンの正本（single source of truth）
+# scripts/scaffold.py がこのファイルから docs/ 配下のスタブを生成します。
+# 新パターンの追加・改名・並び替えは必ずここで行い、mkdocs.yml の nav も合わせて更新すること。
+
+site:
+  title: "AIエージェント本番アーキテクチャ・パターン"
+  principle: "確率的なコアを、決定論的な殻——契約・検証・予算・権限・観測——で囲む。"
+
+forces:
+  - { id: F1, name: 可逆性, note: "失敗をやり直せるか" }
+  - { id: F2, name: 失敗コスト, note: "金銭/法務/安全の痛み" }
+  - { id: F3, name: 1リクエストの価値, note: "売上/意思決定への寄与" }
+  - { id: F4, name: レイテンシ予算, note: "ユーザーの待機耐性" }
+  - { id: F5, name: 入力の信頼度, note: "攻撃/汚染の混入可能性" }
+  - { id: F6, name: タスクの変動性, note: "定型↔探索" }
+  - { id: F7, name: コスト感度・スケール, note: "QPS・月間コスト上限" }
+  - { id: F8, name: 説明責任・規制, note: "監査・コンプラ要件" }
+  - { id: F9, name: プロバイダ信頼度, note: "外部LLMの可用性" }
+
+categories:
+  - id: "01-execution"
+    roman: "I"
+    title: "実行・セッション・オーケストレーション"
+    summary: "長時間・予測不能・失敗しうる実行を、Web層から切り離して安全に走らせる土台。"
+    patterns:
+      - { num: 1,  slug: request-to-job-gateway,            title: "Request-to-Job Gateway｜非同期受付ゲートウェイ",        tagline: "1リクエストを非同期ジョブとして受け付ける", forces: [F4, F1] }
+      - { num: 2,  slug: durable-agent-session,             title: "Durable Agent Session｜耐久エージェントセッション",     tagline: "状態を永続化し中断・再開に耐える",            forces: [F1] }
+      - { num: 3,  slug: workflow-backbone-agent-node,      title: "Workflow Backbone + Agent Node｜決定論骨格＋ノード",   tagline: "骨格は決定論、判断だけ委譲",                  forces: [F6, F8] }
+      - { num: 4,  slug: agent-saga,                        title: "Agent Saga｜補償トランザクション",                    tagline: "副作用連鎖を補償で巻き戻す",                  forces: [F1, F2] }
+      - { num: 5,  slug: time-budgeted-agent-loop,          title: "Time-Budgeted Agent Loop｜予算付きループ",            tagline: "時間・回数・コストを予算化し暴走を止める",    forces: [F7, F3] }
+      - { num: 6,  slug: interruptible-agent,               title: "Interruptible Agent｜中断可能エージェント",            tagline: "途中で停止・方針修正できる",                  forces: [F4] }
+      - { num: 7,  slug: streaming-progress,                title: "Streaming Progress｜進捗ストリーミング",              tagline: "過程を監査可能な要約で逐次表示",              forces: [F4] }
+      - { num: 55, slug: deadline-budget-cascade,           title: "Deadline & Budget Cascade｜期限・予算のカスケード",   tagline: "期限・予算を呼出ツリーへ伝播",                forces: [F7, F3] }
+      - { num: 58, slug: sync-facade-over-async-core,       title: "Sync Facade over Async Core｜同期ファサード",         tagline: "短ければ同期、超えたら非同期へ昇格",          forces: [F4, F1] }
+      - { num: 59, slug: workflow-agent-spectrum-selector,  title: "Workflow–Agent Spectrum Selector｜選定メタ",         tagline: "サブタスク毎に決定論↔自律を選定",            forces: [F6, F2] }
+
+  - id: "02-composition"
+    roman: "II"
+    title: "エージェント構成・分担"
+    summary: "単一エージェントの能力・コンテキスト窓・自己誤認の限界を、役割分離で超える。"
+    patterns:
+      - { num: 8,  slug: planner-executor-reviewer,         title: "Planner-Executor-Reviewer｜計画・実行・検証の分離",   tagline: "計画/実行/検証を別ロールに分ける",            forces: [F2, F3] }
+      - { num: 9,  slug: supervisor-specialist-agents,      title: "Supervisor & Specialist Agents｜統括と専門",          tagline: "統括役が専門役へ委譲する",                    forces: [F6, F7] }
+      - { num: 10, slug: agent-ensemble-debate,             title: "Agent Ensemble & Debate｜アンサンブル・討論",         tagline: "複数で解き合議・討論で頑健化",                forces: [F2, F3] }
+      - { num: 11, slug: deterministic-core-probabilistic-edge, title: "Deterministic Core, Probabilistic Edge｜決定論コア", tagline: "中核は決定論、周辺だけAI",                  forces: [F2, F8] }
+      - { num: 12, slug: blackboard,                        title: "Blackboard｜共有黒板",                              tagline: "共有黒板で疎結合に協調",                      forces: [F6] }
+
+  - id: "03-io-contract"
+    roman: "III"
+    title: "入出力・契約化"
+    summary: "自然言語と確率的出力を、通常ソフトが安全に扱える「契約」に変換する境界。"
+    patterns:
+      - { num: 13, slug: natural-language-boundary-adapter, title: "Natural Language Boundary Adapter｜自然言語境界",     tagline: "自然言語を構造化意図へ変換",                  forces: [F5] }
+      - { num: 14, slug: structured-output-contract,        title: "Structured Output Contract｜構造化出力契約",          tagline: "出力をスキーマで契約化",                      forces: [F8] }
+      - { num: 15, slug: inverted-structured-output,        title: "Inverted Structured Output｜反転構造化出力",          tagline: "最終実行でなく中間判断を出させる",            forces: [F2] }
+      - { num: 16, slug: ambiguity-negotiation,             title: "Ambiguity Negotiation｜曖昧性交渉",                  tagline: "曖昧なら確認してから実行",                    forces: [F1, F2] }
+
+  - id: "04-tools-mcp"
+    roman: "IV"
+    title: "ツール・MCP・外部システム接続"
+    summary: "「考える主体」が外部世界に副作用を起こすための、権限・隔離・冪等性の層。"
+    patterns:
+      - { num: 17, slug: tool-mcp-gateway,                  title: "Tool / MCP Gateway｜ツール・MCPゲートウェイ",          tagline: "ツール接続を集約し認可・監査",                forces: [F5, F8] }
+      - { num: 18, slug: least-privilege-tool-binding,      title: "Least-Privilege Tool Binding｜最小権限バインディング", tagline: "セッション毎に最小権限を束縛",               forces: [F5, F2] }
+      - { num: 19, slug: dry-run-first-tool-execution,      title: "Dry-Run First Tool Execution｜ドライラン優先実行",    tagline: "副作用はまず模擬実行→承認",                  forces: [F1, F2] }
+      - { num: 20, slug: sandboxed-tool-runtime,            title: "Sandboxed Tool Runtime｜サンドボックス実行",          tagline: "コード/操作を隔離環境で実行",                forces: [F5] }
+      - { num: 21, slug: mcp-adapter-isolation,             title: "MCP Adapter Isolation｜MCPアダプタ分離",             tagline: "MCPを信頼境界ごとに分離",                    forces: [F5, F8] }
+      - { num: 22, slug: anti-corruption-layer,             title: "Anti-Corruption Layer｜アンチコラプション層",         tagline: "レガシーとの概念汚染を防ぐ翻訳層",            forces: [F8] }
+
+  - id: "05-memory-context"
+    roman: "V"
+    title: "メモリ・コンテキスト管理"
+    summary: "コンテキスト窓の有限性と、主体を跨ぐ状態受け渡しを扱う。"
+    patterns:
+      - { num: 23, slug: layered-memory,                    title: "Layered Memory｜階層化メモリ",                       tagline: "短期/長期/共有に記憶を階層化",                forces: [F8] }
+      - { num: 24, slug: context-pack-assembly,             title: "Context Pack / Assembly｜コンテキスト組立・RAG",      tagline: "文脈を組み立てグラウンディング",              forces: [F4, F7] }
+      - { num: 25, slug: memory-write-gate,                 title: "Memory Write Gate｜メモリ書き込みゲート",             tagline: "長期保存を承認制にする",                      forces: [F8] }
+      - { num: 26, slug: forgetting-and-expiration,         title: "Forgetting and Expiration｜忘却・失効",              tagline: "記憶に失効・鮮度を持たせる",                  forces: [F8] }
+
+  - id: "06-reliability"
+    roman: "VI"
+    title: "信頼性・検証・ガードレール・自律"
+    summary: "ハルシネーションと逸脱を出荷前に検出し回復する層。目的は制御でなく封じ込め。"
+    patterns:
+      - { num: 27, slug: evidence-first-answer,             title: "Evidence-First Answer｜根拠優先回答",                tagline: "回答前に根拠を取得・引用",                    forces: [F8] }
+      - { num: 28, slug: verifier-agent-critic,             title: "Verifier Agent / Critic｜検証エージェント",           tagline: "独立した検証器で出荷前検査",                  forces: [F2, F4] }
+      - { num: 29, slug: guardrail-sidecar-self-correction, title: "Guardrail Sidecar + Self-Correction｜ガードレール",   tagline: "入出力検査し誤りを自己修正",                  forces: [F5, F4] }
+      - { num: 30, slug: policy-as-code-guardrail,          title: "Policy-as-Code Guardrail｜ポリシー・アズ・コード",    tagline: "制約をコード化し別途判定",                    forces: [F2, F8] }
+      - { num: 31, slug: human-approval-checkpoint,         title: "Human Approval Checkpoint｜人間承認チェックポイント", tagline: "高リスク前に人間承認",                        forces: [F2, F1] }
+      - { num: 57, slug: autonomy-ladder,                   title: "Autonomy Ladder｜自律性のはしご",                    tagline: "実績に応じ自律性を段階的に昇格",              forces: [F1, F2] }
+
+  - id: "07-observability"
+    roman: "VII"
+    title: "観測性・監査・評価"
+    summary: "非決定論を観測・再現・回帰検知可能にし、デプロイ＝挙動変更を規律化する。"
+    patterns:
+      - { num: 32, slug: agent-trace,                       title: "Agent Trace｜エージェントトレース",                  tagline: "全ステップを追記ログ化・再生",                forces: [F8] }
+      - { num: 54, slug: tiered-observability,              title: "Tiered (Hot/Cold) Observability｜二層観測",          tagline: "観測を高速層と安価層に二分",                  forces: [F8, F7] }
+      - { num: 33, slug: version-pinning,                   title: "Prompt/Model/Tool Version Pinning｜バージョン固定",  tagline: "プロンプト/モデル/ツールを固定",              forces: [F8] }
+      - { num: 34, slug: evaluation-ci-cd,                  title: "Evaluation CI/CD｜評価CI/CD",                       tagline: "変更毎に自動評価で回帰検知",                  forces: [F8] }
+      - { num: 35, slug: production-replay,                 title: "Production Replay｜本番リプレイ",                    tagline: "本番ログを再生し新旧比較",                    forces: [F8, F9] }
+      - { num: 36, slug: shadow-canary-deployment,          title: "Shadow / Canary Deployment｜シャドー／カナリア",     tagline: "段階投入と自動ロールバック",                  forces: [F9] }
+
+  - id: "08-cost-scaling"
+    roman: "VIII"
+    title: "コスト・性能・スケーリング"
+    summary: "知能の使用量を資源として管理し、外部LLMの不安定さを吸収する。"
+    patterns:
+      - { num: 37, slug: semantic-gateway-cost-aware-router, title: "Semantic Gateway & Cost-Aware Router｜動的ルーティング", tagline: "難易度でモデルを動的選択",                forces: [F7, F3] }
+      - { num: 38, slug: semantic-result-cache,             title: "Semantic Result Cache｜セマンティック結果キャッシュ", tagline: "意味的に近い結果を再利用",                    forces: [F4, F7] }
+      - { num: 39, slug: prompt-cache-optimized-context,    title: "Prompt Cache Optimized Context｜プロンプトキャッシュ", tagline: "共通prefixでキャッシュを効かせる",           forces: [F7, F4] }
+      - { num: 40, slug: fallback-graceful-degradation,     title: "Fallback & Graceful Degradation｜フォールバック縮退", tagline: "障害時に段階縮退で継続",                      forces: [F9] }
+      - { num: 56, slug: adaptive-effort,                   title: "Adaptive Effort｜適応的努力配分",                    tagline: "難易度で投入計算量を増減",                    forces: [F7, F2] }
+
+  - id: "09-security"
+    roman: "IX"
+    title: "セキュリティ・マルチテナント"
+    summary: "自然言語I/F＝攻撃面、という前提に立った防御層。"
+    patterns:
+      - { num: 41, slug: tenant-isolated-agent-runtime,     title: "Tenant-Isolated Agent Runtime｜テナント分離ランタイム", tagline: "テナント毎に実行・記憶を分離",               forces: [F5, F8] }
+      - { num: 42, slug: data-boundary-firewall,            title: "Data Boundary Firewall｜データ境界ファイアウォール",  tagline: "入出力でPII/機密を検査・マスク",             forces: [F5, F8] }
+      - { num: 43, slug: confused-deputy-damage-limitation, title: "Confused-Deputy Damage Limitation｜被害限定",        tagline: "騙されても被害半径を制限",                    forces: [F5] }
+      - { num: 44, slug: dual-llm-privilege-separation,     title: "Dual-LLM Privilege Separation｜デュアルLLM権限分離",  tagline: "隔離LLMと特権LLMを分離",                     forces: [F5, F2] }
+
+  - id: "10-deployment"
+    roman: "X"
+    title: "デプロイ・ベンダー抽象化・移行"
+    summary: "特定SDK/モデルへのロックインを避け、既存システムへ漸進導入する。"
+    patterns:
+      - { num: 45, slug: agent-runtime-abstraction,         title: "Agent Runtime Abstraction｜ランタイム抽象化",         tagline: "実行基盤を差替可能に",                        forces: [F9, F8] }
+      - { num: 46, slug: model-behavior-compatibility-layer, title: "Model Behavior Compatibility Layer｜互換レイヤー",    tagline: "モデル差を吸収する互換層",                    forces: [F9] }
+      - { num: 47, slug: agent-capability-registry,         title: "Agent Capability Registry｜能力レジストリ",           tagline: "能力・権限・コストを台帳管理",                forces: [F8] }
+      - { num: 48, slug: strangler-fig,                     title: "Strangler Fig｜段階的置換",                          tagline: "既存処理を段階的に置換",                      forces: [F2, F8] }
+
+  - id: "11-ux"
+    roman: "XI"
+    title: "UI/UX・人間協調"
+    summary: "チャットだけでは扱えない長時間・多段階・副作用付き作業を人間が御する面。"
+    patterns:
+      - { num: 49, slug: agent-workbench,                   title: "Agent Workbench｜エージェントワークベンチ",           tagline: "計画/進捗/承認を一画面管理",                  forces: [F4] }
+      - { num: 50, slug: editable-plan,                     title: "Editable Plan｜編集可能プラン",                      tagline: "実行前に計画を人が編集",                      forces: [F6] }
+      - { num: 51, slug: agent-to-human-escalation,         title: "Agent-to-Human Escalation｜人間へのエスカレーション", tagline: "自信/権限不足で人間へ引き継ぎ",              forces: [F2, F4] }
+
+  - id: "12-governance"
+    roman: "XII"
+    title: "組織・ガバナンス・ライフサイクル"
+    summary: "エージェントを組織に来た新しい実行主体として迎える運用設計。"
+    patterns:
+      - { num: 52, slug: agent-constitution,                title: "Agent Constitution｜エージェント憲法",               tagline: "行動原則を体系的に展開",                      forces: [F8, F2] }
+      - { num: 53, slug: agent-change-management,           title: "Agent Change Management｜エージェント変更管理",       tagline: "変更を厳格なCI/カナリア対象に",              forces: [F8, F9] }
