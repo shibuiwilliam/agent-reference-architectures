@@ -8,7 +8,8 @@
 
 ## まず守る原則
 
-- **`patterns.yml` が正本。** パターン番号・slug・タイトル・カテゴリはここに従う。**勝手に追加・改名・採番しない。** 変更が要るときは `patterns.yml` を更新し、`mkdocs.yml` の `nav` も手で合わせ、その旨をコミットメッセージに書く。
+- **`patterns.yml` + `decisions.yml` が正本。** パターン・フォース・ダイヤル・二者択一・リファレンスアーキテクチャ・決定規則はここに従う。**勝手に追加・改名・採番しない。** 変更が要るときは正本YAMLを更新し、`python scripts/generate.py` で成果物を再生成、`mkdocs.yml` の `nav` も手で合わせ、その旨をコミットメッセージに書く。
+- **機械可読成果物は生成物。** `catalog.json`、`llms.txt`、`llms-core.txt`、`llms-full.txt`、各パターンの `GEN:meta` ブロック、`pattern-index.md` の表は `generate.py` が正本YAMLから生成する。**直接編集しない。**
 - **手本は `docs/patterns/01-execution/01-request-to-job-gateway.md`。** 迷ったらこの構成・粒度・トーンに合わせる。
 - **テンプレートは `templates/pattern.md`。** 新規ページはこれを基に書く（`scaffold.py` が適用済み）。
 - 出力言語は**日本語**。技術用語・パターン名の英語表記は併記してよい。
@@ -24,8 +25,13 @@
 | 横断ページ | `docs/anti-patterns.md`, `reference-architectures.md`, `pattern-index.md` |
 | ナビ追加・並び替え | `mkdocs.yml` の `nav`（手動） |
 | スタブ生成 | `python scripts/scaffold.py`（既存は上書きしない） |
+| 成果物再生成 | `python scripts/generate.py`（catalog.json, llms.txt, メタブロック等） |
+| エージェント利用ガイド | `docs/agent-guide.md`, `docs/agent-proposal-template.md` |
+| エージェント統合 | `AGENTS.md`（リポジトリ直下） |
+| MCP サーバ | `mcp-server/server.py` |
+| 意思決定層データ | `decisions.yml`（正本） |
 
-`templates/`・`scripts/`・`patterns.yml`・`site/`（ビルド成果物）は**サイト本文ではない**。`site/` は触らない・コミットしない。
+`templates/`・`scripts/`・`patterns.yml`・`decisions.yml`・`site/`（ビルド成果物）は**サイト本文ではない**。`site/` は触らない・コミットしない。生成物（`catalog.json`等）はコミットするが直接編集しない。
 
 ## パターンページの必須構成
 
@@ -69,11 +75,12 @@
 ## ビルドと品質ゲート（コミット前に必ず）
 
 ```bash
-mkdocs build --strict
+python scripts/generate.py   # 正本から成果物を再生成
+mkdocs build --strict         # リンク切れ・nav不整合をチェック
 ```
 
-これが**エラーゼロで通ること**が完成条件。`--strict` はリンク切れ・nav 不整合・未参照ファイルを失敗にする。
-必要に応じて `mkdocs serve` で見た目（図のレンダリング、リンク遷移）も確認する。
+両方が**エラーゼロで通ること**が完成条件。`--strict` はリンク切れ・nav 不整合・未参照ファイルを失敗にする。
+`generate.py` は冪等（2回実行しても差分が出ない）。CIでも毎回実行される。
 
 `scaffold.py --check` で「未作成ページがないか」を確認できる。
 
@@ -84,7 +91,9 @@ mkdocs build --strict
 - [ ] `関連パターン` に有効な相対リンクが1つ以上ある
 - [ ] 該当するなら `調整`/`選定` に `[F#]` と決定層へのリンクがある
 - [ ] フロントマターの `tags` にカテゴリ名と該当 `F#` がある
-- [ ] `mkdocs build --strict` がエラーなく通る
+- [ ] `patterns.yml` に `related`, `when_to_use`, `when_not`, `element_tech`, `dials`, `tradeoffs` が記入されている
+- [ ] `<!-- BEGIN:GEN:meta --><!-- END:GEN:meta -->` マーカーがある（`generate.py` がメタブロックを注入）
+- [ ] `python scripts/generate.py && mkdocs build --strict` がエラーなく通る
 - [ ] `mkdocs.yml` の `nav` に当該ページが登録されている（scaffold 生成分は手で nav に追記）
 
 ## やってはいけないこと
@@ -108,6 +117,15 @@ fix(links): repair cross-refs in 04-tools-mcp
 
 1. `python scripts/scaffold.py` で対象のスタブが存在することを確認（無ければ生成）。
 2. 対象 `.md` をテンプレ／手本に沿って執筆。`patterns.yml` の `tagline`・`forces` を反映。
-3. 関連パターン・決定層への相対リンクを張る（リンク先スタブが無ければ先に生成）。
-4. `mkdocs build --strict` を実行し、エラーを解消。
-5. `nav` 登録を確認し、1パターン＝1コミットで記録。
+3. `patterns.yml` に `related`, `when_to_use`, `when_not`, `element_tech`, `dials`, `tradeoffs` を記入。
+4. 関連パターン・決定層への相対リンクを張る（リンク先スタブが無ければ先に生成）。
+5. `python scripts/generate.py` を実行し、メタブロック注入・成果物更新。
+6. `mkdocs build --strict` を実行し、エラーを解消。
+7. `nav` 登録を確認し、1パターン＝1コミットで記録。
+
+## エージェント統合の規約
+
+- **`AGENTS.md`**（リポジトリ直下）と **`docs/agent-guide.md`**（サイト掲載）は同じ情報を齟齬なく保つ。
+- **`docs/agent-proposal-template.md`** がエージェントの出力様式。変更時は `AGENTS.md` も合わせる。
+- **MCP サーバ** (`mcp-server/server.py`) は `catalog.json` を読む。`catalog.json` は `generate.py` が生成するため、MCPサーバを直接編集する必要は通常ない。
+- **バージョン** は `patterns.yml` / `decisions.yml` の `version` フィールド。変更時は `CHANGELOG.md` を更新する。

@@ -2,10 +2,11 @@
 
 **意思決定（フォース・程度・相反）を中心に**、AIエージェントを本番システムへ組み込むアーキテクチャパターンのドキュメントサイト。**MkDocs (Material)** で構築し、**GitHub Pages** に公開する。IAの重心は「意思決定を背骨、パターンを語彙」。
 
-- 対象読者: AIエージェントを本番システムへ組み込むアーキテクト／エンジニア
+- 対象読者: AIエージェントを本番システムへ組み込むアーキテクト／エンジニア **＋ コーディングエージェント**
 - 規模: 12カテゴリ・59パターン ＋ 意思決定層（中核）・複合構成・アンチパターン
-- 正本（single source of truth）: [`patterns.yml`](patterns.yml)
+- 正本（single source of truth）: [`patterns.yml`](patterns.yml) + [`decisions.yml`](decisions.yml)
 - 執筆ルール: [`CLAUDE.md`](CLAUDE.md)
+- エージェント統合: [`AGENTS.md`](AGENTS.md)
 
 ---
 
@@ -28,12 +29,18 @@
 agent-architecture-patterns/
 ├─ mkdocs.yml                  # サイト設定・ナビゲーション（nav は手動管理）
 ├─ requirements.txt            # mkdocs-material, pymdown-extensions
-├─ patterns.yml                # ★59パターンの正本（scaffold が参照）
+├─ patterns.yml                # ★59パターンの正本（scaffold + generate が参照）
+├─ decisions.yml               # ★意思決定層の正本（forces/dials/tradeoffs/rules）
 ├─ PROJECT.md                  # このファイル
 ├─ CLAUDE.md                   # Claude Code 向け執筆指示
-├─ .github/workflows/deploy.yml# Pages へ自動デプロイ
+├─ AGENTS.md                   # コーディングエージェント向け統合ガイド
+├─ CHANGELOG.md                # カタログ変更履歴
+├─ .github/workflows/deploy.yml# Pages へ自動デプロイ（generate.py 実行付き）
 ├─ scripts/
-│  └─ scaffold.py              # patterns.yml からスタブ生成（冪等）
+│  ├─ scaffold.py              # patterns.yml からスタブ生成（冪等）
+│  └─ generate.py              # 正本YAML → catalog.json/llms.txt/メタブロック等
+├─ mcp-server/
+│  └─ server.py                # MCP サーバ（catalog.json を読む）
 ├─ templates/
 │  └─ pattern.md               # パターン執筆テンプレート（ビルド対象外）
 └─ docs/                       # ★ビルド対象。ここがサイトの中身
@@ -63,9 +70,15 @@ agent-architecture-patterns/
    │  ├─ tuning-dials.md        # 程度（B-1）
    │  ├─ tradeoffs.md           # 相反（B-2）
    │  └─ parameterization.md    # パターンのパラメータ化（B-3）
-   ├─ anti-patterns.md
-   ├─ reference-architectures.md
-   └─ pattern-index.md          # 59パターン早見表
+   ├─ anti-patterns/             # アンチパターン
+   ├─ reference-architectures/   # リファレンスアーキテクチャ
+   ├─ pattern-index.md          # 59パターン早見表（GEN:pattern-index で生成）
+   ├─ agent-guide.md            # コーディングエージェント向け利用ガイド
+   ├─ agent-proposal-template.md # アーキテクチャ提案テンプレート
+   ├─ catalog.json              # 機械可読マニフェスト（generate.py 生成物）
+   ├─ llms.txt                  # llmstxt.org 形式索引（生成物）
+   ├─ llms-core.txt             # 意思決定コア（低トークン、生成物）
+   └─ llms-full.txt             # 全ページ連結（生成物）
 ```
 
 ファイル名は `NN-slug.md`（`NN` = グローバルなパターン番号の2桁ゼロ詰め、`slug` = 英小文字ハイフン）。番号は飛び番（55,58,59 が I に入る等）になるが、これは新規パターンを後から各カテゴリへ統合した経緯による。**番号と slug は `patterns.yml` を正本とし、勝手に変えない。**
