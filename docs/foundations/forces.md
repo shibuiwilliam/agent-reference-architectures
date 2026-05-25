@@ -9,21 +9,43 @@ title: 駆動変数（フォース）
 
 ## フォースとは何か
 
-アーキテクチャパターンは固定のレシピではない。むしろ、**環境変数を引数にとる関数**のようなものである。ここで言う環境変数——駆動変数（フォース）——とは、システムが置かれた文脈を数値化・序列化したものを指す。パターンを「どの程度適用するか」（[程度ダイヤル](../decisions/tuning-dials.md)）や、「どちらを選ぶか」（[相反の選定基準](../decisions/tradeoffs.md)）は、フォースの値域によって決まる。
+「このパターンを使えばうまくいく」と言われても、自分のシステムにどこまで適用すればよいか迷うことは多い。その判断を助けるのがフォース（駆動変数）である。
 
-## F1–F9 一覧
+アーキテクチャパターンは固定のレシピではなく、**環境変数を引数にとる関数**のようなものと考えるとわかりやすい。ここで言う環境変数——駆動変数（フォース）——とは、システムが置かれた文脈（たとえば「失敗したとき何が起きるか」「ユーザーはどのくらい待てるか」）を数値化・序列化したものである。パターンを「どの程度適用するか」（[程度ダイヤル](../decisions/tuning-dials.md)）や、「どちらを選ぶか」（[相反の選定基準](../decisions/tradeoffs.md)）は、フォースの値域によって決まる。
 
-| ID | 名前 | 問い | 低い場合 | 高い場合 | 関連パターン例 |
-|----|------|------|----------|----------|--------------|
-| `[F1]` | **可逆性** | 失敗をやり直せるか | 不可逆な副作用（メール送信・決済） | 何度でもリトライ可能 | [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md), [#19 Dry-Run First](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) |
-| `[F2]` | **失敗コスト** | 金銭/法務/安全の痛み | 失敗しても軽微 | 誤りが訴訟・人命に関わる | [#28 Verifier Agent](../patterns/06-reliability/28-verifier-agent-critic.md), [#31 Human Approval](../patterns/06-reliability/31-human-approval-checkpoint.md) |
-| `[F3]` | **1リクエストの価値** | 売上/意思決定への寄与 | 大量の低単価リクエスト | 1件が大きな契約・意思決定 | [#10 Agent Ensemble](../patterns/02-composition/10-agent-ensemble-debate.md), [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) |
-| `[F4]` | **レイテンシ予算** | ユーザーの待機耐性 | 即応（100ms級）を期待 | 数分〜数時間の待ちを許容 | [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md), [#7 Streaming Progress](../patterns/01-execution/07-streaming-progress.md) |
-| `[F5]` | **入力の信頼度** | 攻撃/汚染の混入可能性 | 信頼できる内部システムからの入力 | 不特定ユーザーの自然言語入力 | [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md), [#44 Dual-LLM](../patterns/09-security/44-dual-llm-privilege-separation.md) |
-| `[F6]` | **タスクの変動性** | 定型↔探索 | 手順が固定のルーチン | 未知の問題を探索的に解く | [#3 Workflow Backbone](../patterns/01-execution/03-workflow-backbone-agent-node.md), [#59 Spectrum Selector](../patterns/01-execution/59-workflow-agent-spectrum-selector.md) |
-| `[F7]` | **コスト感度・スケール** | QPS・月間コスト上限 | コスト制約が緩い | 大量リクエスト・厳しいコスト上限 | [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md), [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) |
-| `[F8]` | **説明責任・規制** | 監査・コンプラ要件 | 社内ツール・実験用途 | 医療・金融・法務など規制業種 | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md), [#30 Policy-as-Code](../patterns/06-reliability/30-policy-as-code-guardrail.md) |
-| `[F9]` | **プロバイダ信頼度** | 外部LLMの可用性 | 単一プロバイダで十分 | 可用性・ベンダーロックインが懸念 | [#40 Fallback](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md), [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md) |
+## 方針
+
+フォースは意思決定の**入力**であり、出力（パターンや設定値）ではない。まずフォースを見積もり、その値域に基づいてダイヤルの目盛りや二者択一の方向を決める——これが本サイトの意思決定フレームワークの基本方針である。
+
+フォースの評価は主観的な見積もりで構わない。「高/中/低」の3段階で十分である。精密な数値化よりも、チーム内で認識を揃えることが重要である。ただし、見積もりの根拠は [意思決定記録（ADR）](../decisions/adr-template.md) に残しておくと、後の見直しがしやすい。
+
+## 9つのフォースの意味
+
+フォースは3つのグループに分類できる。
+
+**リスク・価値**（何が壊れるか、何を守るか）
+
+| ID | 名前 | 問い | 詳細 |
+|----|------|------|------|
+| `[F1]` | **可逆性** | 失敗をやり直せるか | [詳細 →](forces/f1-reversibility.md) |
+| `[F2]` | **失敗コスト** | 金銭/法務/安全の痛み | [詳細 →](forces/f2-failure-cost.md) |
+| `[F3]` | **1リクエストの価値** | 売上/意思決定への寄与 | [詳細 →](forces/f3-request-value.md) |
+
+**制約・環境**（どこまで許されるか）
+
+| ID | 名前 | 問い | 詳細 |
+|----|------|------|------|
+| `[F4]` | **レイテンシ予算** | ユーザーの待機耐性 | [詳細 →](forces/f4-latency-budget.md) |
+| `[F5]` | **入力の信頼度** | 攻撃/汚染の混入可能性 | [詳細 →](forces/f5-input-trust.md) |
+| `[F6]` | **タスクの変動性** | 定型↔探索 | [詳細 →](forces/f6-task-variability.md) |
+| `[F7]` | **コスト感度・スケール** | QPS・月間コスト上限 | [詳細 →](forces/f7-cost-sensitivity.md) |
+
+**ガバナンス・外部依存**（誰に説明するか）
+
+| ID | 名前 | 問い | 詳細 |
+|----|------|------|------|
+| `[F8]` | **説明責任・規制** | 監査・コンプラ要件 | [詳細 →](forces/f8-accountability.md) |
+| `[F9]` | **プロバイダ信頼度** | 外部LLMの可用性 | [詳細 →](forces/f9-provider-reliability.md) |
 
 ## 使い方
 

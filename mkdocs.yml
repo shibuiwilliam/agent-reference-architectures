@@ -74,9 +74,57 @@ nav:
   - 意思決定:
       - 意思決定の進め方: decisions/decision-flow.md
       - AIエージェントの特性: foundations/characteristics.md
-      - 駆動変数（フォース）: foundations/forces.md
-      - 程度（ダイヤル）: decisions/tuning-dials.md
-      - 相反（二者択一）: decisions/tradeoffs.md
+      - 駆動変数（フォース）:
+          - foundations/forces.md
+          - "[F1] 可逆性": foundations/forces/f1-reversibility.md
+          - "[F2] 失敗コスト": foundations/forces/f2-failure-cost.md
+          - "[F3] 1リクエストの価値": foundations/forces/f3-request-value.md
+          - "[F4] レイテンシ予算": foundations/forces/f4-latency-budget.md
+          - "[F5] 入力の信頼度": foundations/forces/f5-input-trust.md
+          - "[F6] タスクの変動性": foundations/forces/f6-task-variability.md
+          - "[F7] コスト感度・スケール": foundations/forces/f7-cost-sensitivity.md
+          - "[F8] 説明責任・規制": foundations/forces/f8-accountability.md
+          - "[F9] プロバイダ信頼度": foundations/forces/f9-provider-reliability.md
+      - 程度（ダイヤル）:
+          - decisions/tuning-dials.md
+          - タイムアウト: decisions/dials/timeout.md
+          - リトライ回数: decisions/dials/retry-count.md
+          - 自己修正ループ回数: decisions/dials/self-correction-loops.md
+          - チェックポイント頻度: decisions/dials/checkpoint-frequency.md
+          - 予算上限: decisions/dials/budget-cap.md
+          - 自律性レベル: decisions/dials/autonomy-level.md
+          - HITL頻度: decisions/dials/hitl-frequency.md
+          - ガードレール厳しさ: decisions/dials/guardrail-strictness.md
+          - モデル階層: decisions/dials/model-tier-routing.md
+          - Best-of-N: decisions/dials/best-of-n.md
+          - 温度: decisions/dials/temperature.md
+          - キャッシュ類似度閾値: decisions/dials/cache-similarity.md
+          - 検索 top-k: decisions/dials/retrieval-top-k.md
+          - メモリ TTL: decisions/dials/memory-ttl.md
+          - メモリ書き込み積極度: decisions/dials/memory-write-eagerness.md
+          - 要約タイミング: decisions/dials/summarization-timing.md
+          - 露出ツール数: decisions/dials/exposed-tool-count.md
+          - トレースサンプリング率: decisions/dials/trace-sampling-rate.md
+          - プロンプト保存先: decisions/dials/prompt-storage.md
+          - ログ保持期間: decisions/dials/log-retention.md
+      - 相反（二者択一）:
+          - decisions/tradeoffs.md
+          - 同期 ↔ 非同期: decisions/tradeoffs-catalog/sync-vs-async.md
+          - シングル ↔ マルチエージェント: decisions/tradeoffs-catalog/single-vs-multi-agent.md
+          - オーケストレーション ↔ コレオグラフィ: decisions/tradeoffs-catalog/orchestration-vs-choreography.md
+          - ワークフロー ↔ エージェント: decisions/tradeoffs-catalog/workflow-vs-agent.md
+          - Plan ↔ ReAct: decisions/tradeoffs-catalog/plan-vs-react.md
+          - プロンプト ↔ コード制御: decisions/tradeoffs-catalog/prompt-vs-code.md
+          - RAG ↔ Fine-Tuning: decisions/tradeoffs-catalog/rag-vs-finetuning.md
+          - 単一 ↔ マルチプロバイダ: decisions/tradeoffs-catalog/single-vs-multi-provider.md
+          - インライン ↔ 事後検証: decisions/tradeoffs-catalog/inline-vs-post-verification.md
+          - 同一 ↔ 別モデル検証: decisions/tradeoffs-catalog/same-vs-different-model.md
+          - LLM推論 ↔ ツール委譲: decisions/tradeoffs-catalog/llm-vs-tool.md
+          - Fail-fast ↔ 縮退運転: decisions/tradeoffs-catalog/fail-fast-vs-degradation.md
+          - プッシュ ↔ プル: decisions/tradeoffs-catalog/push-vs-pull.md
+          - 文脈内 ↔ 外部状態: decisions/tradeoffs-catalog/in-context-vs-external.md
+          - ビルド ↔ バイ: decisions/tradeoffs-catalog/build-vs-buy.md
+          - 構造化 ↔ 自由形式出力: decisions/tradeoffs-catalog/structured-vs-freeform.md
       - ダイヤル×二者択一の相互作用: decisions/interactions.md
       - フォース別逆引き: decisions/by-force.md
       - 意思決定記録（ADR）: decisions/adr-template.md
@@ -167,6 +215,25 @@ nav:
           - "#52 Agent Constitution": patterns/12-governance/52-agent-constitution.md
           - "#53 Agent Change Management": patterns/12-governance/53-agent-change-management.md
   - 複合構成・アンチパターン:
-      - リファレンスアーキテクチャ: reference-architectures.md
-      - アンチパターン: anti-patterns.md
+      - リファレンスアーキテクチャ:
+          - reference-architectures/index.md
+          - 最小構成（MVP）: reference-architectures/01-mvp.md
+          - 副作用重視構成: reference-architectures/02-side-effect-first.md
+          - 信頼できない入力構成: reference-architectures/03-untrusted-input.md
+          - 事実性重視構成: reference-architectures/04-factuality-first.md
+          - コスト重視構成: reference-architectures/05-cost-first.md
+          - 継続改善運用構成: reference-architectures/06-continuous-improvement.md
+      - アンチパターン:
+          - anti-patterns/index.md
+          - 無限・過大タイムアウト: anti-patterns/01-infinite-timeout.md
+          - 過剰ガードレール: anti-patterns/02-excessive-guardrails.md
+          - 最強モデル一択: anti-patterns/03-strongest-model-only.md
+          - 観測基盤フル投入: anti-patterns/04-full-observability.md
+          - コンテキスト詰め込みすぎ: anti-patterns/05-context-stuffing.md
+          - 目盛りの根拠を残さない: anti-patterns/06-no-rationale.md
+          - 何でも同期 / 何でも非同期: anti-patterns/07-all-sync-or-async.md
+          - 万能マルチエージェント: anti-patterns/08-universal-multi-agent.md
+          - リトライストーム: anti-patterns/09-retry-storm.md
+          - プロンプトをセキュリティ境界にする: anti-patterns/10-prompt-as-security.md
+          - LLMに算術や厳密検索をやらせる: anti-patterns/11-llm-as-calculator.md
       - パターン早見表: pattern-index.md

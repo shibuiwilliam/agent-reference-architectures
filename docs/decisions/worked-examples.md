@@ -9,7 +9,7 @@ title: 通し例
 
 ## この章の目的
 
-[意思決定の進め方](decision-flow.md) の①〜⑤を、具体的なシステムを題材にして実演する。「フォースが二者択一とダイヤルを経て、パターン選定を駆動する」という因果の流れを、矢印で追っていく。
+理論だけでは「結局どう使うのか」がわかりにくい。ここでは [意思決定の進め方](decision-flow.md) の①〜⑤を、具体的なシステムを題材にして実演する。「フォースが二者択一とダイヤルを経て、パターン選定を駆動する」という因果の流れを、矢印で追える形にした。
 
 ---
 
@@ -64,7 +64,7 @@ flowchart LR
 
 ### 採用パターン
 
-[最小構成](../reference-architectures.md) + キャッシュ層:
+[最小構成](../reference-architectures/01-mvp.md) + キャッシュ層:
 
 - [#58 Sync Facade](../patterns/01-execution/58-sync-facade-over-async-core.md) — 同期/非同期ハイブリッド
 - [#24 Context Pack / Assembly](../patterns/05-memory-context/24-context-pack-assembly.md) — RAG
@@ -130,7 +130,7 @@ flowchart LR
 
 ### 採用パターン
 
-[副作用重視構成](../reference-architectures.md):
+[副作用重視構成](../reference-architectures/02-side-effect-first.md):
 
 - [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) — 非同期受付
 - [#3 Workflow Backbone](../patterns/01-execution/03-workflow-backbone-agent-node.md) — 決定論的フロー
@@ -201,7 +201,7 @@ flowchart LR
 
 ### 採用パターン
 
-[コスト重視構成](../reference-architectures.md) + [信頼できない入力構成](../reference-architectures.md):
+[コスト重視構成](../reference-architectures/05-cost-first.md) + [信頼できない入力構成](../reference-architectures/03-untrusted-input.md):
 
 - [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — 難易度別ルーティング
 - [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) — FAQ類似クエリの再利用
@@ -234,5 +234,5 @@ flowchart LR
 
 - [意思決定の進め方](decision-flow.md) — このページが実演するワークフロー
 - [フォース別逆引き](by-force.md) — フォースから引く場合の辞書
-- [リファレンスアーキテクチャ](../reference-architectures.md) — 複合構成のテンプレート
+- [リファレンスアーキテクチャ](../reference-architectures/index.md) — 複合構成のテンプレート
 - [意思決定記録（ADR）](adr-template.md) — 記録のフォーマット

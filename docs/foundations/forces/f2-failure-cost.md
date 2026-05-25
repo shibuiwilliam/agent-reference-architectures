@@ -1,0 +1,61 @@
+---
+title: "[F2] 失敗コスト"
+tags:
+  - "駆動変数"
+---
+
+# [F2] 失敗コスト（Failure Cost）
+
+!!! abstract "一言"
+    エージェントが誤った出力や操作をしたとき、どれだけの痛み（金銭・法務・安全・信用）が生じるかを測るフォース。
+
+## 概要
+
+失敗コストは、エージェントの誤りがもたらす損害の深刻度を表す。社内チャットボットの回答ミスと、医療診断支援の誤判断では、同じ「間違い」でも影響の桁が違う。このフォースの値が高いほど、検証・承認・監査の層を厚くする必要がある。
+
+## なぜ重要か
+
+失敗コストを過小評価すると、本番環境で「たまたまうまく動いている」状態に安住し、稀な失敗が訴訟・規制違反・人的被害に直結する。逆に過大評価すると、すべての操作に重い承認フローを課してスループットが崩壊する。正確な見積もりが、防御層の適切な厚みを決める。
+
+## 値域の解釈
+
+### 低い場合
+
+誤っても実害が軽微な状況。社内FAQボット、ドラフト文書の下書き生成、開発者向けコード補完などが典型例。ユーザーが結果を目視確認してから使う前提があり、誤りのフィードバックループが短い。この領域ではガードレールを軽くし、速度や利便性を優先できる。
+
+### 高い場合
+
+誤りが金銭的損失・法的責任・安全上の危険に直結する状況。金融取引の執行、医療レポートの生成、法務文書のレビュー、インフラ変更の自動実行などが該当する。1件の誤りが数百万円の損害や規制当局からの制裁につながりうる。多段階の検証、独立したVerifierエージェント、Policy-as-Code による制約の明文化が必要になる。
+
+## 評価の指針
+
+- エージェントの誤出力が直接ユーザーや外部システムに届くか、人間のレビューを経るか
+- 最悪ケースの金銭的損失はいくらか（1件あたり）
+- 誤りが法的責任や規制違反を引き起こす可能性はあるか
+- 誤りが人の安全や健康に影響しうるか
+- 過去に類似システムで発生した障害の影響範囲はどの程度だったか
+
+## 影響する設計判断
+
+### 関連するダイヤル
+
+- [自己修正ループ回数](../../decisions/dials/self-correction-loops.md) — 失敗コストが高いほど、出力を自己検証・修正するループを増やす
+- [ガードレール厳格度](../../decisions/dials/guardrail-strictness.md) — コストが高い領域では厳格なガードレールを設定する
+- [HITL頻度](../../decisions/dials/hitl-frequency.md) — 失敗コストに比例して人間承認の頻度を上げる
+- [Best-of-N](../../decisions/dials/best-of-n.md) — 高コスト判断では複数候補から最良を選ぶ
+- [自律レベル](../../decisions/dials/autonomy-level.md) — 失敗コストが高いほど自律レベルを抑制する
+
+### 関連する二者択一
+
+- [単一エージェント ↔ マルチエージェント](../../decisions/tradeoffs-catalog/single-vs-multi-agent.md) — 失敗コストが高ければ検証役を分離するマルチエージェント構成が有利
+- [同一モデル ↔ 異モデル](../../decisions/tradeoffs-catalog/same-vs-different-model.md) — 高コスト判断では異なるモデルで検証し、共通の盲点を避ける
+- [インライン検証 ↔ 事後検証](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — 失敗コストが高ければインライン検証を優先
+- [ワークフロー ↔ エージェント](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) — 高コスト領域ではワークフローで制御可能性を確保
+
+## 関連パターン
+
+- [#28 Verifier Agent / Critic](../../patterns/06-reliability/28-verifier-agent-critic.md) — 独立した検証器で出荷前検査を行う
+- [#31 Human Approval Checkpoint](../../patterns/06-reliability/31-human-approval-checkpoint.md) — 高リスク操作の前に人間承認を挟む
+- [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) — 制約をコード化して機械的に判定する
+- [#10 Agent Ensemble & Debate](../../patterns/02-composition/10-agent-ensemble-debate.md) — 複数エージェントの合議で頑健性を高める
+- [#8 Planner-Executor-Reviewer](../../patterns/02-composition/08-planner-executor-reviewer.md) — 計画・実行・検証を分離し、各段階で品質を担保する

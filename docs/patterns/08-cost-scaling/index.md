@@ -7,7 +7,7 @@
     - **主な二者択一**: 単一↔マルチプロバイダ、Fail-fast↔縮退 → [相反（二者択一）](../../decisions/tradeoffs.md)
     - **意思決定の進め方**: [意思決定の進め方](../../decisions/decision-flow.md)
 
-LLMの利用量を資源として管理し、外部LLMの不安定さを吸収する。
+エージェントのリクエスト数が増えるにつれ、LLMのAPI費用は想定を超えて膨らんでいく。さらに、外部プロバイダの障害やレート制限で突然応答が返らなくなる場面も珍しくない。LLMの利用量を資源として管理し、外部LLMの不安定さを吸収するためのパターン群である。
 
 - [#37 Semantic Gateway & Cost-Aware Router｜動的ルーティング](37-semantic-gateway-cost-aware-router.md) — 難易度に応じてモデルを動的に選択する
 - [#38 Semantic Result Cache｜セマンティック結果キャッシュ](38-semantic-result-cache.md) — 意味的に近い過去の結果を再利用する
