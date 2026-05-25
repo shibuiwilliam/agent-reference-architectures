@@ -4,6 +4,7 @@ title: パターン早見表
 
 # パターン早見表（59パターン）
 
+<!-- BEGIN:GEN:pattern-index -->
 | # | パターン | カテゴリ | 一言 |
 |---|---------|---------|------|
 | 1 | [Request-to-Job Gateway](patterns/01-execution/01-request-to-job-gateway.md) | I. 実行 | 1リクエストを非同期ジョブとして受け付ける |
@@ -38,7 +39,7 @@ title: パターン早見表
 | 30 | [Policy-as-Code Guardrail](patterns/06-reliability/30-policy-as-code-guardrail.md) | VI. 信頼性 | 制約をコード化し別途判定 |
 | 31 | [Human Approval Checkpoint](patterns/06-reliability/31-human-approval-checkpoint.md) | VI. 信頼性 | 高リスク前に人間承認 |
 | 32 | [Agent Trace](patterns/07-observability/32-agent-trace.md) | VII. 観測 | 全ステップを追記ログ化・再生 |
-| 33 | [Version Pinning](patterns/07-observability/33-version-pinning.md) | VII. 観測 | プロンプト/モデル/ツールを固定 |
+| 33 | [Prompt/Model/Tool Version Pinning](patterns/07-observability/33-version-pinning.md) | VII. 観測 | プロンプト/モデル/ツールを固定 |
 | 34 | [Evaluation CI/CD](patterns/07-observability/34-evaluation-ci-cd.md) | VII. 観測 | 変更毎に自動評価で回帰検知 |
 | 35 | [Production Replay](patterns/07-observability/35-production-replay.md) | VII. 観測 | 本番ログを再生し新旧比較 |
 | 36 | [Shadow / Canary Deployment](patterns/07-observability/36-shadow-canary-deployment.md) | VII. 観測 | 段階投入と自動ロールバック |
@@ -65,3 +66,4 @@ title: パターン早見表
 | 57 | [Autonomy Ladder](patterns/06-reliability/57-autonomy-ladder.md) | VI. 信頼性 | 実績に応じ自律性を段階的に昇格 |
 | 58 | [Sync Facade over Async Core](patterns/01-execution/58-sync-facade-over-async-core.md) | I. 実行 | 短ければ同期、超えたら非同期へ昇格 |
 | 59 | [Workflow–Agent Spectrum Selector](patterns/01-execution/59-workflow-agent-spectrum-selector.md) | I. 実行 | サブタスク毎に決定論↔自律を選定 |
+<!-- END:GEN:pattern-index -->

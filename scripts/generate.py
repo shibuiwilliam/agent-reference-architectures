@@ -456,20 +456,55 @@ def generate_meta_blocks(pdata: dict) -> None:
         print(f"  ✓ meta blocks injected: {count} files")
 
 
+# ── Phase 2: pattern-index generation ────────────────────────────────
+
+CATEGORY_SHORT = {
+    "01-execution": "I. 実行",
+    "02-composition": "II. 構成",
+    "03-io-contract": "III. 契約",
+    "04-tools-mcp": "IV. ツール",
+    "05-memory-context": "V. メモリ",
+    "06-reliability": "VI. 信頼性",
+    "07-observability": "VII. 観測",
+    "08-cost-scaling": "VIII. コスト",
+    "09-security": "IX. セキュリティ",
+    "10-deployment": "X. デプロイ",
+    "11-ux": "XI. UX",
+    "12-governance": "XII. ガバナンス",
+}
+
+
+def generate_pattern_index(pdata: dict) -> None:
+    """docs/pattern-index.md の GEN:pattern-index ブロックを再生成"""
+    idx_path = DOCS / "pattern-index.md"
+    if not idx_path.exists():
+        return
+
+    lines = []
+    lines.append("| # | パターン | カテゴリ | 一言 |")
+    lines.append("|---|---------|---------|------|")
+
+    flat = flatten_patterns(pdata)
+    for p in flat:
+        cat_short = CATEGORY_SHORT.get(p["category"], p["category"])
+        # Extract short English name from title (before ｜)
+        title_parts = p["title"].split("｜")
+        short_title = title_parts[0].strip()
+        link = f"[{short_title}](patterns/{p['category']}/{p['id']:02d}-{p['slug']}.md)"
+        lines.append(f"| {p['id']} | {link} | {cat_short} | {p['tagline']} |")
+
+    content = "\n".join(lines)
+    changed = inject_gen_block(idx_path, "pattern-index", content)
+    if changed:
+        print("  ✓ pattern-index.md")
+
+
 # ── Phase 2: by-force regeneration ───────────────────────────────────
 
 def generate_by_force(pdata: dict, ddata: dict) -> None:
     """docs/decisions/by-force.md の GEN:by-force ブロックを再生成"""
-    by_force_path = DOCS / "decisions" / "by-force.md"
-    if not by_force_path.exists():
-        return
-
-    # Build force→items mapping from decisions.yml
-    # Currently by-force.md is hand-written and quite good.
-    # We inject a supplementary block if marker exists.
-    changed = inject_gen_block(by_force_path, "by-force", "")
-    # For now, by-force.md is hand-curated (already excellent).
-    # Future: generate from decisions.yml rules.
+    # by-force.md is hand-curated and excellent. No marker-based generation.
+    pass
 
 
 # ── main ─────────────────────────────────────────────────────────────
@@ -487,6 +522,7 @@ def main() -> None:
     generate_llms_core_txt(pdata, ddata)
     generate_llms_full_txt(pdata, ddata)
     generate_meta_blocks(pdata)
+    generate_pattern_index(pdata)
     generate_by_force(pdata, ddata)
 
     print("generate.py: 完了")
