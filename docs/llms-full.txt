@@ -71,19 +71,45 @@
 
 パターンは「問題に対する解」である。そのため、AIエージェントのアーキテクチャパターンを理解するには、まずAIエージェントが本番環境にどのような**新しい壊れ方**を持ち込むのかを把握しておく必要がある。
 
-## 特性一覧
+## 方針
 
-| # | 特性 | 説明 | 主な対応パターン |
-|---|------|------|-----------------|
-| C1 | **非決定論的な出力** | 同じ入力でも異なる出力を返す。テスト・再現・比較が従来手法では困難 | [#14 Structured Output Contract](../patterns/03-io-contract/14-structured-output-contract.md), [#28 Verifier Agent](../patterns/06-reliability/28-verifier-agent-critic.md), [#34 Evaluation CI/CD](../patterns/07-observability/34-evaluation-ci-cd.md) |
-| C2 | **長時間・可変長の実行** | 数秒〜数十分、ステップ数も事前に読めない。HTTPタイムアウトやリソース占有の問題 | [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md), [#5 Time-Budgeted Agent Loop](../patterns/01-execution/05-time-budgeted-agent-loop.md), [#6 Interruptible Agent](../patterns/01-execution/06-interruptible-agent.md) |
-| C3 | **外部世界への副作用** | ツール呼び出しでメール送信・DB更新など不可逆な操作を行う | [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md), [#19 Dry-Run First](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md), [#31 Human Approval Checkpoint](../patterns/06-reliability/31-human-approval-checkpoint.md) |
-| C4 | **ハルシネーション** | 事実と異なる情報を自信を持って生成する | [#27 Evidence-First Answer](../patterns/06-reliability/27-evidence-first-answer.md), [#29 Guardrail Sidecar](../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) |
-| C5 | **コンテキスト窓の有限性** | 入力長に制限があり、長い会話や大量の文書を一度に扱えない | [#23 Layered Memory](../patterns/05-memory-context/23-layered-memory.md), [#24 Context Pack](../patterns/05-memory-context/24-context-pack-assembly.md), [#26 Forgetting and Expiration](../patterns/05-memory-context/26-forgetting-and-expiration.md) |
-| C6 | **外部LLMへの依存** | 推論エンジンが外部サービス。レイテンシ・可用性・価格が自社で制御できない | [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md), [#40 Fallback](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md), [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md) |
-| C7 | **自然言語インターフェース＝攻撃面** | プロンプトインジェクション・データ漏洩など新しい攻撃ベクトル | [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md), [#43 Confused-Deputy](../patterns/09-security/43-confused-deputy-damage-limitation.md), [#44 Dual-LLM Privilege Separation](../patterns/09-security/44-dual-llm-privilege-separation.md) |
-| C8 | **コストが入力/出力量に比例** | トークン課金のため、使い方次第でコストが桁違いに変動する | [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md), [#39 Prompt Cache](../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md), [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) |
-| C9 | **挙動変更＝モデル更新** | コード変更なしにモデル更新で挙動が変わる。従来のCI/CDでは検知できない | [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md), [#35 Production Replay](../patterns/07-observability/35-production-replay.md), [#36 Shadow/Canary Deployment](../patterns/07-observability/36-shadow-canary-deployment.md) |
+特性はパターン選定の**前提**である。「なぜこのパターンが必要か」を説明する根拠として使う。特性を把握せずにパターンを適用すると、不要な防波堤を立てて複雑性だけが増す、あるいは必要な防波堤を見落として本番障害を招く、といった事態になりかねない。
+
+特性のリスク度合いはシステムの文脈——すなわち [駆動変数（フォース）](forces.md) によって決まる。同じ特性であっても、フォースの値域が変われば対処の優先度は異なる。
+
+## 特性の分類
+
+9つの特性は3つのグループに分類できる。
+
+### 出力の不確実性
+
+AIエージェントの出力が従来のソフトウェアと根本的に異なる点。テスト・検証・品質保証に影響する。
+
+| # | 特性 | 壊れ方 | 詳細 |
+|---|------|--------|------|
+| C1 | **非決定論的な出力** | テスト・再現・比較が従来手法では困難 | [→](characteristics/c1-non-determinism.md) |
+| C4 | **ハルシネーション** | 事実と異なる情報を自信を持って生成する | [→](characteristics/c4-hallucination.md) |
+| C9 | **挙動変更＝モデル更新** | コード変更なしにモデル更新で挙動が変わる | [→](characteristics/c9-model-update-drift.md) |
+
+### 実行の予測不能性
+
+処理時間・副作用・リソース消費が事前に読めない。運用・スケーリング・安全性に影響する。
+
+| # | 特性 | 壊れ方 | 詳細 |
+|---|------|--------|------|
+| C2 | **長時間・可変長の実行** | HTTPタイムアウトやリソース占有 | [→](characteristics/c2-variable-duration.md) |
+| C3 | **外部世界への副作用** | 不可逆な操作を意図せず実行する | [→](characteristics/c3-side-effects.md) |
+| C5 | **コンテキスト窓の有限性** | 長い会話や大量の文書を一度に扱えない | [→](characteristics/c5-context-window.md) |
+
+### 外部依存とコスト
+
+外部サービスへの依存と、それに伴うコスト・セキュリティ・可用性の課題。
+
+| # | 特性 | 壊れ方 | 詳細 |
+|---|------|--------|------|
+| C6 | **外部LLMへの依存** | レイテンシ・可用性・価格が自社で制御できない | [→](characteristics/c6-external-llm-dependency.md) |
+| C7 | **自然言語インターフェース＝攻撃面** | プロンプトインジェクション等の新しい攻撃ベクトル | [→](characteristics/c7-attack-surface.md) |
+| C8 | **コストが入力/出力量に比例** | 使い方次第でコストが桁違いに変動する | [→](characteristics/c8-token-cost.md) |
 
 ## 特性と駆動変数の関係
 
@@ -5828,6 +5854,98 @@ LLMの出力をJSONスキーマなどで構造化する。下流のシステム�
 
 ---
 
+# 1. Minimal Configuration (MVP)
+
+!!! abstract "TL;DR"
+    A 4-layer configuration for getting a working agent up and running as quickly as possible when failure cost is low.
+
+## When This Architecture Is Needed
+
+You want to validate a new product idea. You want to try it as an internal productivity tool with a small team first. This minimal configuration is what you need first in these situations.
+
+What's distinctive is the intentional omission of layers like guardrails, security, and cost optimization — "necessary in production but excessive initially." It's used in situations where `[F2]` failure cost is low and `[F8]` accountability is not required — such as internal tools or hackathon prototypes.
+
+However, "minimal" doesn't mean "sloppy." The four layers — async processing, suspend/resume, structured output, and minimal tracing — form the foundation for adding layers later. Without this foundation, you'll likely need a complete rewrite when moving to production.
+
+## Force Assessment
+
+| Force | Rating | Meaning in This Configuration |
+|---------|------|----------------|
+| `[F1]` Reversibility | High | Operations are primarily retry-friendly |
+| `[F2]` Failure Cost | Low | Incorrect output causes minimal damage |
+| `[F3]` Per-Request Value | Low-Medium | Individual requests don't carry high value |
+| `[F4]` Latency Budget | Medium | A few seconds to tens of seconds of wait is tolerable |
+| `[F5]` Input Trust | High | Input from internal users or developers |
+| `[F6]` Task Variability | Medium | Balance of routine and exploratory tasks |
+| `[F7]` Cost Sensitivity | Low | Low request volume, relaxed cost constraints |
+| `[F8]` Accountability | Low | No audit or regulatory requirements |
+| `[F9]` Provider Reliability | — | A single provider is sufficient |
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    Client[Client] --> GW["#1 Gateway<br/>Async Intake"]
+    GW --> Session["#2 Durable Session<br/>State Persistence"]
+    Session --> Output["#14 Structured Output<br/>Output Contract"]
+    Output --> Trace["#32 Agent Trace<br/>Tracing"]
+    Trace --> Response[Response]
+```
+
+## Configuration Pattern List
+
+| Layer | Pattern | Role | Why It's Needed |
+|---|---------|------|-----------|
+| Intake | [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) | Async processing to avoid timeouts | LLM calls take seconds to minutes, so sync HTTP connections will drop |
+| State | [#2 Durable Agent Session](../patterns/01-execution/02-durable-agent-session.md) | Suspend/resume | When sessions are lost on process restart or scale-in, users must start over |
+| Output | [#14 Structured Output Contract](../patterns/03-io-contract/14-structured-output-contract.md) | Downstream system integration | Natural language output causes downstream parse failures |
+| Observability | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) | Minimal debugging info | Without traces, there's no way to post-hoc verify "why that answer was given" |
+
+## Layer Details
+
+### Intake Layer — Request-to-Job Gateway
+
+Immediately responds to client requests with a job ID and runs LLM processing in the background. Without this layer, LLM inference time hits HTTP timeouts, returning errors to the frontend. Retries especially risk duplicate execution of the same request.
+
+### State Layer — Durable Agent Session
+
+Persists agent session state. Multi-turn conversations and in-progress step execution can be preserved. Without this layer, conversations reset on every server restart, severely degrading user experience.
+
+### Output Layer — Structured Output Contract
+
+Structures LLM output with JSON schemas and similar formats. Downstream systems and UIs can reliably receive data. Without this layer, the frontend breaks whenever LLM output format varies.
+
+### Observability Layer — Agent Trace
+
+Records all LLM calls and tool executions as traces. Even at the MVP stage, traces dramatically speed up debugging. Without this layer, investigating issues devolves into repeatedly re-querying the LLM — highly inefficient.
+
+## What Can Be Omitted / What to Consider Adding
+
+- **Can omit**: Guardrails (output inspection can be skipped while `[F2]` is low), multi-agent architecture (single agent is sufficient), cost optimization (unnecessary while request volume is low)
+- **Consider adding**: If input is unstructured, add [#13 Natural Language Boundary Adapter](../patterns/03-io-contract/13-natural-language-boundary-adapter.md). If streaming display is needed, add [#7 Streaming Progress](../patterns/01-execution/07-streaming-progress.md)
+
+## Concrete Scenario
+
+Consider building a Q&A chatbot for an internal knowledge base. Users are about 20 internal engineers. The bot searches internal Wiki content via RAG and returns answers.
+
+When the client (Slack bot) receives a user's question, it sends a request to the Request-to-Job Gateway. The Gateway enqueues the job and immediately returns "Generating answer..." to Slack. A background worker processes the question as a Durable Session, executing RAG search followed by LLM inference. Output is structured per the Structured Output Contract into JSON format and formatted as Slack message blocks. All LLM calls are recorded in the Agent Trace, allowing post-hoc review of "why this answer was given."
+
+With this configuration, you can have a working prototype in 1-2 days. Collect user feedback and add layers as needed.
+
+## Evolution Path
+
+- If `[F2]` increases -> Add [Side-Effect-First Configuration](02-side-effect-first.md) elements (Agent Saga, Human Approval)
+- If `[F5]` decreases -> Add [Untrusted Input Configuration](03-untrusted-input.md) security layers
+- If `[F7]` increases -> Add [Cost-First Configuration](05-cost-first.md) caching and routing layers
+- If `[F8]` increases -> Add [Continuous Improvement Configuration](06-continuous-improvement.md) evaluation and deployment layers
+
+## Related Configurations
+
+- [Side-Effect-First Configuration](02-side-effect-first.md) — The most common next evolution from MVP
+- [Cost-First Configuration](05-cost-first.md) — Combined when user count grows
+
+---
+
 # 2. 副作用重視構成
 
 !!! abstract "一言"
@@ -5938,6 +6056,220 @@ Dry-Run Firstが「返金額: 12,800円、返金先: クレジットカード末
 
 ---
 
+# 2. Side-Effect-First Configuration
+
+!!! abstract "TL;DR"
+    A 7-layer configuration for systems with irreversible operations, incorporating rollback on failure and human approval.
+
+## When This Architecture Is Needed
+
+The agent sends emails, executes payments, updates database records — when a system includes these "irreversible operations," LLM judgment errors lead directly to tangible damage.
+
+Typical scenarios include e-commerce order processing agents, customer support bots that automate refund processing, and sales support tools that update CRM data. All are situations where `[F1]` reversibility is low and `[F2]` failure cost is high.
+
+The key principle of this configuration is "let the LLM make decisions, but code handles execution." Additionally, high-risk operations are preceded by human approval, and failures trigger compensating transactions via the Saga pattern. It may seem defensive, but this level of safeguarding is essential when dealing with irreversible operations.
+
+## Force Assessment
+
+| Force | Rating | Meaning in This Configuration |
+|---------|------|----------------|
+| `[F1]` Reversibility | Low | Irreversible operations like email sending and payment |
+| `[F2]` Failure Cost | High | Incorrect operations lead to financial damage or trust loss |
+| `[F3]` Per-Request Value | Medium-High | Each processing item directly relates to actual business |
+| `[F4]` Latency Budget | Medium-High | Includes approval wait, so safety is prioritized over responsiveness |
+| `[F5]` Input Trust | Medium | Mostly from internal operators, but input error risk exists |
+| `[F6]` Task Variability | Low-Medium | Business flows are relatively fixed |
+| `[F7]` Cost Sensitivity | Medium | Additional calls for safety take priority over cost |
+| `[F8]` Accountability | Medium-High | Operation recording and tracking are required |
+| `[F9]` Provider Reliability | Medium | Fallback is reassuring but not mandatory |
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    Client[Client] --> GW["#1 Gateway"]
+    GW --> WF["#3 Workflow Backbone<br/>Flow Control"]
+    WF --> DryRun["#19 Dry-Run First<br/>Simulated Execution"]
+    DryRun --> Approval["#31 Human Approval<br/>Human Approval"]
+    Approval --> Exec["#15 Inverted Output<br/>Code Execution"]
+    Exec --> Saga["#4 Agent Saga<br/>Compensation"]
+    Saga --> Trace["#32 Agent Trace"]
+```
+
+## Configuration Pattern List
+
+| Layer | Pattern | Role | Why It's Needed |
+|---|---------|------|-----------|
+| Intake | [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) | Async intake | Processing can take minutes to hours including approval wait |
+| Backbone | [#3 Workflow Backbone + Agent Node](../patterns/01-execution/03-workflow-backbone-agent-node.md) | Deterministic flow control | Side-effect execution order can't be left to LLM whims |
+| Compensation | [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md) | Rollback on failure | Without compensation for already-executed operations on mid-process failure, data becomes inconsistent |
+| Approval | [#31 Human Approval Checkpoint](../patterns/06-reliability/31-human-approval-checkpoint.md) | Human approval before high-risk operations | Letting machines alone execute irreversible operations is too risky |
+| Tool | [#19 Dry-Run First Tool Execution](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) | Simulated execution of side effects | Without previewing "what will happen" before execution, approvers can't make informed decisions |
+| Output | [#15 Inverted Structured Output](../patterns/03-io-contract/15-inverted-structured-output.md) | LLM decides only, code executes | If the LLM directly calls APIs, parameter errors can't be prevented |
+| Observability | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) | Full operation tracking | Without audit trails of what was executed, root cause identification during incidents is impossible |
+
+## Layer Details
+
+### Intake Layer — Request-to-Job Gateway
+
+Processing with side effects can take minutes to hours, including human approval wait and Saga compensation. Synchronous HTTP connections can't sustain this, so processing is managed as async jobs. Clients receive a job ID, with progress reported via polling or webhooks.
+
+### Backbone Layer — Workflow Backbone + Agent Node
+
+Business flows like "inventory check -> quote creation -> approval -> payment -> notification" are controlled by a deterministic workflow engine. LLMs may be called at each node, but flow branching and ordering are determined by code. Without this layer, the LLM risks skipping steps or getting the order wrong.
+
+### Compensation Layer — Agent Saga
+
+When multi-step processing fails midway, compensating operations (reverse operations equivalent to cancellation) are executed for already-completed operations. For example, if inventory allocation fails after payment succeeds, a refund is processed. Without this layer, data inconsistencies are left unresolved.
+
+### Approval Layer — Human Approval Checkpoint
+
+Human approval is inserted before high-risk operations like payments exceeding a threshold or external information transmission. Dry-Run First results are presented to the approver with "Should this operation be executed?" Without this layer, LLM misjudgments directly lead to damage.
+
+### Tool Layer — Dry-Run First Tool Execution
+
+Before performing actual operations, a simulated execution (dry-run) previews "what will happen." Approvers can make decisions based on dry-run results. Without this layer, the only information available to approvers is "the LLM says so," making approval a rubber stamp.
+
+### Output Layer — Inverted Structured Output
+
+What the LLM outputs is a "declaration of operations to execute" — actual API calls are made by code. If the LLM directly calls external APIs, parameter type errors or out-of-range values can't be caught. Code-side validation ensures safety.
+
+### Observability Layer — Agent Trace
+
+All LLM calls, tool executions, approval decisions, and Saga compensations are recorded as traces. During incidents, "when, who approved what, and what was executed" can be tracked. Without this layer, incident response relies on guesswork and memory.
+
+## What Can Be Omitted / What to Consider Adding
+
+- **Can omit**: If all operations are low-risk, Human Approval Checkpoint can be relaxed to threshold-based. Agent Saga can also be omitted if only idempotent operations are involved
+- **Consider adding**: If `[F5]` is low, layer [Untrusted Input Configuration](03-untrusted-input.md) security layers. If `[F8]` increases, ensure reproducibility with [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md)
+
+## Concrete Scenario
+
+Consider an e-commerce order processing agent. A customer support representative instructs: "Cancel customer A's order #1234 and process a refund."
+
+The Request-to-Job Gateway accepts the job, and Workflow Backbone initiates the flow: "retrieve order info -> determine cancellation eligibility -> calculate refund amount -> approval -> execute refund -> notify customer." The LLM cross-references order information with the return policy to determine cancellation eligibility and declares the refund amount as Inverted Structured Output.
+
+Dry-Run First previews "Refund amount: 12,800 yen, refund to: credit card ending 1234," and Human Approval Checkpoint requests approval from the representative. After approval, code calls the payment API's refund endpoint and sends a notification email. If the refund API fails, Agent Saga executes compensation to restore the cancellation status. The entire process is recorded in Agent Trace for later auditing.
+
+## Evolution Path
+
+- If `[F5]` decreases -> Add [Untrusted Input Configuration](03-untrusted-input.md) Data Boundary Firewall, Dual-LLM separation
+- If `[F7]` increases -> Use [Cost-First Configuration](05-cost-first.md) routing to direct low-risk operations to lightweight models
+- If `[F8]` increases -> Introduce [Continuous Improvement Configuration](06-continuous-improvement.md) Evaluation CI/CD for regression detection
+- To increase autonomy -> Gradually omit approval with [#57 Autonomy Ladder](../patterns/06-reliability/57-autonomy-ladder.md)
+
+## Related Configurations
+
+- [Minimal Configuration (MVP)](01-mvp.md) — The foundation of this configuration. MVP layers plus side-effect guards
+- [Untrusted Input Configuration](03-untrusted-input.md) — Layer when accepting input from external users
+- [Factuality-First Configuration](04-factuality-first.md) — Combine when judgment accuracy is also required
+
+---
+
+# 3. Untrusted Input Configuration
+
+!!! abstract "TL;DR"
+    A 6-layer configuration centered on boundary defense and privilege separation for safely processing input from untrusted users.
+
+## When This Architecture Is Needed
+
+The agent is exposed to the public. Any number of end users can freely input natural language. In this case, inputs may include prompt injection, PII (personally identifiable information), and intentional abuse.
+
+This applies broadly to situations where `[F5]` input trust is low — SaaS chat support, AI assistants offered as public APIs, and AI features in consumer-facing apps. Even for internal tools, once the user base exceeds several hundred, input diversity increases dramatically and should effectively be treated as "untrusted input."
+
+The core of this configuration is operating from the premise that "input is not to be trusted." While accepting untrusted input, it minimizes impact on the overall system by combining boundary inspection, LLM privilege separation, and blast radius limitation in multiple layers.
+
+## Force Assessment
+
+| Force | Rating | Meaning in This Configuration |
+|---------|------|----------------|
+| `[F1]` Reversibility | Medium | Input-caused damage needs to be contained |
+| `[F2]` Failure Cost | Medium-High | Successful injection attacks can lead to data leakage |
+| `[F3]` Per-Request Value | Low-Medium | Often a high-volume processing scenario |
+| `[F4]` Latency Budget | Medium | Some overhead from inspection layers is tolerable |
+| `[F5]` Input Trust | Low | Natural language input from untrusted users |
+| `[F6]` Task Variability | Medium-High | Diverse user intents |
+| `[F7]` Cost Sensitivity | Medium | Additional calls for security take priority over cost |
+| `[F8]` Accountability | Medium | Tracking during security incidents is needed |
+| `[F9]` Provider Reliability | — | Not directly related to security |
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    User[User Input] --> NL["#13 NL Boundary<br/>Structuring"]
+    NL --> FW["#42 Data Boundary<br/>Firewall"]
+    FW --> Dual["#44 Dual-LLM<br/>Privilege Separation"]
+    Dual --> LP["#18 Least-Privilege<br/>Minimal Permissions"]
+    LP --> Guard["#29 Guardrail<br/>Output Inspection"]
+    Guard --> Response[Response]
+```
+
+## Configuration Pattern List
+
+| Layer | Pattern | Role | Why It's Needed |
+|---|---------|------|-----------|
+| Boundary | [#13 Natural Language Boundary Adapter](../patterns/03-io-contract/13-natural-language-boundary-adapter.md) | Input structuring | Passing natural language directly to the LLM blurs the boundary between instructions and input, making injection easier |
+| Inspection | [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md) | PII/injection inspection | Without pre-detecting and removing PII or malicious prompts from input, leakage and malfunction occur downstream |
+| Separation | [#44 Dual-LLM Privilege Separation](../patterns/09-security/44-dual-llm-privilege-separation.md) | Isolated LLM and privileged LLM separation | Without separating the LLM handling user input from the LLM with tool execution privileges, injection can directly manipulate tools |
+| Permissions | [#18 Least-Privilege Tool Binding](../patterns/04-tools-mcp/18-least-privilege-tool-binding.md) | Least privilege | Granting full access to all tools allows unlimited damage |
+| Blast Radius | [#43 Confused-Deputy Damage Limitation](../patterns/09-security/43-confused-deputy-damage-limitation.md) | Blast radius limitation | Even with minimum privileges, damage can occur within the remaining permission scope. Set caps on operation rates, affected record counts, and amounts |
+| Guardrail | [#29 Guardrail Sidecar + Self-Correction](../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) | Output inspection | Both input and output need inspection. Attackers have techniques to extract information through output |
+
+## Layer Details
+
+### Boundary Layer — Natural Language Boundary Adapter
+
+Converts the user's natural language input into a structured format (intent, entities, parameters). This clarifies the boundary between "data" and "instructions" passed to downstream LLMs. Without this layer, user input mixes with system prompts, creating a primary attack surface for injection.
+
+### Inspection Layer — Data Boundary Firewall
+
+Inspects both input and output for PII leakage, known injection patterns, and sensitive data contamination. Detection rules typically combine pattern matching and classification models. Without this layer, credit card numbers unintentionally included by users or injection strings planted by attackers reach the LLM directly.
+
+### Separation Layer — Dual-LLM Privilege Separation
+
+Separates the "isolated LLM" that directly handles user input from the "privileged LLM" with tool execution authority. The isolated LLM only interprets user intent and has no access to external APIs or databases. The privileged LLM receives only structured output from the isolated LLM. Without this layer, sophisticated injection could allow attackers to directly manipulate tools.
+
+### Permissions Layer — Least-Privilege Tool Binding
+
+Limits tools exposed to the agent to the bare minimum required for the task. For example, an agent that only needs "customer data lookup" is not given "customer data deletion" permission. Without this layer, in the event of a breach, the scope of tools available to an attacker is unnecessarily broad.
+
+### Blast Radius Layer — Confused-Deputy Damage Limitation
+
+Even with minimum privileges, damage can still occur within the remaining permission scope. This layer sets operation rate limits, caps on affected record counts per operation, and amount limits. Without this layer, mass data deletion or high-value payments could be executed at once, even within authorized permissions.
+
+### Guardrail Layer — Guardrail Sidecar + Self-Correction
+
+Inspects LLM output for sensitive information leakage, inappropriate content, and policy violations. When violations are detected, the output is replaced or self-correction is attempted. Without this layer, there's no last line of defense if input-side protection is breached.
+
+## What Can Be Omitted / What to Consider Adding
+
+- **Can omit**: If the input source is limited to authenticated internal users only, Dual-LLM separation can be simplified (though complete omission is not recommended)
+- **Consider adding**: In multi-tenant environments, add [#41 Tenant-Isolated Agent Runtime](../patterns/09-security/41-tenant-isolated-agent-runtime.md) for tenant isolation. When side effects are involved, layer [Side-Effect-First Configuration](02-side-effect-first.md) Saga and approval layers
+
+## Concrete Scenario
+
+Consider AI chat support provided by a BtoC SaaS. End users number in the tens of thousands per month. They ask product questions, request contract changes, and report issues in natural language.
+
+User input is first structured by the Natural Language Boundary Adapter. Input like "I want to cancel my contract. My credit card number is 1234-5678-..." is decomposed into intent="cancellation," PII detected="credit card number present." The Data Boundary Firewall masks the credit card number and runs injection checks.
+
+The structured intent passes to the Dual-LLM isolated LLM. The isolated LLM determines it's a "cancellation request" and sends structured output to the privileged LLM. The privileged LLM is bound via Least-Privilege to only "contract lookup" and "cancellation request creation" tools — it has no access to tools like "bulk delete all contracts." Confused-Deputy Damage Limitation restricts processing to 1 cancellation per session. The final response is inspected by the Guardrail Sidecar to confirm no internal system information is leaked before being returned to the user.
+
+## Evolution Path
+
+- If `[F2]` increases -> Add [Side-Effect-First Configuration](02-side-effect-first.md) Human Approval and Agent Saga
+- If `[F7]` increases -> Reuse inspected queries with [Cost-First Configuration](05-cost-first.md) Semantic Cache
+- If `[F8]` increases -> Automate security-related regression tests with [Continuous Improvement Configuration](06-continuous-improvement.md)
+- As attack patterns evolve -> Manage rules as code with [#30 Policy-as-Code Guardrail](../patterns/06-reliability/30-policy-as-code-guardrail.md) for rapid updates
+
+## Related Configurations
+
+- [Side-Effect-First Configuration](02-side-effect-first.md) — Layer when irreversible operations are involved
+- [Factuality-First Configuration](04-factuality-first.md) — Combine when there's risk of attackers inducing misinformation
+- [Minimal Configuration (MVP)](01-mvp.md) — MVP is sufficient for internal-only, trusted-user scenarios
+
+---
+
 # 3. 信頼できない入力構成
 
 !!! abstract "一言"
@@ -6042,6 +6374,108 @@ BtoCのSaaSが提供するAIチャットサポートを考える。エンドユ�
 
 ---
 
+# 4. Factuality-First Configuration
+
+!!! abstract "TL;DR"
+    A 6-layer configuration combining evidence retrieval, independent verification, and ensemble consensus for domains where hallucination is unacceptable.
+
+## When This Architecture Is Needed
+
+Medical information provision, legal document review, financial product explanations — in these domains, an LLM generating "plausible but incorrect information" can lead to catastrophic consequences. Beyond regulated industries, this configuration is a candidate whenever "you are held accountable for answer accuracy."
+
+When `[F2]` failure cost is high and `[F8]` accountability is required, LLM output cannot be trusted at face value. Evidence is retrieved first, an independent verifier agent cross-checks, and when necessary, multiple models reach consensus. It may appear excessive, but in domains where a single piece of misinformation can lead to lawsuits or health risks, this multi-layered defense is justified.
+
+## Force Assessment
+
+| Force | Rating | Meaning in This Configuration |
+|---------|------|----------------|
+| `[F1]` Reversibility | Medium | Information can be retracted, but actions based on misinformation cannot |
+| `[F2]` Failure Cost | High | Incorrect information can lead to lawsuits, health damage, or financial loss |
+| `[F3]` Per-Request Value | High | Each answer is used for important decision-making |
+| `[F4]` Latency Budget | High | Tens of seconds to minutes of wait is tolerable for accuracy |
+| `[F5]` Input Trust | Medium-High | Often from domain experts, but ambiguous questions exist |
+| `[F6]` Task Variability | Medium | Domain-specific but with a broad range of questions |
+| `[F7]` Cost Sensitivity | Low-Medium | Additional costs for accuracy are tolerable |
+| `[F8]` Accountability | High | Disclosure of evidence and reasoning process is required |
+| `[F9]` Provider Reliability | Medium | Multi-provider may be prerequisite when using ensemble with multiple models |
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    Query[Query] --> Evidence["#27 Evidence-First<br/>Evidence Retrieval"]
+    Evidence --> Verifier["#28 Verifier<br/>Independent Verification"]
+    Verifier --> Ensemble["#10 Ensemble<br/>Consensus"]
+    Ensemble --> Output["#14 Structured Output<br/>With Citations"]
+    Output --> Policy["#30 Policy-as-Code<br/>Regulatory Check"]
+    Policy --> Trace["#32 Trace +<br/>#33 Version Pin"]
+```
+
+## Configuration Pattern List
+
+| Layer | Pattern | Role | Why It's Needed |
+|---|---------|------|-----------|
+| Evidence | [#27 Evidence-First Answer](../patterns/06-reliability/27-evidence-first-answer.md) | Retrieve evidence before answering | Answers without evidence are a breeding ground for hallucination |
+| Verification | [#28 Verifier Agent / Critic](../patterns/06-reliability/28-verifier-agent-critic.md) | Independent fact verification | The generating agent cannot be expected to catch its own errors |
+| Consensus | [#10 Agent Ensemble & Debate](../patterns/02-composition/10-agent-ensemble-debate.md) | Multi-model consensus | Mutual cross-checking mitigates single-model biases |
+| Contract | [#14 Structured Output Contract](../patterns/03-io-contract/14-structured-output-contract.md) | Structured output with citations | Without structurally separating evidence from answers, citations can't be verified |
+| Policy | [#30 Policy-as-Code Guardrail](../patterns/06-reliability/30-policy-as-code-guardrail.md) | Automated regulatory compliance check | Manual compliance verification doesn't scale |
+| Observability | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) + [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) | Complete audit trail | Being able to reproduce "why that answer was generated" after the fact is required |
+
+## Layer Details
+
+### Evidence Layer — Evidence-First Answer
+
+Before having the LLM generate an answer, relevant evidence (documents, database records, external sources) is retrieved first. The LLM constructs its answer based solely on retrieved evidence. Without this layer, outdated or incorrect information from the LLM's training data becomes the answer directly. RAG (Retrieval-Augmented Generation) is the typical implementation of this layer.
+
+### Verification Layer — Verifier Agent / Critic
+
+The generated answer is verified by a separate agent independent from the generating agent. It checks consistency between evidence and answer, logical coherence, and factual accuracy. Without this layer, the LLM's "confidently wrong" outputs go directly to output. Since the same biases apply when the same LLM handles both generation and verification, independence is crucial.
+
+### Consensus Layer — Agent Ensemble & Debate
+
+Multiple models (different providers or different prompt strategies) answer the same question, and answer consistency is checked. When disagreements exist, a Debate process cross-references evidence and adopts the answer with the strongest supporting evidence. Without this layer, systematic biases of a single model cannot be detected. This layer trades cost for reliability and is especially effective when `[F3]` is high.
+
+### Contract Layer — Structured Output Contract
+
+Answers are structured into "conclusion," "evidence (citation locations)," "confidence level," and "caveats." Users and downstream systems can independently verify the evidence. Without this layer, LLM answers remain as "plausible text" where fact and inference can't be distinguished.
+
+### Policy Layer — Policy-as-Code Guardrail
+
+Automatically checks compliance with industry regulations and internal policies. For example, detecting "whether definitive language is used about drug efficacy" or "whether expressions constitute investment advice" via rule-based checks. Without this layer, compliance verification depends on manual effort and doesn't scale.
+
+### Observability Layer — Agent Trace + Version Pinning
+
+All LLM calls, evidence retrieval, verification results, and consensus processes are recorded as traces. Version Pinning fixes model version, prompt version, and evidence data version, ensuring answer reproducibility. Without this layer, "regenerating the same answer under the same conditions from 3 months ago" is impossible, and audit requirements can't be met.
+
+## What Can Be Omitted / What to Consider Adding
+
+- **Can omit**: When `[F3]` is low (high volume, low value per request), the consensus layer cost may not be justified. Verifier Agent alone may suffice
+- **Consider adding**: When accepting input from untrusted users, layer [Untrusted Input Configuration](03-untrusted-input.md) security layers. For high-risk answers, insert expert review with [#31 Human Approval Checkpoint](../patterns/06-reliability/31-human-approval-checkpoint.md)
+
+## Concrete Scenario
+
+Consider a contract review support agent for a legal department. A lawyer uploads a contract and asks: "Are there any risky clauses in this contract?"
+
+Evidence-First Answer first searches the internal case law database and regulatory guidelines to retrieve relevant evidence. The generating agent produces an answer based on the evidence: "Article 5's liability cap clause has the following risks." The Verifier Agent independently verifies whether cited case law exists and whether the clause interpretation is correct.
+
+Agent Ensemble submits the same question to another model and checks answer consistency. For clauses with disagreement, evidence is cross-referenced and the answer with higher confidence is adopted. Output follows the Structured Output Contract, structured into "Risk clauses," "Evidence (case law/guideline citations)," "Confidence level," and "Recommended actions." The Policy-as-Code Guardrail checks for "definitive expressions that constitute legal advice" and softens language if issues are found. The entire process is recorded in the Agent Trace, and Version Pinning enables re-verification under the same conditions.
+
+## Evolution Path
+
+- If `[F1]` decreases -> Add [Side-Effect-First Configuration](02-side-effect-first.md) approval and Saga (e.g., when auto-correcting contracts based on answers)
+- If `[F7]` increases -> Reuse similar question answers with [Cost-First Configuration](05-cost-first.md) Semantic Cache to reduce consensus costs
+- If `[F5]` decreases -> Layer [Untrusted Input Configuration](03-untrusted-input.md) security layers
+- Once operations stabilize -> Auto-detect answer quality regression with [Continuous Improvement Configuration](06-continuous-improvement.md) Evaluation CI/CD
+
+## Related Configurations
+
+- [Side-Effect-First Configuration](02-side-effect-first.md) — Combine when automated actions based on answers are included
+- [Continuous Improvement Configuration](06-continuous-improvement.md) — Essential for continuous monitoring of answer quality
+- [Cost-First Configuration](05-cost-first.md) — Reference when optimizing consensus layer costs
+
+---
+
 # 4. 事実性重視構成
 
 !!! abstract "一言"
@@ -6141,6 +6575,112 @@ Agent Ensembleが別のモデルにも同じ質問を投げ、回答の一致度
 - [副作用重視構成](02-side-effect-first.md) — 回答に基づく自動アクションを含む場合に組み合わせる
 - [継続改善運用構成](06-continuous-improvement.md) — 回答品質の継続的なモニタリングに不可欠
 - [コスト重視構成](05-cost-first.md) — 合議のコストを最適化する場合に参照
+
+---
+
+# 5. Cost-First Configuration
+
+!!! abstract "TL;DR"
+    A 6-layer configuration combining routing, caching, and effort allocation for processing high-volume requests at low cost.
+
+## When This Architecture Is Needed
+
+At the prototype stage, there was no need to worry about LLM API costs. But as user count grows and you're processing tens to hundreds of thousands of requests per month, the situation changes. Even if per-request cost is small, the accumulation causes monthly costs to spike rapidly.
+
+Typical scenarios include AI chat features in BtoC apps, company-wide knowledge search for all employees, and batch jobs processing large document volumes. All are situations where `[F7]` cost sensitivity is high and per-request value (`[F3]`) is relatively low.
+
+The philosophy of this configuration is "don't invest the same compute resources in every request." Simple questions go to lightweight models, similar questions are served from cache, and only difficult questions get the high-performance model. By adaptively allocating effort, costs are reduced without significantly compromising quality.
+
+## Force Assessment
+
+| Force | Rating | Meaning in This Configuration |
+|---------|------|----------------|
+| `[F1]` Reversibility | High | Answer errors can be addressed by regeneration |
+| `[F2]` Failure Cost | Low-Medium | Individual request failures are not critical |
+| `[F3]` Per-Request Value | Low | High-volume processing at low unit price |
+| `[F4]` Latency Budget | Medium | Fast on cache hit, some delay tolerable on miss |
+| `[F5]` Input Trust | Medium-High | Cost optimization and security are orthogonal |
+| `[F6]` Task Variability | Low-Medium | Similar requests are repeated |
+| `[F7]` Cost Sensitivity | High | Strict monthly cost cap, or high request volume |
+| `[F8]` Accountability | Low | Cost optimization is the primary goal, low audit requirements |
+| `[F9]` Provider Reliability | Medium-High | Fallback targets need to be secured since multiple models are used |
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    Req[Request] --> Router["#37 Semantic Router<br/>Model Routing"]
+    Router --> Cache["#38 Semantic Cache<br/>Reuse"]
+    Cache --> Effort["#56 Adaptive Effort<br/>Effort Allocation"]
+    Effort --> Budget["#5 Time-Budget<br/>Budget Cap"]
+    Budget --> Fallback["#40 Fallback<br/>Degradation"]
+    Fallback --> Response[Response]
+```
+
+## Configuration Pattern List
+
+| Layer | Pattern | Role | Why It's Needed |
+|---|---------|------|-----------|
+| Routing | [#37 Semantic Gateway & Cost-Aware Router](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) | Difficulty-based model routing | Processing all requests with a high-performance model causes linear cost growth |
+| Cache | [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) | Similar query reuse | When the same types of questions repeat, there's no need to call the LLM |
+| Prompt | [#39 Prompt Cache Optimized Context](../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md) | Prefix sharing for cache | Cache common portions of system prompts and context to reduce input token charges |
+| Effort Allocation | [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) | Difficulty-based compute adjustment | Running long Chain-of-Thought for easy questions is wasteful |
+| Budget | [#5 Time-Budgeted Agent Loop](../patterns/01-execution/05-time-budgeted-agent-loop.md) | Per-request caps | Without budgets, a runaway request can consume the entire monthly budget |
+| Fallback | [#40 Fallback & Graceful Degradation](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) | Degradation during failures | Prevent all requests from failing when the high-performance model goes down |
+
+## Layer Details
+
+### Routing Layer — Semantic Gateway & Cost-Aware Router
+
+Analyzes request content and routes to appropriate models based on difficulty and type. FAQ-like questions go to lightweight, inexpensive models, while questions requiring complex reasoning go to high-performance models. Without this layer, even "What's the weather today?" uses the most powerful model, resulting in extremely poor cost efficiency.
+
+### Cache Layer — Semantic Result Cache
+
+Returns answers for semantically similar queries from cache. Since it uses embedding vector similarity rather than exact match, questions with only different phrasing still hit. Without this layer, "How to install Python" and "How do I install Python" each trigger separate LLM calls. Balancing cache TTL (expiration) and hit rate is the key operational consideration.
+
+### Prompt Layer — Prompt Cache Optimized Context
+
+Reuses common portions of system prompts and RAG-retrieved context through the LLM provider's prompt cache feature. By fixing the prefix portion and varying only the user-specific part, input token charges are significantly reduced. Without this layer, the same system prompt token charges occur on every request.
+
+### Effort Allocation Layer — Adaptive Effort
+
+Pre-estimates request difficulty and adaptively adjusts compute effort (reasoning steps, tool call count, etc.). Easy questions get zero-shot instant answers, and only difficult questions trigger Chain-of-Thought or ReAct loops. Without this layer, the same compute is invested in every request, wasting resources on easy questions.
+
+### Budget Layer — Time-Budgeted Agent Loop
+
+Sets per-request caps on LLM call count, token count, and execution time. When approaching the budget limit, partial results are returned or the system falls back to a lower-cost model. Without this layer, a single runaway request can consume most of the monthly budget.
+
+### Fallback Layer — Fallback & Graceful Degradation
+
+During high-performance model API outages or rate limit exhaustion, falls back to alternative models or rule-based answers. Even if a complete answer can't be provided, returning a partial answer with "Answer quality may be lower than usual" is a better user experience than an error screen. Without this layer, provider outages directly cause complete service stoppage.
+
+## What Can Be Omitted / What to Consider Adding
+
+- **Can omit**: At low request volumes (under a few thousand per month), Semantic Cache and Prompt Cache Optimized Context have limited impact. The routing layer alone can be deployed first
+- **Consider adding**: If `[F2]` increases, layer [Side-Effect-First Configuration](02-side-effect-first.md) safety layers. If `[F9]` increases, ease provider switching with [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md)
+
+## Concrete Scenario
+
+Consider a knowledge search AI used by 1,000 internal employees. Monthly request volume is 100,000. Content from internal Wiki, Confluence, and Google Drive is searched via RAG to return answers. Monthly LLM API budget is 500,000 yen.
+
+The Semantic Gateway receives requests and classifies them. Routine questions like "What are the cafeteria hours?" (40% of total) are routed to a lightweight model (GPT-4o mini class). The Semantic Result Cache checks for similar past answers, with a 30% hit rate returning instant responses. This alone handles 58% of all requests without full LLM calls.
+
+For the remaining 42% of requests, Adaptive Effort estimates difficulty. Questions answerable with simple RAG search (25%) get zero-shot answers, while those requiring cross-document analysis (17%) undergo multi-step reasoning. Time-Budgeted Agent Loop sets caps on each request to prevent runaway processing. During high-performance model API outages, Fallback substitutes with a lightweight model plus a note: "Answer quality may be lower than usual."
+
+With this configuration, monthly costs can be reduced by 60-70% compared to processing all requests with a high-performance model.
+
+## Evolution Path
+
+- If `[F2]` increases -> Add [Side-Effect-First Configuration](02-side-effect-first.md) safety layers (when evolving from knowledge search to action execution)
+- If `[F8]` increases -> Evaluate whether cost reduction is impacting quality with [Continuous Improvement Configuration](06-continuous-improvement.md)
+- If `[F9]` increases -> Strengthen multi-provider operations with [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md) and [#46 Model Behavior Compatibility Layer](../patterns/10-deployment/46-model-behavior-compatibility-layer.md)
+- If cache hit rate drops -> Optimize context structure with [#24 Context Pack / Assembly](../patterns/05-memory-context/24-context-pack-assembly.md)
+
+## Related Configurations
+
+- [Minimal Configuration (MVP)](01-mvp.md) — The MVP foundation is needed before cost optimization
+- [Factuality-First Configuration](04-factuality-first.md) — This configuration's techniques can optimize consensus layer costs
+- [Continuous Improvement Configuration](06-continuous-improvement.md) — Monitor whether cost reduction is causing quality degradation
 
 ---
 
@@ -6247,6 +6787,115 @@ Semantic Gatewayがリクエストを受け取り、分類する。「社内カ�
 - [最小構成（MVP）](01-mvp.md) — コスト最適化の前にMVPの土台が必要
 - [事実性重視構成](04-factuality-first.md) — 合議層のコスト最適化にこの構成の手法が使える
 - [継続改善運用構成](06-continuous-improvement.md) — コスト削減が品質劣化を招いていないかのモニタリング
+
+---
+
+# 6. Continuous Improvement Configuration
+
+!!! abstract "TL;DR"
+    A 6-layer configuration combining version management, evaluation, and deployment for maintaining and improving quality after production launch.
+
+## When This Architecture Is Needed
+
+Once an agent starts running in production, new challenges emerge. Model version upgrades change answer quality. A prompt improvement intended to help causes degradation in other cases. Production traffic patterns differ from pre-launch testing.
+
+This configuration addresses "problems that only become visible after production launch." In environments with high `[F8]` accountability — finance, healthcare, legal, or simply "products that can't compromise on quality" — equal or greater effort must be invested in operational improvement compared to initial construction.
+
+The principle of this configuration is building "a system for making changes safely and continuously." Version-control all components, run automated evaluation on every change, and deploy incrementally. Achieve operations that "detect before breaking" rather than "fix after breaking."
+
+## Force Assessment
+
+| Force | Rating | Meaning in This Configuration |
+|---------|------|----------------|
+| `[F1]` Reversibility | Medium | Version management enables rollback |
+| `[F2]` Failure Cost | Medium-High | Quality degradation directly impacts user experience and trust |
+| `[F3]` Per-Request Value | Medium | Overall quality trends matter more than individual requests |
+| `[F4]` Latency Budget | — | Operational layer doesn't directly affect latency |
+| `[F5]` Input Trust | — | Orthogonal to operational improvement |
+| `[F6]` Task Variability | Medium-High | Accommodate production traffic diversity |
+| `[F7]` Cost Sensitivity | Medium | Observability costs themselves need optimization |
+| `[F8]` Accountability | High | Quality maintenance and improvement must be demonstrated quantitatively |
+| `[F9]` Provider Reliability | Medium | Prepare for quality fluctuations from model updates |
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    Change[Change] --> Pin["#33 Version Pinning<br/>Pinning"]
+    Pin --> Eval["#34 Evaluation CI/CD<br/>Auto Evaluation"]
+    Eval --> Replay["#35 Production Replay<br/>Old/New Comparison"]
+    Replay --> Deploy["#36 Shadow/Canary<br/>Staged Rollout"]
+    Deploy --> Observe["#54 Tiered Obs.<br/>Observability"]
+    Observe --> CM["#53 Change Mgmt<br/>Change Management"]
+    CM --> Change
+```
+
+## Configuration Pattern List
+
+| Layer | Pattern | Role | Why It's Needed |
+|---|---------|------|-----------|
+| Pinning | [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) | Reproducibility assurance | Without fixed model, prompt, and data versions, "when quality changed" can't be identified |
+| Evaluation | [#34 Evaluation CI/CD](../patterns/07-observability/34-evaluation-ci-cd.md) | Automated regression detection per change | Manual testing can't comprehensively verify change impact |
+| Replay | [#35 Production Replay](../patterns/07-observability/35-production-replay.md) | Old/new comparison | Synthetic tests can't reproduce production traffic diversity |
+| Deployment | [#36 Shadow / Canary Deployment](../patterns/07-observability/36-shadow-canary-deployment.md) | Staged rollout | Switching all traffic at once creates too large a blast radius when issues arise |
+| Change Management | [#53 Agent Change Management](../patterns/12-governance/53-agent-change-management.md) | Change process discipline | Without records of who changed what, when, and why, root cause tracking for quality degradation is impossible |
+| Observability | [#54 Tiered Observability](../patterns/07-observability/54-tiered-observability.md) | Cost-efficient observability | Retaining all traces at full volume causes storage cost explosion |
+
+## Layer Details
+
+### Pinning Layer — Version Pinning
+
+Pin and tag model version, prompt version, and RAG data source snapshots. Enable complete reproduction of "the state from last Monday." Without this layer, when a model provider's silent update causes quality fluctuation, "what caused it" can't be identified. LLM output is non-deterministic, but fixing input conditions limits the range of variation.
+
+### Evaluation Layer — Evaluation CI/CD
+
+An automated evaluation pipeline runs whenever prompts or models are changed and committed. Scores are calculated against pre-defined evaluation sets (question-expected answer pairs), and changes are blocked if scores fall below thresholds. Without this layer, "changing a prompt with good intentions causes quality degradation in other cases" regressions are missed.
+
+### Replay Layer — Production Replay
+
+Actual production requests (anonymized) are re-executed against the new version, and output differences from the old version are compared. This discovers edge cases unique to production that synthetic tests can't cover. Without this layer, "no issues in test environment but degradation in production" — implicit regressions — can't be detected.
+
+### Deployment Layer — Shadow / Canary Deployment
+
+The new version is first validated in Shadow mode (production traffic is duplicated and processed, but results are not returned), then if no issues are found, proceeds to Canary (distributed to 5-10% of total traffic), gradually increasing traffic. Without this layer, all users are simultaneously impacted by the new version, and rollback on issue discovery is large-scale.
+
+### Change Management Layer — Agent Change Management
+
+Define and record the process for change proposals, reviews, approvals, deployments, and rollbacks. Logs capture "who changed what, when, and why." Without this layer, when multiple people simultaneously change prompts causing quality degradation, root cause isolation is impossible.
+
+### Observability Layer — Tiered Observability
+
+Trace storage uses hot (recent, full volume) and cold (historical, sampled) tiers. Recent traces are queryable at high speed, while older traces are moved to low-cost storage. Without this layer, either full-volume trace retention causes storage cost bloat, or early trace deletion prevents post-hoc analysis.
+
+## What Can Be Omitted / What to Consider Adding
+
+- **Can omit**: At the prototype stage or with few users, simple Blue/Green deployment suffices over Shadow/Canary Deployment. Production Replay is also less effective until sufficient production traffic accumulates
+- **Consider adding**: If `[F2]` is high, incorporate [#28 Verifier Agent / Critic](../patterns/06-reliability/28-verifier-agent-critic.md) into the evaluation pipeline. If cost observability is important, integrate [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) metrics into Tiered Observability
+
+## Concrete Scenario
+
+Consider an investment information chatbot for a financial institution. There are reporting obligations to regulators, and maintaining answer quality is a mandatory requirement. Monthly request volume is 50,000.
+
+Every time the development team improves prompts, Evaluation CI/CD runs automated tests against a 200-item evaluation set. If accuracy score falls below 95%, the PR cannot be merged. Changes that pass testing are tagged as a new version via Version Pinning.
+
+Before deployment, Production Replay executes 1,000 recent production requests (anonymized) from the past week against both old and new versions, generating an output difference report. If there are 5 or more cases where "the old version was correct but the new version is wrong," deployment is rolled back.
+
+If no issues are found, Shadow Deployment processes production traffic duplicates with the new version for 1 day. If the difference between shadow and production results is within acceptable range, the new version is distributed to 10% of traffic as Canary. After a 1-week canary period, traffic is switched entirely.
+
+Agent Change Management records all changes and auto-generates reports for regulators. Tiered Observability maintains hot storage for the most recent 30 days of traces, moving older ones to cold storage. During audits, traces from the required period can be restored and submitted.
+
+## Evolution Path
+
+- If `[F2]` increases -> Incorporate [Factuality-First Configuration](04-factuality-first.md) Verifier Agent and Evidence-First into the evaluation pipeline
+- If `[F7]` increases -> Optimize observability costs themselves using [Cost-First Configuration](05-cost-first.md) techniques
+- As the team grows -> Define cross-organization quality standards with [#52 Agent Constitution](../patterns/12-governance/52-agent-constitution.md)
+- To increase autonomy -> Link [#57 Autonomy Ladder](../patterns/06-reliability/57-autonomy-ladder.md) with Evaluation CI/CD to auto-adjust autonomy based on quality scores
+
+## Related Configurations
+
+- [Factuality-First Configuration](04-factuality-first.md) — Combine when quality maintenance is especially important
+- [Cost-First Configuration](05-cost-first.md) — Borrow techniques for optimizing observability and evaluation costs
+- [Minimal Configuration (MVP)](01-mvp.md) — Configuration added when moving from MVP to production
 
 ---
 

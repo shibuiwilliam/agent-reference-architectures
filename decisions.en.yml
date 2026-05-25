@@ -1,0 +1,479 @@
+# decisions.yml — Single source of truth for the decision layer
+# Defines forces / dials / tradeoffs / reference_architectures / rules.
+# scripts/generate.py generates artifacts from this file + patterns.yml.
+
+version: "1.0.0"
+
+forces:
+  - id: F1
+    name: Reversibility
+    question: Can failures be undone?
+    high_implies: Retry and re-execution are easy. Guards can be relaxed
+    low_implies: Irreversible operations. Compensation, approval, and dry-run are required
+  - id: F2
+    name: Failure Cost
+    question: Financial/legal/safety impact
+    high_implies: Multi-layer verification, HITL, and plan-first approach required
+    low_implies: Minimal configuration is sufficient. Post-hoc verification is acceptable
+  - id: F3
+    name: Per-Request Value
+    question: Contribution to revenue/decision-making
+    high_implies: Cost-intensive verification and consensus are justified
+    low_implies: Optimize with lightweight models and caching
+  - id: F4
+    name: Latency Budget
+    question: User's tolerance for waiting
+    high_implies: Asynchronous and multi-step verification are acceptable
+    low_implies: Prioritize synchronous, streaming, and caching
+  - id: F5
+    name: Input Trustworthiness
+    question: Likelihood of attack/contamination
+    high_implies: Internal users. Guardrails can be relaxed
+    low_implies: Untrusted input. Boundary defense and privilege separation are required
+  - id: F6
+    name: Task Variability
+    question: Routine vs. exploratory
+    high_implies: Agent, multi-agent configuration, high temperature
+    low_implies: Workflow, deterministic core, low temperature
+  - id: F7
+    name: Cost Sensitivity / Scale
+    question: QPS and monthly cost ceiling
+    high_implies: Routing, caching, and effort allocation are required
+    low_implies: A single model is sufficient
+  - id: F8
+    name: Accountability / Regulation
+    question: Audit and compliance requirements
+    high_implies: Full tracing, version pinning, and policy codification
+    low_implies: Sampling and minimal logging are acceptable
+  - id: F9
+    name: Provider Reliability
+    question: Availability of external LLMs
+    high_implies: A single provider is sufficient
+    low_implies: Multi-provider, fallback, and abstraction are required
+
+dials:
+  # ── Execution Control ──
+  - id: timeout
+    name: Timeout
+    category: Execution Control
+    poles: [Cuts off too early, Holds too long]
+    driver: [F4]
+    default: "Sync 5–10s, async 5–30min"
+    patterns: [1, 5, 58]
+    detail: dials/timeout.md
+  - id: retry-count
+    name: Retry Count
+    category: Execution Control
+    poles: [Gives up immediately, Retries indefinitely]
+    driver: [F9]
+    default: "2–3 times (exponential backoff)"
+    patterns: [40]
+    detail: dials/retry-count.md
+  - id: self-correction-loops
+    name: Self-Correction Loop Count
+    category: Execution Control
+    poles: [No correction, Infinite loop]
+    driver: [F7, F3]
+    default: "1–3 times"
+    patterns: [8, 29]
+    detail: dials/self-correction-loops.md
+  - id: checkpoint-frequency
+    name: Checkpoint Frequency
+    category: Execution Control
+    poles: [No recording, Record every line]
+    driver: [F1]
+    default: "Per step or every N minutes"
+    patterns: [2, 4]
+    detail: dials/checkpoint-frequency.md
+  - id: budget-cap
+    name: Budget Cap
+    category: Execution Control
+    poles: [No limit, Overly strict limit]
+    driver: [F7, F3]
+    default: "10–30% of request value"
+    patterns: [5, 55]
+    detail: dials/budget-cap.md
+  # ── Autonomy & Safety Control ──
+  - id: autonomy-level
+    name: Autonomy Level
+    category: Autonomy & Safety Control
+    poles: [Human approval for all, Fully autonomous]
+    driver: [F2, F1]
+    default: "Start low for new tasks → promote with track record"
+    patterns: [31, 57]
+    detail: dials/autonomy-level.md
+  - id: hitl-frequency
+    name: HITL Frequency
+    category: Autonomy & Safety Control
+    poles: [Approve all, No approval]
+    driver: [F2]
+    default: "High-risk operations only"
+    patterns: [31]
+    detail: dials/hitl-frequency.md
+  - id: guardrail-strictness
+    name: Guardrail Strictness
+    category: Autonomy & Safety Control
+    poles: [Pass-through only, Block all]
+    driver: [F5, F2]
+    default: "Threshold 0.7–0.9"
+    patterns: [29, 30]
+    detail: dials/guardrail-strictness.md
+  # ── Model & Generation Control ──
+  - id: model-tier-routing
+    name: Model Tier
+    category: Model & Generation Control
+    poles: [Large model for all, Small model for all]
+    driver: [F7, F3]
+    default: "Small model when confidence ≥ 0.8"
+    patterns: [37]
+    detail: dials/model-tier-routing.md
+  - id: best-of-n
+    name: Best-of-N
+    category: Model & Generation Control
+    poles: [Single attempt, Compare all N attempts]
+    driver: [F2, F3]
+    default: "1 (low risk), 3–5 (high risk)"
+    patterns: [10]
+    detail: dials/best-of-n.md
+  - id: temperature
+    name: Temperature
+    category: Model & Generation Control
+    poles: [Deterministic, Highly random]
+    driver: [F6]
+    default: "0.0–0.3 (routine), 0.5–0.8 (exploratory)"
+    patterns: []
+    detail: dials/temperature.md
+  # ── Memory & Context Control ──
+  - id: cache-similarity
+    name: Cache Similarity Threshold
+    category: Memory & Context Control
+    poles: [Exact match only, Too-loose hits]
+    driver: [F7]
+    default: "Cosine similarity 0.92–0.97"
+    patterns: [38]
+    detail: dials/cache-similarity.md
+  - id: retrieval-top-k
+    name: Retrieval top-k
+    category: Memory & Context Control
+    poles: [Too few, Too many]
+    driver: [F4, F7]
+    default: "5–20, no more than 50% of total"
+    patterns: [24]
+    detail: dials/retrieval-top-k.md
+  - id: memory-ttl
+    name: Memory TTL
+    category: Memory & Context Control
+    poles: [Expire immediately, Retain indefinitely]
+    driver: [F8]
+    default: "Session 1 hour, long-term 30–90 days"
+    patterns: [26]
+    detail: dials/memory-ttl.md
+  - id: memory-write-eagerness
+    name: Memory Write Eagerness
+    category: Memory & Context Control
+    poles: [Never write, Write everything]
+    driver: [F8]
+    default: "Automatic based on confidence threshold"
+    patterns: [25]
+    detail: dials/memory-write-eagerness.md
+  - id: summarization-timing
+    name: Summarization Timing
+    category: Memory & Context Control
+    poles: [Never summarize, Summarize immediately]
+    driver: [F4]
+    default: "When token usage reaches 70% of context window"
+    patterns: [23]
+    detail: dials/summarization-timing.md
+  - id: exposed-tool-count
+    name: Exposed Tool Count
+    category: Memory & Context Control
+    poles: [No tools, All tools exposed]
+    driver: [F6]
+    default: "5–15 per session"
+    patterns: [18]
+    detail: dials/exposed-tool-count.md
+  # ── Observability & Recording Control ──
+  - id: trace-sampling-rate
+    name: Trace Sampling Rate
+    category: Observability & Recording Control
+    poles: [No recording, Record all]
+    driver: [F8, F7]
+    default: "Dev 100%, prod 1–10%"
+    patterns: [32, 54]
+    detail: dials/trace-sampling-rate.md
+  - id: prompt-storage
+    name: Prompt Storage Location & Granularity
+    category: Observability & Recording Control
+    poles: [No storage, Full version history for all]
+    driver: [F8]
+    default: "Git-managed with version tags"
+    patterns: [33]
+    detail: dials/prompt-storage.md
+  - id: log-retention
+    name: Log Retention Period
+    category: Observability & Recording Control
+    poles: [Delete immediately, Retain permanently]
+    driver: [F8, F7]
+    default: "Hot 7–30 days, cold 1–7 years"
+    patterns: [54]
+    detail: dials/log-retention.md
+
+tradeoffs:
+  # ── Execution Model ──
+  - id: sync-vs-async
+    name: Sync vs. Async
+    category: Execution Model
+    a: Synchronous processing
+    b: Asynchronous processing
+    driver: [F4, F1]
+    default: "Sync if within a few seconds"
+    hybrid: 58
+    patterns: [1, 58]
+    detail: tradeoffs-catalog/sync-vs-async.md
+  - id: single-vs-multi-agent
+    name: Single vs. Multi-Agent
+    category: Execution Model
+    a: Single agent
+    b: Multi-agent
+    driver: [F6, F7]
+    default: "Single if single is sufficient"
+    patterns: [9, 10]
+    detail: tradeoffs-catalog/single-vs-multi-agent.md
+  - id: orchestration-vs-choreography
+    name: Centralized vs. Choreography
+    category: Execution Model
+    a: Centralized orchestration
+    b: Choreography
+    driver: [F8, F6]
+    default: "Centralized orchestration"
+    patterns: [3, 12]
+    detail: tradeoffs-catalog/orchestration-vs-choreography.md
+  - id: workflow-vs-agent
+    name: Workflow vs. Agent
+    category: Execution Model
+    a: Workflow
+    b: Agent
+    driver: [F6, F2]
+    default: "Workflow for routine tasks"
+    patterns: [3, 59]
+    detail: tradeoffs-catalog/workflow-vs-agent.md
+  - id: plan-vs-react
+    name: Plan vs. ReAct
+    category: Execution Model
+    a: Plan (plan-first)
+    b: ReAct (act-then-observe)
+    driver: [F2, F6]
+    default: "Plan when side effects are significant"
+    patterns: [8, 50]
+    detail: tradeoffs-catalog/plan-vs-react.md
+  # ── Control & Knowledge Source ──
+  - id: prompt-vs-code
+    name: Prompt Control vs. Code Control
+    category: Control & Knowledge Source
+    a: Prompt control
+    b: Code control
+    driver: [F8, F6]
+    default: "Code control"
+    patterns: [11, 30]
+    detail: tradeoffs-catalog/prompt-vs-code.md
+  - id: rag-vs-finetuning
+    name: RAG vs. Fine-Tuning
+    category: Control & Knowledge Source
+    a: RAG
+    b: Fine-Tuning
+    driver: [F7, F4]
+    default: "RAG"
+    patterns: [24, 27]
+    detail: tradeoffs-catalog/rag-vs-finetuning.md
+  - id: single-vs-multi-provider
+    name: Single vs. Multi-Provider
+    category: Control & Knowledge Source
+    a: Single provider
+    b: Multi-provider
+    driver: [F9, F7]
+    default: "Start with single"
+    patterns: [45, 46, 40]
+    detail: tradeoffs-catalog/single-vs-multi-provider.md
+  - id: llm-vs-tool
+    name: LLM Reasoning vs. Tool Delegation
+    category: Control & Knowledge Source
+    a: LLM reasoning
+    b: Tool delegation
+    driver: [F2]
+    default: "Use tools for arithmetic and search"
+    patterns: [17, 15]
+    detail: tradeoffs-catalog/llm-vs-tool.md
+  # ── Verification & Reliability ──
+  - id: inline-vs-post-verification
+    name: Inline Verification vs. Post-hoc Verification
+    category: Verification & Reliability
+    a: Inline verification
+    b: Post-hoc verification
+    driver: [F4, F2]
+    default: "Inline for high risk"
+    patterns: [28, 29]
+    detail: tradeoffs-catalog/inline-vs-post-verification.md
+  - id: same-vs-different-model
+    name: Same-Model Verification vs. Different-Model Verification
+    category: Verification & Reliability
+    a: Same-model verification
+    b: Different-model verification
+    driver: [F2, F7]
+    default: "Same model; different model for high risk"
+    patterns: [10, 28]
+    detail: tradeoffs-catalog/same-vs-different-model.md
+  - id: fail-fast-vs-degradation
+    name: Fail-Fast vs. Graceful Degradation
+    category: Verification & Reliability
+    a: Fail-fast
+    b: Graceful degradation
+    driver: [F9, F3]
+    default: "Fail-fast for low value"
+    patterns: [40]
+    detail: tradeoffs-catalog/fail-fast-vs-degradation.md
+  # ── Infrastructure & Data ──
+  - id: push-vs-pull
+    name: Push vs. Pull
+    category: Infrastructure & Data
+    a: Push
+    b: Pull
+    driver: [F4, F7]
+    default: "Push"
+    patterns: [1, 7]
+    detail: tradeoffs-catalog/push-vs-pull.md
+  - id: in-context-vs-external
+    name: In-Context State vs. External State
+    category: Infrastructure & Data
+    a: In-context state
+    b: External state
+    driver: [F4, F8]
+    default: "In-context for short-term, external for persistent"
+    patterns: [23, 2]
+    detail: tradeoffs-catalog/in-context-vs-external.md
+  - id: build-vs-buy
+    name: Build vs. Buy
+    category: Infrastructure & Data
+    a: Build
+    b: Buy
+    driver: [F8, F7]
+    default: "Build for differentiators"
+    patterns: [45]
+    detail: tradeoffs-catalog/build-vs-buy.md
+  - id: structured-vs-freeform
+    name: Structured Output vs. Free-Form Output
+    category: Infrastructure & Data
+    a: Structured output
+    b: Free-form output
+    driver: [F8, F6]
+    default: "Structured for downstream integration"
+    patterns: [14]
+    detail: tradeoffs-catalog/structured-vs-freeform.md
+
+reference_architectures:
+  - id: mvp
+    name: Minimal Configuration (MVP)
+    forces: { F1: high, F2: low, F5: high, F7: low, F8: low }
+    layers:
+      - { role: Reception, pattern: 1 }
+      - { role: State, pattern: 2 }
+      - { role: Output, pattern: 14 }
+      - { role: Observability, pattern: 32 }
+    detail: reference-architectures/01-mvp.md
+  - id: side-effect
+    name: Side-Effect-First Configuration
+    forces: { F1: low, F2: high }
+    layers:
+      - { role: Reception, pattern: 1 }
+      - { role: Skeleton, pattern: 3 }
+      - { role: Compensation, pattern: 4 }
+      - { role: Approval, pattern: 31 }
+      - { role: Tooling, pattern: 19 }
+      - { role: Output, pattern: 15 }
+      - { role: Observability, pattern: 32 }
+    detail: reference-architectures/02-side-effect-first.md
+  - id: untrusted-input
+    name: Untrusted Input Configuration
+    forces: { F5: low }
+    layers:
+      - { role: Boundary, pattern: 13 }
+      - { role: Inspection, pattern: 42 }
+      - { role: Separation, pattern: 44 }
+      - { role: Permissions, pattern: 18 }
+      - { role: Blast Radius Limitation, pattern: 43 }
+      - { role: Guardrails, pattern: 29 }
+    detail: reference-architectures/03-untrusted-input.md
+  - id: factuality
+    name: Factuality-First Configuration
+    forces: { F2: high, F8: high }
+    layers:
+      - { role: Grounding, pattern: 27 }
+      - { role: Verification, pattern: 28 }
+      - { role: Consensus, pattern: 10 }
+      - { role: Contract, pattern: 14 }
+      - { role: Policy, pattern: 30 }
+      - { role: Observability, pattern: 32 }
+    detail: reference-architectures/04-factuality-first.md
+  - id: cost
+    name: Cost-First Configuration
+    forces: { F7: high, F3: low }
+    layers:
+      - { role: Routing, pattern: 37 }
+      - { role: Caching, pattern: 38 }
+      - { role: Prompt, pattern: 39 }
+      - { role: Effort Allocation, pattern: 56 }
+      - { role: Budget, pattern: 5 }
+      - { role: Fallback, pattern: 40 }
+    detail: reference-architectures/05-cost-first.md
+  - id: continuous-improvement
+    name: Continuous Improvement Operations Configuration
+    forces: { F8: high }
+    layers:
+      - { role: Pinning, pattern: 33 }
+      - { role: Evaluation, pattern: 34 }
+      - { role: Replay, pattern: 35 }
+      - { role: Deployment, pattern: 36 }
+      - { role: Change Management, pattern: 53 }
+      - { role: Observability, pattern: 54 }
+    detail: reference-architectures/06-continuous-improvement.md
+
+rules:
+  - id: rule-high-f2-low-f1
+    if: { F2: high, F1: low }
+    then_patterns: [31, 19, 4, 3, 15]
+    rationale: "Irreversible and high risk → Human approval, dry-run, and saga compensation are required candidates. Workflow skeleton guarantees ordering; LLM handles decisions only"
+  - id: rule-high-f2-high-f8
+    if: { F2: high, F8: high }
+    then_patterns: [28, 30, 32, 33, 10]
+    rationale: "High risk + audit obligations → Independent verification, policy codification, full tracing, version pinning. Consensus ensures quality"
+  - id: rule-low-f5
+    if: { F5: low }
+    then_patterns: [13, 42, 44, 18, 43, 29]
+    rationale: "Untrusted input → Defense in depth with boundary defense, privilege separation, and blast radius limitation"
+  - id: rule-high-f7
+    if: { F7: high }
+    then_patterns: [37, 38, 39, 56, 5, 40]
+    rationale: "Cost constraints → Optimize with routing, caching, and effort allocation. Budget cap prevents runaway costs"
+  - id: rule-high-f8
+    if: { F8: high }
+    then_patterns: [32, 33, 34, 30, 54, 52]
+    rationale: "Audit/regulation → Full tracing, version pinning, evaluation CI/CD, policy codification. Constitution codifies behavioral principles"
+  - id: rule-low-f9
+    if: { F9: low }
+    then_patterns: [40, 45, 46]
+    rationale: "Unstable provider → Ensure availability with fallback, runtime abstraction, and compatibility layer"
+  - id: rule-high-f6
+    if: { F6: high }
+    then_patterns: [59, 12, 9]
+    rationale: "Exploratory tasks → Agent autonomy, multi-agent configuration, and blackboard for flexible coordination"
+  - id: rule-low-f6
+    if: { F6: low }
+    then_patterns: [3, 11]
+    rationale: "Routine tasks → Workflow skeleton and deterministic core ensure predictability"
+  - id: rule-high-f3
+    if: { F3: high }
+    then_patterns: [10, 8, 28, 37]
+    rationale: "High-value requests → Consensus, plan-verify separation, and independent verification justify cost-intensive quality assurance"
+  - id: rule-low-f4
+    if: { F4: low }
+    then_patterns: [58, 7, 38, 39]
+    rationale: "Responsiveness required → Reduce latency with sync facade, streaming, and caching"

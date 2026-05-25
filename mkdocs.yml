@@ -28,7 +28,6 @@ theme:
         icon: material/weather-sunny
         name: ライトモードに切り替え
   features:
-    - navigation.instant
     - navigation.tracking
     - navigation.tabs
     - navigation.sections
@@ -42,7 +41,218 @@ theme:
 
 plugins:
   - search:
-      lang: ja
+      lang:
+        - ja
+        - en
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: ja
+          default: true
+          name: 日本語
+          build: true
+        - locale: en
+          name: English
+          build: true
+          site_name: "AI Agent Production Architecture Patterns"
+          site_description: "An integrated catalog of architecture patterns for embedding AI agents into production systems, centered on decision-making (forces, dials, and tradeoffs)"
+          theme:
+            palette:
+              - media: "(prefers-color-scheme: light)"
+                scheme: default
+                primary: indigo
+                accent: indigo
+                toggle:
+                  icon: material/weather-night
+                  name: Switch to dark mode
+              - media: "(prefers-color-scheme: dark)"
+                scheme: slate
+                primary: indigo
+                accent: indigo
+                toggle:
+                  icon: material/weather-sunny
+                  name: Switch to light mode
+          nav:
+            - Introduction: index.md
+            - Decision Framework:
+                - How to Make Decisions: decisions/decision-flow.md
+                - AI Agent Characteristics:
+                    - foundations/characteristics.md
+                    - "[C1] Non-Deterministic Output": foundations/characteristics/c1-non-determinism.md
+                    - "[C2] Variable-Duration Execution": foundations/characteristics/c2-variable-duration.md
+                    - "[C3] Side Effects on External World": foundations/characteristics/c3-side-effects.md
+                    - "[C4] Hallucination": foundations/characteristics/c4-hallucination.md
+                    - "[C5] Finite Context Window": foundations/characteristics/c5-context-window.md
+                    - "[C6] External LLM Dependency": foundations/characteristics/c6-external-llm-dependency.md
+                    - "[C7] Natural Language as Attack Surface": foundations/characteristics/c7-attack-surface.md
+                    - "[C8] Token-Proportional Cost": foundations/characteristics/c8-token-cost.md
+                    - "[C9] Behavior Drift from Model Updates": foundations/characteristics/c9-model-update-drift.md
+                - Driving Variables (Forces):
+                    - foundations/forces.md
+                    - "[F1] Reversibility": foundations/forces/f1-reversibility.md
+                    - "[F2] Failure Cost": foundations/forces/f2-failure-cost.md
+                    - "[F3] Per-Request Value": foundations/forces/f3-request-value.md
+                    - "[F4] Latency Budget": foundations/forces/f4-latency-budget.md
+                    - "[F5] Input Trust": foundations/forces/f5-input-trust.md
+                    - "[F6] Task Variability": foundations/forces/f6-task-variability.md
+                    - "[F7] Cost Sensitivity & Scale": foundations/forces/f7-cost-sensitivity.md
+                    - "[F8] Accountability & Regulation": foundations/forces/f8-accountability.md
+                    - "[F9] Provider Reliability": foundations/forces/f9-provider-reliability.md
+                - Dials (Tuning Degrees):
+                    - decisions/tuning-dials.md
+                    - Timeout: decisions/dials/timeout.md
+                    - Retry Count: decisions/dials/retry-count.md
+                    - Self-Correction Loops: decisions/dials/self-correction-loops.md
+                    - Checkpoint Frequency: decisions/dials/checkpoint-frequency.md
+                    - Budget Cap: decisions/dials/budget-cap.md
+                    - Autonomy Level: decisions/dials/autonomy-level.md
+                    - HITL Frequency: decisions/dials/hitl-frequency.md
+                    - Guardrail Strictness: decisions/dials/guardrail-strictness.md
+                    - Model Tier Routing: decisions/dials/model-tier-routing.md
+                    - Best-of-N: decisions/dials/best-of-n.md
+                    - Temperature: decisions/dials/temperature.md
+                    - Cache Similarity Threshold: decisions/dials/cache-similarity.md
+                    - Retrieval Top-K: decisions/dials/retrieval-top-k.md
+                    - Memory TTL: decisions/dials/memory-ttl.md
+                    - Memory Write Eagerness: decisions/dials/memory-write-eagerness.md
+                    - Summarization Timing: decisions/dials/summarization-timing.md
+                    - Exposed Tool Count: decisions/dials/exposed-tool-count.md
+                    - Trace Sampling Rate: decisions/dials/trace-sampling-rate.md
+                    - Prompt Storage: decisions/dials/prompt-storage.md
+                    - Log Retention: decisions/dials/log-retention.md
+                - Tradeoffs (Binary Choices):
+                    - decisions/tradeoffs.md
+                    - Sync ↔ Async: decisions/tradeoffs-catalog/sync-vs-async.md
+                    - Single ↔ Multi-Agent: decisions/tradeoffs-catalog/single-vs-multi-agent.md
+                    - Orchestration ↔ Choreography: decisions/tradeoffs-catalog/orchestration-vs-choreography.md
+                    - Workflow ↔ Agent: decisions/tradeoffs-catalog/workflow-vs-agent.md
+                    - Plan ↔ ReAct: decisions/tradeoffs-catalog/plan-vs-react.md
+                    - Prompt ↔ Code Control: decisions/tradeoffs-catalog/prompt-vs-code.md
+                    - RAG ↔ Fine-Tuning: decisions/tradeoffs-catalog/rag-vs-finetuning.md
+                    - Single ↔ Multi-Provider: decisions/tradeoffs-catalog/single-vs-multi-provider.md
+                    - Inline ↔ Post-Verification: decisions/tradeoffs-catalog/inline-vs-post-verification.md
+                    - Same ↔ Different Model Verification: decisions/tradeoffs-catalog/same-vs-different-model.md
+                    - LLM Reasoning ↔ Tool Delegation: decisions/tradeoffs-catalog/llm-vs-tool.md
+                    - Fail-Fast ↔ Graceful Degradation: decisions/tradeoffs-catalog/fail-fast-vs-degradation.md
+                    - Push ↔ Pull: decisions/tradeoffs-catalog/push-vs-pull.md
+                    - In-Context ↔ External State: decisions/tradeoffs-catalog/in-context-vs-external.md
+                    - Build ↔ Buy: decisions/tradeoffs-catalog/build-vs-buy.md
+                    - Structured ↔ Freeform Output: decisions/tradeoffs-catalog/structured-vs-freeform.md
+                - Dial × Tradeoff Interactions: decisions/interactions.md
+                - Reverse Lookup by Force: decisions/by-force.md
+                - Architecture Decision Record (ADR): decisions/adr-template.md
+                - Worked Examples: decisions/worked-examples.md
+                - Pattern Parameterization: decisions/parameterization.md
+            - "Pattern Reference (Vocabulary)":
+                - "I. Execution, Session & Orchestration":
+                    - patterns/01-execution/index.md
+                    - "#1 Request-to-Job Gateway": patterns/01-execution/01-request-to-job-gateway.md
+                    - "#2 Durable Agent Session": patterns/01-execution/02-durable-agent-session.md
+                    - "#3 Workflow Backbone + Agent Node": patterns/01-execution/03-workflow-backbone-agent-node.md
+                    - "#4 Agent Saga": patterns/01-execution/04-agent-saga.md
+                    - "#5 Time-Budgeted Agent Loop": patterns/01-execution/05-time-budgeted-agent-loop.md
+                    - "#6 Interruptible Agent": patterns/01-execution/06-interruptible-agent.md
+                    - "#7 Streaming Progress": patterns/01-execution/07-streaming-progress.md
+                    - "#55 Deadline & Budget Cascade": patterns/01-execution/55-deadline-budget-cascade.md
+                    - "#58 Sync Facade over Async Core": patterns/01-execution/58-sync-facade-over-async-core.md
+                    - "#59 Workflow–Agent Spectrum Selector": patterns/01-execution/59-workflow-agent-spectrum-selector.md
+                - "II. Agent Composition & Delegation":
+                    - patterns/02-composition/index.md
+                    - "#8 Planner-Executor-Reviewer": patterns/02-composition/08-planner-executor-reviewer.md
+                    - "#9 Supervisor & Specialist Agents": patterns/02-composition/09-supervisor-specialist-agents.md
+                    - "#10 Agent Ensemble & Debate": patterns/02-composition/10-agent-ensemble-debate.md
+                    - "#11 Deterministic Core, Probabilistic Edge": patterns/02-composition/11-deterministic-core-probabilistic-edge.md
+                    - "#12 Blackboard": patterns/02-composition/12-blackboard.md
+                - "III. I/O & Contract":
+                    - patterns/03-io-contract/index.md
+                    - "#13 Natural Language Boundary Adapter": patterns/03-io-contract/13-natural-language-boundary-adapter.md
+                    - "#14 Structured Output Contract": patterns/03-io-contract/14-structured-output-contract.md
+                    - "#15 Inverted Structured Output": patterns/03-io-contract/15-inverted-structured-output.md
+                    - "#16 Ambiguity Negotiation": patterns/03-io-contract/16-ambiguity-negotiation.md
+                - "IV. Tools, MCP & External System Integration":
+                    - patterns/04-tools-mcp/index.md
+                    - "#17 Tool / MCP Gateway": patterns/04-tools-mcp/17-tool-mcp-gateway.md
+                    - "#18 Least-Privilege Tool Binding": patterns/04-tools-mcp/18-least-privilege-tool-binding.md
+                    - "#19 Dry-Run First Tool Execution": patterns/04-tools-mcp/19-dry-run-first-tool-execution.md
+                    - "#20 Sandboxed Tool Runtime": patterns/04-tools-mcp/20-sandboxed-tool-runtime.md
+                    - "#21 MCP Adapter Isolation": patterns/04-tools-mcp/21-mcp-adapter-isolation.md
+                    - "#22 Anti-Corruption Layer": patterns/04-tools-mcp/22-anti-corruption-layer.md
+                - "V. Memory & Context Management":
+                    - patterns/05-memory-context/index.md
+                    - "#23 Layered Memory": patterns/05-memory-context/23-layered-memory.md
+                    - "#24 Context Pack / Assembly": patterns/05-memory-context/24-context-pack-assembly.md
+                    - "#25 Memory Write Gate": patterns/05-memory-context/25-memory-write-gate.md
+                    - "#26 Forgetting and Expiration": patterns/05-memory-context/26-forgetting-and-expiration.md
+                - "VI. Reliability, Verification, Guardrails & Autonomy":
+                    - patterns/06-reliability/index.md
+                    - "#27 Evidence-First Answer": patterns/06-reliability/27-evidence-first-answer.md
+                    - "#28 Verifier Agent / Critic": patterns/06-reliability/28-verifier-agent-critic.md
+                    - "#29 Guardrail Sidecar + Self-Correction": patterns/06-reliability/29-guardrail-sidecar-self-correction.md
+                    - "#30 Policy-as-Code Guardrail": patterns/06-reliability/30-policy-as-code-guardrail.md
+                    - "#31 Human Approval Checkpoint": patterns/06-reliability/31-human-approval-checkpoint.md
+                    - "#57 Autonomy Ladder": patterns/06-reliability/57-autonomy-ladder.md
+                - "VII. Observability, Audit & Evaluation":
+                    - patterns/07-observability/index.md
+                    - "#32 Agent Trace": patterns/07-observability/32-agent-trace.md
+                    - "#54 Tiered (Hot/Cold) Observability": patterns/07-observability/54-tiered-observability.md
+                    - "#33 Version Pinning": patterns/07-observability/33-version-pinning.md
+                    - "#34 Evaluation CI/CD": patterns/07-observability/34-evaluation-ci-cd.md
+                    - "#35 Production Replay": patterns/07-observability/35-production-replay.md
+                    - "#36 Shadow / Canary Deployment": patterns/07-observability/36-shadow-canary-deployment.md
+                - "VIII. Cost, Performance & Scaling":
+                    - patterns/08-cost-scaling/index.md
+                    - "#37 Semantic Gateway & Cost-Aware Router": patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md
+                    - "#38 Semantic Result Cache": patterns/08-cost-scaling/38-semantic-result-cache.md
+                    - "#39 Prompt Cache Optimized Context": patterns/08-cost-scaling/39-prompt-cache-optimized-context.md
+                    - "#40 Fallback & Graceful Degradation": patterns/08-cost-scaling/40-fallback-graceful-degradation.md
+                    - "#56 Adaptive Effort": patterns/08-cost-scaling/56-adaptive-effort.md
+                - "IX. Security & Multi-Tenancy":
+                    - patterns/09-security/index.md
+                    - "#41 Tenant-Isolated Agent Runtime": patterns/09-security/41-tenant-isolated-agent-runtime.md
+                    - "#42 Data Boundary Firewall": patterns/09-security/42-data-boundary-firewall.md
+                    - "#43 Confused-Deputy Damage Limitation": patterns/09-security/43-confused-deputy-damage-limitation.md
+                    - "#44 Dual-LLM Privilege Separation": patterns/09-security/44-dual-llm-privilege-separation.md
+                - "X. Deployment, Vendor Abstraction & Migration":
+                    - patterns/10-deployment/index.md
+                    - "#45 Agent Runtime Abstraction": patterns/10-deployment/45-agent-runtime-abstraction.md
+                    - "#46 Model Behavior Compatibility Layer": patterns/10-deployment/46-model-behavior-compatibility-layer.md
+                    - "#47 Agent Capability Registry": patterns/10-deployment/47-agent-capability-registry.md
+                    - "#48 Strangler Fig": patterns/10-deployment/48-strangler-fig.md
+                - "XI. UI/UX & Human Collaboration":
+                    - patterns/11-ux/index.md
+                    - "#49 Agent Workbench": patterns/11-ux/49-agent-workbench.md
+                    - "#50 Editable Plan": patterns/11-ux/50-editable-plan.md
+                    - "#51 Agent-to-Human Escalation": patterns/11-ux/51-agent-to-human-escalation.md
+                - "XII. Organization, Governance & Lifecycle":
+                    - patterns/12-governance/index.md
+                    - "#52 Agent Constitution": patterns/12-governance/52-agent-constitution.md
+                    - "#53 Agent Change Management": patterns/12-governance/53-agent-change-management.md
+            - "Composite & Anti-Patterns":
+                - Reference Architectures:
+                    - reference-architectures/index.md
+                    - "MVP (Minimum Viable)": reference-architectures/01-mvp.md
+                    - Side-Effect-First: reference-architectures/02-side-effect-first.md
+                    - Untrusted Input: reference-architectures/03-untrusted-input.md
+                    - Factuality-First: reference-architectures/04-factuality-first.md
+                    - Cost-First: reference-architectures/05-cost-first.md
+                    - Continuous Improvement: reference-architectures/06-continuous-improvement.md
+                - Anti-Patterns:
+                    - anti-patterns/index.md
+                    - "Infinite / Excessive Timeout": anti-patterns/01-infinite-timeout.md
+                    - Excessive Guardrails: anti-patterns/02-excessive-guardrails.md
+                    - Strongest Model Only: anti-patterns/03-strongest-model-only.md
+                    - Full Observability Overkill: anti-patterns/04-full-observability.md
+                    - Context Stuffing: anti-patterns/05-context-stuffing.md
+                    - No Rationale for Dial Settings: anti-patterns/06-no-rationale.md
+                    - "All-Sync / All-Async": anti-patterns/07-all-sync-or-async.md
+                    - Universal Multi-Agent: anti-patterns/08-universal-multi-agent.md
+                    - Retry Storm: anti-patterns/09-retry-storm.md
+                    - Prompt as Security Boundary: anti-patterns/10-prompt-as-security.md
+                    - LLM as Calculator: anti-patterns/11-llm-as-calculator.md
+                - Pattern Quick Reference: pattern-index.md
+            - Agent Integration:
+                - Coding Agent Guide: agent-guide.md
+                - Architecture Proposal Template: agent-proposal-template.md
 
 markdown_extensions:
   - admonition
