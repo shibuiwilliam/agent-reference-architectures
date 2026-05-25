@@ -23,6 +23,9 @@ env/
 *.swp
 *.swo
 
+# Source/working documents (not published)
+_source/
+
 # OS
 .DS_Store
 Thumbs.db
