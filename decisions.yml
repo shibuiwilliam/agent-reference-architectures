@@ -1,0 +1,479 @@
+# decisions.yml — 意思決定層の正本（single source of truth）
+# forces / dials / tradeoffs / reference_architectures / rules を定義する。
+# scripts/generate.py がこのファイル + patterns.yml から成果物を生成する。
+
+version: "1.0.0"
+
+forces:
+  - id: F1
+    name: 可逆性
+    question: 失敗をやり直せるか
+    high_implies: リトライ・再実行が容易。ガードを緩められる
+    low_implies: 不可逆操作。補償・承認・Dry-Runが必須
+  - id: F2
+    name: 失敗コスト
+    question: 金銭/法務/安全の痛み
+    high_implies: 多重検証・HITL・Plan先行が必要
+    low_implies: 最小構成で十分。事後検証で可
+  - id: F3
+    name: 1リクエストの価値
+    question: 売上/意思決定への寄与
+    high_implies: コストをかけた検証・合議が見合う
+    low_implies: 軽量モデル・キャッシュで効率化
+  - id: F4
+    name: レイテンシ予算
+    question: ユーザーの待機耐性
+    high_implies: 非同期・多段検証を許容できる
+    low_implies: 同期・ストリーミング・キャッシュ優先
+  - id: F5
+    name: 入力の信頼度
+    question: 攻撃/汚染の混入可能性
+    high_implies: 社内ユーザー。ガードレール緩め
+    low_implies: 不特定入力。境界防御・権限分離が必須
+  - id: F6
+    name: タスクの変動性
+    question: 定型↔探索
+    high_implies: エージェント・マルチ構成・高温度
+    low_implies: ワークフロー・決定論コア・低温度
+  - id: F7
+    name: コスト感度・スケール
+    question: QPS・月間コスト上限
+    high_implies: ルーティング・キャッシュ・努力配分が必須
+    low_implies: 単一モデルで十分
+  - id: F8
+    name: 説明責任・規制
+    question: 監査・コンプラ要件
+    high_implies: 全件トレース・バージョン固定・ポリシーコード化
+    low_implies: サンプリング・最低限ログで可
+  - id: F9
+    name: プロバイダ信頼度
+    question: 外部LLMの可用性
+    high_implies: 単一プロバイダで十分
+    low_implies: マルチプロバイダ・フォールバック・抽象化が必要
+
+dials:
+  # ── 実行制御 ──
+  - id: timeout
+    name: タイムアウト
+    category: 実行制御
+    poles: [打ち切りが早すぎる, 占有が長すぎる]
+    driver: [F4]
+    default: "同期 5–10秒、非同期 5–30分"
+    patterns: [1, 5, 58]
+    detail: dials/timeout.md
+  - id: retry-count
+    name: リトライ回数
+    category: 実行制御
+    poles: [即座に諦める, 無限リトライ]
+    driver: [F9]
+    default: "2–3回（指数バックオフ）"
+    patterns: [40]
+    detail: dials/retry-count.md
+  - id: self-correction-loops
+    name: 自己修正ループ回数
+    category: 実行制御
+    poles: [修正なし, 無限ループ]
+    driver: [F7, F3]
+    default: "1–3回"
+    patterns: [8, 29]
+    detail: dials/self-correction-loops.md
+  - id: checkpoint-frequency
+    name: チェックポイント頻度
+    category: 実行制御
+    poles: [記録なし, 毎行記録]
+    driver: [F1]
+    default: "ステップ毎またはN分毎"
+    patterns: [2, 4]
+    detail: dials/checkpoint-frequency.md
+  - id: budget-cap
+    name: 予算上限
+    category: 実行制御
+    poles: [制限なし, 厳しすぎる制限]
+    driver: [F7, F3]
+    default: "リクエスト価値の10–30%"
+    patterns: [5, 55]
+    detail: dials/budget-cap.md
+  # ── 自律性・安全制御 ──
+  - id: autonomy-level
+    name: 自律性レベル
+    category: 自律性・安全制御
+    poles: [全件人間承認, 完全自律]
+    driver: [F2, F1]
+    default: "新規は低→実績で昇格"
+    patterns: [31, 57]
+    detail: dials/autonomy-level.md
+  - id: hitl-frequency
+    name: HITL頻度
+    category: 自律性・安全制御
+    poles: [全件承認, 承認なし]
+    driver: [F2]
+    default: "高リスク操作のみ"
+    patterns: [31]
+    detail: dials/hitl-frequency.md
+  - id: guardrail-strictness
+    name: ガードレール厳しさ
+    category: 自律性・安全制御
+    poles: [通過のみ, 全件ブロック]
+    driver: [F5, F2]
+    default: "閾値 0.7–0.9"
+    patterns: [29, 30]
+    detail: dials/guardrail-strictness.md
+  # ── モデル・生成制御 ──
+  - id: model-tier-routing
+    name: モデル階層
+    category: モデル・生成制御
+    poles: [全件大モデル, 全件小モデル]
+    driver: [F7, F3]
+    default: "信頼度 0.8 以上で小モデル"
+    patterns: [37]
+    detail: dials/model-tier-routing.md
+  - id: best-of-n
+    name: Best-of-N
+    category: モデル・生成制御
+    poles: [1回のみ, N回全比較]
+    driver: [F2, F3]
+    default: "1（低リスク）、3–5（高リスク）"
+    patterns: [10]
+    detail: dials/best-of-n.md
+  - id: temperature
+    name: 温度
+    category: モデル・生成制御
+    poles: [決定論的, 高ランダム]
+    driver: [F6]
+    default: "0.0–0.3（定型）、0.5–0.8（探索）"
+    patterns: []
+    detail: dials/temperature.md
+  # ── メモリ・コンテキスト制御 ──
+  - id: cache-similarity
+    name: キャッシュ類似度閾値
+    category: メモリ・コンテキスト制御
+    poles: [完全一致のみ, 緩すぎるヒット]
+    driver: [F7]
+    default: "コサイン類似度 0.92–0.97"
+    patterns: [38]
+    detail: dials/cache-similarity.md
+  - id: retrieval-top-k
+    name: 検索 top-k
+    category: メモリ・コンテキスト制御
+    poles: [少なすぎ, 多すぎ]
+    driver: [F4, F7]
+    default: "5–20、全体の50%以下"
+    patterns: [24]
+    detail: dials/retrieval-top-k.md
+  - id: memory-ttl
+    name: メモリ TTL
+    category: メモリ・コンテキスト制御
+    poles: [即失効, 無期限保持]
+    driver: [F8]
+    default: "セッション 1時間、長期 30–90日"
+    patterns: [26]
+    detail: dials/memory-ttl.md
+  - id: memory-write-eagerness
+    name: メモリ書き込み積極度
+    category: メモリ・コンテキスト制御
+    poles: [書き込まない, 全件書き込み]
+    driver: [F8]
+    default: "信頼度閾値で自動"
+    patterns: [25]
+    detail: dials/memory-write-eagerness.md
+  - id: summarization-timing
+    name: 要約タイミング
+    category: メモリ・コンテキスト制御
+    poles: [要約しない, 即座に要約]
+    driver: [F4]
+    default: "トークン使用量が窓の70%到達時"
+    patterns: [23]
+    detail: dials/summarization-timing.md
+  - id: exposed-tool-count
+    name: 露出ツール数
+    category: メモリ・コンテキスト制御
+    poles: [ツールなし, 全ツール露出]
+    driver: [F6]
+    default: "5–15個/セッション"
+    patterns: [18]
+    detail: dials/exposed-tool-count.md
+  # ── 観測・記録制御 ──
+  - id: trace-sampling-rate
+    name: トレースサンプリング率
+    category: 観測・記録制御
+    poles: [記録なし, 全件記録]
+    driver: [F8, F7]
+    default: "開発 100%、本番 1–10%"
+    patterns: [32, 54]
+    detail: dials/trace-sampling-rate.md
+  - id: prompt-storage
+    name: プロンプト保存先・粒度
+    category: 観測・記録制御
+    poles: [保存なし, 全バージョン全量保存]
+    driver: [F8]
+    default: "Git管理、バージョンタグ付き"
+    patterns: [33]
+    detail: dials/prompt-storage.md
+  - id: log-retention
+    name: ログ保持期間
+    category: 観測・記録制御
+    poles: [即削除, 永久保持]
+    driver: [F8, F7]
+    default: "Hot 7–30日、Cold 1–7年"
+    patterns: [54]
+    detail: dials/log-retention.md
+
+tradeoffs:
+  # ── 実行モデル ──
+  - id: sync-vs-async
+    name: 同期↔非同期
+    category: 実行モデル
+    a: 同期処理
+    b: 非同期処理
+    driver: [F4, F1]
+    default: "数秒以内なら同期"
+    hybrid: 58
+    patterns: [1, 58]
+    detail: tradeoffs-catalog/sync-vs-async.md
+  - id: single-vs-multi-agent
+    name: シングル↔マルチエージェント
+    category: 実行モデル
+    a: シングルエージェント
+    b: マルチエージェント
+    driver: [F6, F7]
+    default: "シングルで十分ならシングル"
+    patterns: [9, 10]
+    detail: tradeoffs-catalog/single-vs-multi-agent.md
+  - id: orchestration-vs-choreography
+    name: 中央集権↔コレオグラフィ
+    category: 実行モデル
+    a: 中央集権
+    b: コレオグラフィ
+    driver: [F8, F6]
+    default: "中央集権"
+    patterns: [3, 12]
+    detail: tradeoffs-catalog/orchestration-vs-choreography.md
+  - id: workflow-vs-agent
+    name: ワークフロー↔エージェント
+    category: 実行モデル
+    a: ワークフロー
+    b: エージェント
+    driver: [F6, F2]
+    default: "定型はワークフロー"
+    patterns: [3, 59]
+    detail: tradeoffs-catalog/workflow-vs-agent.md
+  - id: plan-vs-react
+    name: Plan↔ReAct
+    category: 実行モデル
+    a: Plan（計画先行）
+    b: ReAct（逐次行動）
+    driver: [F2, F6]
+    default: "副作用大なら Plan"
+    patterns: [8, 50]
+    detail: tradeoffs-catalog/plan-vs-react.md
+  # ── 制御・知識ソース ──
+  - id: prompt-vs-code
+    name: プロンプト制御↔コード制御
+    category: 制御・知識ソース
+    a: プロンプト制御
+    b: コード制御
+    driver: [F8, F6]
+    default: "コード制御"
+    patterns: [11, 30]
+    detail: tradeoffs-catalog/prompt-vs-code.md
+  - id: rag-vs-finetuning
+    name: RAG↔Fine-Tuning
+    category: 制御・知識ソース
+    a: RAG
+    b: Fine-Tuning
+    driver: [F7, F4]
+    default: "RAG"
+    patterns: [24, 27]
+    detail: tradeoffs-catalog/rag-vs-finetuning.md
+  - id: single-vs-multi-provider
+    name: 単一↔マルチプロバイダ
+    category: 制御・知識ソース
+    a: 単一プロバイダ
+    b: マルチプロバイダ
+    driver: [F9, F7]
+    default: "単一で始める"
+    patterns: [45, 46, 40]
+    detail: tradeoffs-catalog/single-vs-multi-provider.md
+  - id: llm-vs-tool
+    name: LLM推論↔ツール委譲
+    category: 制御・知識ソース
+    a: LLM推論
+    b: ツール委譲
+    driver: [F2]
+    default: "算術・検索はツール"
+    patterns: [17, 15]
+    detail: tradeoffs-catalog/llm-vs-tool.md
+  # ── 検証・信頼性 ──
+  - id: inline-vs-post-verification
+    name: インライン検証↔事後検証
+    category: 検証・信頼性
+    a: インライン検証
+    b: 事後検証
+    driver: [F4, F2]
+    default: "高リスクはインライン"
+    patterns: [28, 29]
+    detail: tradeoffs-catalog/inline-vs-post-verification.md
+  - id: same-vs-different-model
+    name: 同一モデル検証↔別モデル検証
+    category: 検証・信頼性
+    a: 同一モデル検証
+    b: 別モデル検証
+    driver: [F2, F7]
+    default: "同一、高リスクなら別"
+    patterns: [10, 28]
+    detail: tradeoffs-catalog/same-vs-different-model.md
+  - id: fail-fast-vs-degradation
+    name: Fail-fast↔縮退運転
+    category: 検証・信頼性
+    a: Fail-fast
+    b: 縮退運転
+    driver: [F9, F3]
+    default: "低価値は fail-fast"
+    patterns: [40]
+    detail: tradeoffs-catalog/fail-fast-vs-degradation.md
+  # ── インフラ・データ ──
+  - id: push-vs-pull
+    name: プッシュ↔プル
+    category: インフラ・データ
+    a: プッシュ
+    b: プル
+    driver: [F4, F7]
+    default: "プッシュ"
+    patterns: [1, 7]
+    detail: tradeoffs-catalog/push-vs-pull.md
+  - id: in-context-vs-external
+    name: 文脈内状態↔外部状態
+    category: インフラ・データ
+    a: 文脈内状態
+    b: 外部状態
+    driver: [F4, F8]
+    default: "短期は文脈内、永続は外部"
+    patterns: [23, 2]
+    detail: tradeoffs-catalog/in-context-vs-external.md
+  - id: build-vs-buy
+    name: ビルド↔バイ
+    category: インフラ・データ
+    a: ビルド
+    b: バイ
+    driver: [F8, F7]
+    default: "差別化はビルド"
+    patterns: [45]
+    detail: tradeoffs-catalog/build-vs-buy.md
+  - id: structured-vs-freeform
+    name: 構造化出力↔自由形式出力
+    category: インフラ・データ
+    a: 構造化出力
+    b: 自由形式出力
+    driver: [F8, F6]
+    default: "下流連携は構造化"
+    patterns: [14]
+    detail: tradeoffs-catalog/structured-vs-freeform.md
+
+reference_architectures:
+  - id: mvp
+    name: 最小構成（MVP）
+    forces: { F1: high, F2: low, F5: high, F7: low, F8: low }
+    layers:
+      - { role: 受付, pattern: 1 }
+      - { role: 状態, pattern: 2 }
+      - { role: 出力, pattern: 14 }
+      - { role: 観測, pattern: 32 }
+    detail: reference-architectures/01-mvp.md
+  - id: side-effect
+    name: 副作用重視構成
+    forces: { F1: low, F2: high }
+    layers:
+      - { role: 受付, pattern: 1 }
+      - { role: 骨格, pattern: 3 }
+      - { role: 補償, pattern: 4 }
+      - { role: 承認, pattern: 31 }
+      - { role: ツール, pattern: 19 }
+      - { role: 出力, pattern: 15 }
+      - { role: 観測, pattern: 32 }
+    detail: reference-architectures/02-side-effect-first.md
+  - id: untrusted-input
+    name: 信頼できない入力構成
+    forces: { F5: low }
+    layers:
+      - { role: 境界, pattern: 13 }
+      - { role: 検査, pattern: 42 }
+      - { role: 分離, pattern: 44 }
+      - { role: 権限, pattern: 18 }
+      - { role: 被害限定, pattern: 43 }
+      - { role: ガードレール, pattern: 29 }
+    detail: reference-architectures/03-untrusted-input.md
+  - id: factuality
+    name: 事実性重視構成
+    forces: { F2: high, F8: high }
+    layers:
+      - { role: 根拠, pattern: 27 }
+      - { role: 検証, pattern: 28 }
+      - { role: 合議, pattern: 10 }
+      - { role: 契約, pattern: 14 }
+      - { role: ポリシー, pattern: 30 }
+      - { role: 観測, pattern: 32 }
+    detail: reference-architectures/04-factuality-first.md
+  - id: cost
+    name: コスト重視構成
+    forces: { F7: high, F3: low }
+    layers:
+      - { role: ルーティング, pattern: 37 }
+      - { role: キャッシュ, pattern: 38 }
+      - { role: プロンプト, pattern: 39 }
+      - { role: 努力配分, pattern: 56 }
+      - { role: 予算, pattern: 5 }
+      - { role: フォールバック, pattern: 40 }
+    detail: reference-architectures/05-cost-first.md
+  - id: continuous-improvement
+    name: 継続改善運用構成
+    forces: { F8: high }
+    layers:
+      - { role: 固定, pattern: 33 }
+      - { role: 評価, pattern: 34 }
+      - { role: リプレイ, pattern: 35 }
+      - { role: デプロイ, pattern: 36 }
+      - { role: 変更管理, pattern: 53 }
+      - { role: 観測, pattern: 54 }
+    detail: reference-architectures/06-continuous-improvement.md
+
+rules:
+  - id: rule-high-f2-low-f1
+    if: { F2: high, F1: low }
+    then_patterns: [31, 19, 4, 3, 15]
+    rationale: "不可逆かつ高リスク → 人間承認・Dry-Run・Saga補償を必須候補に。ワークフロー骨格で順序を保証し、LLMは判断のみ"
+  - id: rule-high-f2-high-f8
+    if: { F2: high, F8: high }
+    then_patterns: [28, 30, 32, 33, 10]
+    rationale: "高リスク＋監査義務 → 独立検証・ポリシーコード化・全件トレース・バージョン固定。合議で品質を担保"
+  - id: rule-low-f5
+    if: { F5: low }
+    then_patterns: [13, 42, 44, 18, 43, 29]
+    rationale: "信頼できない入力 → 境界防御・権限分離・被害半径制限の多層防御"
+  - id: rule-high-f7
+    if: { F7: high }
+    then_patterns: [37, 38, 39, 56, 5, 40]
+    rationale: "コスト制約 → ルーティング・キャッシュ・努力配分で効率化。予算上限で暴走防止"
+  - id: rule-high-f8
+    if: { F8: high }
+    then_patterns: [32, 33, 34, 30, 54, 52]
+    rationale: "監査・規制 → 全件トレース・バージョン固定・評価CI/CD・ポリシーコード化。憲法で行動原則を体系化"
+  - id: rule-low-f9
+    if: { F9: low }
+    then_patterns: [40, 45, 46]
+    rationale: "プロバイダ不安定 → フォールバック・ランタイム抽象化・互換レイヤーで可用性確保"
+  - id: rule-high-f6
+    if: { F6: high }
+    then_patterns: [59, 12, 9]
+    rationale: "探索的タスク → エージェント自律・マルチ構成・黒板で柔軟な協調"
+  - id: rule-low-f6
+    if: { F6: low }
+    then_patterns: [3, 11]
+    rationale: "定型タスク → ワークフロー骨格・決定論コアで予測可能性を確保"
+  - id: rule-high-f3
+    if: { F3: high }
+    then_patterns: [10, 8, 28, 37]
+    rationale: "高価値リクエスト → 合議・計画-検証分離・独立検証でコストをかけた品質担保"
+  - id: rule-low-f4
+    if: { F4: low }
+    then_patterns: [58, 7, 38, 39]
+    rationale: "即応性要求 → 同期ファサード・ストリーミング・キャッシュで低レイテンシ化"
