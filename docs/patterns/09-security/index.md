@@ -1,5 +1,11 @@
 # IX. セキュリティ・マルチテナント
 
+
+!!! tip "この関心で効く意思決定"
+    - **主なフォース**: `[F5]` 入力の信頼度、`[F8]` 説明責任、`[F2]` 失敗コスト
+    - **主なダイヤル**: 露出ツール数、ガードレール厳しさ → [程度（ダイヤル）](../../decisions/tuning-dials.md)
+    - **意思決定の進め方**: [意思決定の進め方](../../decisions/decision-flow.md)
+
 自然言語I/F＝攻撃面、という前提に立った防御層。
 
 - [#41 Tenant-Isolated Agent Runtime｜テナント分離ランタイム](41-tenant-isolated-agent-runtime.md) — テナント毎に実行・記憶を分離

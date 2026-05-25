@@ -4,7 +4,7 @@
 
 ## このプロジェクトの目的
 
-12カテゴリ・59パターンの解説ページを書き、MkDocs (Material) でビルドして GitHub Pages に公開する。全体像・構成・デプロイ手順は `PROJECT.md`、パターンの正本は `patterns.yml`。
+**意思決定（フォース・程度・相反）を中心**に、12カテゴリ・59パターンの解説ページを MkDocs (Material) でビルドして GitHub Pages に公開する。IAの重心は「意思決定を背骨、パターンを語彙」。全体像・構成・デプロイ手順は `PROJECT.md`、パターンの正本は `patterns.yml`。
 
 ## まず守る原則
 
@@ -20,7 +20,7 @@
 | パターン本文を書く | `docs/patterns/<NN-category>/<NN-slug>.md` |
 | カテゴリ概要を書く | `docs/patterns/<NN-category>/index.md` |
 | 土台ページ | `docs/foundations/characteristics.md`, `forces.md` |
-| 意思決定層 | `docs/decisions/tuning-dials.md`, `tradeoffs.md`, `parameterization.md` |
+| 意思決定層（中核） | `docs/decisions/decision-flow.md`（背骨）, `tuning-dials.md`, `tradeoffs.md`, `interactions.md`, `by-force.md`, `worked-examples.md`, `adr-template.md`, `parameterization.md` |
 | 横断ページ | `docs/anti-patterns.md`, `reference-architectures.md`, `pattern-index.md` |
 | ナビ追加・並び替え | `mkdocs.yml` の `nav`（手動） |
 | スタブ生成 | `python scripts/scaffold.py`（既存は上書きしない） |
@@ -35,7 +35,8 @@
 2. `# #{番号} {タイトル}`
 3. `!!! abstract "一言"` … 1文のTL;DR
 4. `## 概要` … 2〜4文。何を・どこに置くか
-5. `## 設計` … 構成要素とデータの流れ。必要なら mermaid 図
+5. `!!! info "意思決定上の位置づけ"` … **必須**。必要にするフォース・関与するダイヤル/二者択一・意思決定の進め方へのリンク
+6. `## 設計` … 構成要素とデータの流れ。必要なら mermaid 図
 6. `## 解決する課題` … どの特性／設計圧力に効くか、「無いと何が壊れるか」
 7. `## 向き / 不向き` … **両方必須**。不向きを書かないものはパターンでなく宣伝
 8. `## 要素技術` … 具体的な実装候補に接続
@@ -79,6 +80,7 @@ mkdocs build --strict
 ## 完成の定義（Definition of Done / 1パターン）
 
 - [ ] 必須見出しが順に揃い、`向き` と `不向き` の両方がある
+- [ ] `!!! info "意思決定上の位置づけ"` ブロックがある（フォース・関与する決定・意思決定の進め方へのリンク）
 - [ ] `関連パターン` に有効な相対リンクが1つ以上ある
 - [ ] 該当するなら `調整`/`選定` に `[F#]` と決定層へのリンクがある
 - [ ] フロントマターの `tags` にカテゴリ名と該当 `F#` がある

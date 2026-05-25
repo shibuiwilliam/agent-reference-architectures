@@ -15,6 +15,11 @@ tags:
 
 1つのLLMに「考えて・やって・確かめて」を全部やらせると、自分の計画を自分で検証する利益相反が生じる。Planner-Executor-Reviewer は、計画（Plan）・実行（Execute）・検証（Review）を独立したロール――場合によっては別モデルや別プロンプト――に分離する。Planner がステップ列を生成し、Executor がツール呼び出しや副作用を実行し、Reviewer が結果を検証して差し戻しまたは承認する。
 
+!!! info "意思決定上の位置づけ"
+    - **必要にするフォース**: `[F2]` 失敗コスト・`[F3]` 1リクエストの価値
+    - **関与する決定**: [相反](../../decisions/tradeoffs.md) の Plan↔ReAct
+    - **意思決定の進め方**: [意思決定の進め方](../../decisions/decision-flow.md)
+
 ## 設計
 
 ```mermaid

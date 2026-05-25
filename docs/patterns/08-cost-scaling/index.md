@@ -1,5 +1,12 @@
 # VIII. コスト・性能・スケーリング
 
+
+!!! tip "この関心で効く意思決定"
+    - **主なフォース**: `[F7]` コスト感度、`[F3]` リクエスト価値、`[F9]` プロバイダ信頼度
+    - **主なダイヤル**: モデル階層閾値、キャッシュ類似度閾値、リトライ回数 → [程度（ダイヤル）](../../decisions/tuning-dials.md)
+    - **主な二者択一**: 単一↔マルチプロバイダ、Fail-fast↔縮退 → [相反（二者択一）](../../decisions/tradeoffs.md)
+    - **意思決定の進め方**: [意思決定の進め方](../../decisions/decision-flow.md)
+
 知能の使用量を資源として管理し、外部LLMの不安定さを吸収する。
 
 - [#37 Semantic Gateway & Cost-Aware Router｜動的ルーティング](37-semantic-gateway-cost-aware-router.md) — 難易度でモデルを動的選択
