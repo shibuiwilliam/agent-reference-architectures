@@ -1,6 +1,5 @@
 site_name: AIエージェント本番アーキテクチャ・パターン
-site_description: AIエージェントを本番システムへ組み込むためのアーキテクチャパターン・チューニング・選定基準の統合カタログ
-site_author: (あなたの名前 / 組織名)
+site_description: 意思決定（フォース・程度・相反）を中心に、AIエージェントを本番システムへ組み込むアーキテクチャパターンの統合カタログ
 # GitHub Pages の公開URL。<user> と <repo> を自分のものに置き換える
 site_url: https://shibuiwilliam.github.io/agent-reference-architectures/
 docs_dir: docs
@@ -69,13 +68,21 @@ markdown_extensions:
 extra_css:
   - assets/stylesheets/extra.css
 
-# ── ナビゲーション（patterns.yml と一致させること） ──
+# ── ナビゲーション（意思決定を背骨、パターンを語彙） ──
 nav:
   - はじめに: index.md
-  - 土台:
+  - 意思決定:
+      - 意思決定の進め方: decisions/decision-flow.md
       - AIエージェントの特性: foundations/characteristics.md
       - 駆動変数（フォース）: foundations/forces.md
-  - パターン:
+      - 程度（ダイヤル）: decisions/tuning-dials.md
+      - 相反（二者択一）: decisions/tradeoffs.md
+      - ダイヤル×二者択一の相互作用: decisions/interactions.md
+      - フォース別逆引き: decisions/by-force.md
+      - 意思決定記録（ADR）: decisions/adr-template.md
+      - 通し例: decisions/worked-examples.md
+      - パターンのパラメータ化: decisions/parameterization.md
+  - パターン・リファレンス（語彙）:
       - I. 実行・セッション・オーケストレーション:
           - patterns/01-execution/index.md
           - "#1 Request-to-Job Gateway": patterns/01-execution/01-request-to-job-gateway.md
@@ -159,10 +166,7 @@ nav:
           - patterns/12-governance/index.md
           - "#52 Agent Constitution": patterns/12-governance/52-agent-constitution.md
           - "#53 Agent Change Management": patterns/12-governance/53-agent-change-management.md
-  - 意思決定層:
-      - 程度（チューニング）ダイヤル: decisions/tuning-dials.md
-      - 相反する仕組みの選定基準: decisions/tradeoffs.md
-      - パターンのパラメータ化: decisions/parameterization.md
-  - アンチパターン: anti-patterns.md
-  - リファレンスアーキテクチャ: reference-architectures.md
-  - パターン早見表: pattern-index.md
+  - 複合構成・アンチパターン:
+      - リファレンスアーキテクチャ: reference-architectures.md
+      - アンチパターン: anti-patterns.md
+      - パターン早見表: pattern-index.md
