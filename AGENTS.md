@@ -38,7 +38,7 @@ agent-reference-architectures カタログ（v1.0.0）を使用する。
 
 ### 経路3: MCP接続
 
-`mcp/` ディレクトリにMCPサーバを提供（`catalog.json` を読む薄い実装）。
+`mcp-server/` ディレクトリにMCPサーバを提供（`catalog.json` を読む薄い実装）。
 
 ツール:
 - `search_patterns(query)` — 意味検索でパターン候補
