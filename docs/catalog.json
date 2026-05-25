@@ -1,0 +1,2909 @@
+{
+  "version": "1.0.0",
+  "principle": "確率的なコアを、決定論的な殻——契約・検証・予算・権限・観測——で囲む。",
+  "forces": [
+    {
+      "id": "F1",
+      "name": "可逆性",
+      "question": "失敗をやり直せるか",
+      "high_implies": "リトライ・再実行が容易。ガードを緩められる",
+      "low_implies": "不可逆操作。補償・承認・Dry-Runが必須"
+    },
+    {
+      "id": "F2",
+      "name": "失敗コスト",
+      "question": "金銭/法務/安全の痛み",
+      "high_implies": "多重検証・HITL・Plan先行が必要",
+      "low_implies": "最小構成で十分。事後検証で可"
+    },
+    {
+      "id": "F3",
+      "name": "1リクエストの価値",
+      "question": "売上/意思決定への寄与",
+      "high_implies": "コストをかけた検証・合議が見合う",
+      "low_implies": "軽量モデル・キャッシュで効率化"
+    },
+    {
+      "id": "F4",
+      "name": "レイテンシ予算",
+      "question": "ユーザーの待機耐性",
+      "high_implies": "非同期・多段検証を許容できる",
+      "low_implies": "同期・ストリーミング・キャッシュ優先"
+    },
+    {
+      "id": "F5",
+      "name": "入力の信頼度",
+      "question": "攻撃/汚染の混入可能性",
+      "high_implies": "社内ユーザー。ガードレール緩め",
+      "low_implies": "不特定入力。境界防御・権限分離が必須"
+    },
+    {
+      "id": "F6",
+      "name": "タスクの変動性",
+      "question": "定型↔探索",
+      "high_implies": "エージェント・マルチ構成・高温度",
+      "low_implies": "ワークフロー・決定論コア・低温度"
+    },
+    {
+      "id": "F7",
+      "name": "コスト感度・スケール",
+      "question": "QPS・月間コスト上限",
+      "high_implies": "ルーティング・キャッシュ・努力配分が必須",
+      "low_implies": "単一モデルで十分"
+    },
+    {
+      "id": "F8",
+      "name": "説明責任・規制",
+      "question": "監査・コンプラ要件",
+      "high_implies": "全件トレース・バージョン固定・ポリシーコード化",
+      "low_implies": "サンプリング・最低限ログで可"
+    },
+    {
+      "id": "F9",
+      "name": "プロバイダ信頼度",
+      "question": "外部LLMの可用性",
+      "high_implies": "単一プロバイダで十分",
+      "low_implies": "マルチプロバイダ・フォールバック・抽象化が必要"
+    }
+  ],
+  "dials": [
+    {
+      "id": "timeout",
+      "name": "タイムアウト",
+      "category": "実行制御",
+      "poles": [
+        "打ち切りが早すぎる",
+        "占有が長すぎる"
+      ],
+      "driver": [
+        "F4"
+      ],
+      "default": "同期 5–10秒、非同期 5–30分",
+      "patterns": [
+        1,
+        5,
+        58
+      ]
+    },
+    {
+      "id": "retry-count",
+      "name": "リトライ回数",
+      "category": "実行制御",
+      "poles": [
+        "即座に諦める",
+        "無限リトライ"
+      ],
+      "driver": [
+        "F9"
+      ],
+      "default": "2–3回（指数バックオフ）",
+      "patterns": [
+        40
+      ]
+    },
+    {
+      "id": "self-correction-loops",
+      "name": "自己修正ループ回数",
+      "category": "実行制御",
+      "poles": [
+        "修正なし",
+        "無限ループ"
+      ],
+      "driver": [
+        "F7",
+        "F3"
+      ],
+      "default": "1–3回",
+      "patterns": [
+        8,
+        29
+      ]
+    },
+    {
+      "id": "checkpoint-frequency",
+      "name": "チェックポイント頻度",
+      "category": "実行制御",
+      "poles": [
+        "記録なし",
+        "毎行記録"
+      ],
+      "driver": [
+        "F1"
+      ],
+      "default": "ステップ毎またはN分毎",
+      "patterns": [
+        2,
+        4
+      ]
+    },
+    {
+      "id": "budget-cap",
+      "name": "予算上限",
+      "category": "実行制御",
+      "poles": [
+        "制限なし",
+        "厳しすぎる制限"
+      ],
+      "driver": [
+        "F7",
+        "F3"
+      ],
+      "default": "リクエスト価値の10–30%",
+      "patterns": [
+        5,
+        55
+      ]
+    },
+    {
+      "id": "autonomy-level",
+      "name": "自律性レベル",
+      "category": "自律性・安全制御",
+      "poles": [
+        "全件人間承認",
+        "完全自律"
+      ],
+      "driver": [
+        "F2",
+        "F1"
+      ],
+      "default": "新規は低→実績で昇格",
+      "patterns": [
+        31,
+        57
+      ]
+    },
+    {
+      "id": "hitl-frequency",
+      "name": "HITL頻度",
+      "category": "自律性・安全制御",
+      "poles": [
+        "全件承認",
+        "承認なし"
+      ],
+      "driver": [
+        "F2"
+      ],
+      "default": "高リスク操作のみ",
+      "patterns": [
+        31
+      ]
+    },
+    {
+      "id": "guardrail-strictness",
+      "name": "ガードレール厳しさ",
+      "category": "自律性・安全制御",
+      "poles": [
+        "通過のみ",
+        "全件ブロック"
+      ],
+      "driver": [
+        "F5",
+        "F2"
+      ],
+      "default": "閾値 0.7–0.9",
+      "patterns": [
+        29,
+        30
+      ]
+    },
+    {
+      "id": "model-tier-routing",
+      "name": "モデル階層",
+      "category": "モデル・生成制御",
+      "poles": [
+        "全件大モデル",
+        "全件小モデル"
+      ],
+      "driver": [
+        "F7",
+        "F3"
+      ],
+      "default": "信頼度 0.8 以上で小モデル",
+      "patterns": [
+        37
+      ]
+    },
+    {
+      "id": "best-of-n",
+      "name": "Best-of-N",
+      "category": "モデル・生成制御",
+      "poles": [
+        "1回のみ",
+        "N回全比較"
+      ],
+      "driver": [
+        "F2",
+        "F3"
+      ],
+      "default": "1（低リスク）、3–5（高リスク）",
+      "patterns": [
+        10
+      ]
+    },
+    {
+      "id": "temperature",
+      "name": "温度",
+      "category": "モデル・生成制御",
+      "poles": [
+        "決定論的",
+        "高ランダム"
+      ],
+      "driver": [
+        "F6"
+      ],
+      "default": "0.0–0.3（定型）、0.5–0.8（探索）",
+      "patterns": []
+    },
+    {
+      "id": "cache-similarity",
+      "name": "キャッシュ類似度閾値",
+      "category": "メモリ・コンテキスト制御",
+      "poles": [
+        "完全一致のみ",
+        "緩すぎるヒット"
+      ],
+      "driver": [
+        "F7"
+      ],
+      "default": "コサイン類似度 0.92–0.97",
+      "patterns": [
+        38
+      ]
+    },
+    {
+      "id": "retrieval-top-k",
+      "name": "検索 top-k",
+      "category": "メモリ・コンテキスト制御",
+      "poles": [
+        "少なすぎ",
+        "多すぎ"
+      ],
+      "driver": [
+        "F4",
+        "F7"
+      ],
+      "default": "5–20、全体の50%以下",
+      "patterns": [
+        24
+      ]
+    },
+    {
+      "id": "memory-ttl",
+      "name": "メモリ TTL",
+      "category": "メモリ・コンテキスト制御",
+      "poles": [
+        "即失効",
+        "無期限保持"
+      ],
+      "driver": [
+        "F8"
+      ],
+      "default": "セッション 1時間、長期 30–90日",
+      "patterns": [
+        26
+      ]
+    },
+    {
+      "id": "memory-write-eagerness",
+      "name": "メモリ書き込み積極度",
+      "category": "メモリ・コンテキスト制御",
+      "poles": [
+        "書き込まない",
+        "全件書き込み"
+      ],
+      "driver": [
+        "F8"
+      ],
+      "default": "信頼度閾値で自動",
+      "patterns": [
+        25
+      ]
+    },
+    {
+      "id": "summarization-timing",
+      "name": "要約タイミング",
+      "category": "メモリ・コンテキスト制御",
+      "poles": [
+        "要約しない",
+        "即座に要約"
+      ],
+      "driver": [
+        "F4"
+      ],
+      "default": "トークン使用量が窓の70%到達時",
+      "patterns": [
+        23
+      ]
+    },
+    {
+      "id": "exposed-tool-count",
+      "name": "露出ツール数",
+      "category": "メモリ・コンテキスト制御",
+      "poles": [
+        "ツールなし",
+        "全ツール露出"
+      ],
+      "driver": [
+        "F6"
+      ],
+      "default": "5–15個/セッション",
+      "patterns": [
+        18
+      ]
+    },
+    {
+      "id": "trace-sampling-rate",
+      "name": "トレースサンプリング率",
+      "category": "観測・記録制御",
+      "poles": [
+        "記録なし",
+        "全件記録"
+      ],
+      "driver": [
+        "F8",
+        "F7"
+      ],
+      "default": "開発 100%、本番 1–10%",
+      "patterns": [
+        32,
+        54
+      ]
+    },
+    {
+      "id": "prompt-storage",
+      "name": "プロンプト保存先・粒度",
+      "category": "観測・記録制御",
+      "poles": [
+        "保存なし",
+        "全バージョン全量保存"
+      ],
+      "driver": [
+        "F8"
+      ],
+      "default": "Git管理、バージョンタグ付き",
+      "patterns": [
+        33
+      ]
+    },
+    {
+      "id": "log-retention",
+      "name": "ログ保持期間",
+      "category": "観測・記録制御",
+      "poles": [
+        "即削除",
+        "永久保持"
+      ],
+      "driver": [
+        "F8",
+        "F7"
+      ],
+      "default": "Hot 7–30日、Cold 1–7年",
+      "patterns": [
+        54
+      ]
+    }
+  ],
+  "tradeoffs": [
+    {
+      "id": "sync-vs-async",
+      "name": "同期↔非同期",
+      "category": "実行モデル",
+      "a": "同期処理",
+      "b": "非同期処理",
+      "driver": [
+        "F4",
+        "F1"
+      ],
+      "default": "数秒以内なら同期",
+      "patterns": [
+        1,
+        58
+      ],
+      "hybrid": 58
+    },
+    {
+      "id": "single-vs-multi-agent",
+      "name": "シングル↔マルチエージェント",
+      "category": "実行モデル",
+      "a": "シングルエージェント",
+      "b": "マルチエージェント",
+      "driver": [
+        "F6",
+        "F7"
+      ],
+      "default": "シングルで十分ならシングル",
+      "patterns": [
+        9,
+        10
+      ]
+    },
+    {
+      "id": "orchestration-vs-choreography",
+      "name": "中央集権↔コレオグラフィ",
+      "category": "実行モデル",
+      "a": "中央集権",
+      "b": "コレオグラフィ",
+      "driver": [
+        "F8",
+        "F6"
+      ],
+      "default": "中央集権",
+      "patterns": [
+        3,
+        12
+      ]
+    },
+    {
+      "id": "workflow-vs-agent",
+      "name": "ワークフロー↔エージェント",
+      "category": "実行モデル",
+      "a": "ワークフロー",
+      "b": "エージェント",
+      "driver": [
+        "F6",
+        "F2"
+      ],
+      "default": "定型はワークフロー",
+      "patterns": [
+        3,
+        59
+      ]
+    },
+    {
+      "id": "plan-vs-react",
+      "name": "Plan↔ReAct",
+      "category": "実行モデル",
+      "a": "Plan（計画先行）",
+      "b": "ReAct（逐次行動）",
+      "driver": [
+        "F2",
+        "F6"
+      ],
+      "default": "副作用大なら Plan",
+      "patterns": [
+        8,
+        50
+      ]
+    },
+    {
+      "id": "prompt-vs-code",
+      "name": "プロンプト制御↔コード制御",
+      "category": "制御・知識ソース",
+      "a": "プロンプト制御",
+      "b": "コード制御",
+      "driver": [
+        "F8",
+        "F6"
+      ],
+      "default": "コード制御",
+      "patterns": [
+        11,
+        30
+      ]
+    },
+    {
+      "id": "rag-vs-finetuning",
+      "name": "RAG↔Fine-Tuning",
+      "category": "制御・知識ソース",
+      "a": "RAG",
+      "b": "Fine-Tuning",
+      "driver": [
+        "F7",
+        "F4"
+      ],
+      "default": "RAG",
+      "patterns": [
+        24,
+        27
+      ]
+    },
+    {
+      "id": "single-vs-multi-provider",
+      "name": "単一↔マルチプロバイダ",
+      "category": "制御・知識ソース",
+      "a": "単一プロバイダ",
+      "b": "マルチプロバイダ",
+      "driver": [
+        "F9",
+        "F7"
+      ],
+      "default": "単一で始める",
+      "patterns": [
+        45,
+        46,
+        40
+      ]
+    },
+    {
+      "id": "llm-vs-tool",
+      "name": "LLM推論↔ツール委譲",
+      "category": "制御・知識ソース",
+      "a": "LLM推論",
+      "b": "ツール委譲",
+      "driver": [
+        "F2"
+      ],
+      "default": "算術・検索はツール",
+      "patterns": [
+        17,
+        15
+      ]
+    },
+    {
+      "id": "inline-vs-post-verification",
+      "name": "インライン検証↔事後検証",
+      "category": "検証・信頼性",
+      "a": "インライン検証",
+      "b": "事後検証",
+      "driver": [
+        "F4",
+        "F2"
+      ],
+      "default": "高リスクはインライン",
+      "patterns": [
+        28,
+        29
+      ]
+    },
+    {
+      "id": "same-vs-different-model",
+      "name": "同一モデル検証↔別モデル検証",
+      "category": "検証・信頼性",
+      "a": "同一モデル検証",
+      "b": "別モデル検証",
+      "driver": [
+        "F2",
+        "F7"
+      ],
+      "default": "同一、高リスクなら別",
+      "patterns": [
+        10,
+        28
+      ]
+    },
+    {
+      "id": "fail-fast-vs-degradation",
+      "name": "Fail-fast↔縮退運転",
+      "category": "検証・信頼性",
+      "a": "Fail-fast",
+      "b": "縮退運転",
+      "driver": [
+        "F9",
+        "F3"
+      ],
+      "default": "低価値は fail-fast",
+      "patterns": [
+        40
+      ]
+    },
+    {
+      "id": "push-vs-pull",
+      "name": "プッシュ↔プル",
+      "category": "インフラ・データ",
+      "a": "プッシュ",
+      "b": "プル",
+      "driver": [
+        "F4",
+        "F7"
+      ],
+      "default": "プッシュ",
+      "patterns": [
+        1,
+        7
+      ]
+    },
+    {
+      "id": "in-context-vs-external",
+      "name": "文脈内状態↔外部状態",
+      "category": "インフラ・データ",
+      "a": "文脈内状態",
+      "b": "外部状態",
+      "driver": [
+        "F4",
+        "F8"
+      ],
+      "default": "短期は文脈内、永続は外部",
+      "patterns": [
+        23,
+        2
+      ]
+    },
+    {
+      "id": "build-vs-buy",
+      "name": "ビルド↔バイ",
+      "category": "インフラ・データ",
+      "a": "ビルド",
+      "b": "バイ",
+      "driver": [
+        "F8",
+        "F7"
+      ],
+      "default": "差別化はビルド",
+      "patterns": [
+        45
+      ]
+    },
+    {
+      "id": "structured-vs-freeform",
+      "name": "構造化出力↔自由形式出力",
+      "category": "インフラ・データ",
+      "a": "構造化出力",
+      "b": "自由形式出力",
+      "driver": [
+        "F8",
+        "F6"
+      ],
+      "default": "下流連携は構造化",
+      "patterns": [
+        14
+      ]
+    }
+  ],
+  "reference_architectures": [
+    {
+      "id": "mvp",
+      "name": "最小構成（MVP）",
+      "forces": {
+        "F1": "high",
+        "F2": "low",
+        "F5": "high",
+        "F7": "low",
+        "F8": "low"
+      },
+      "layers": [
+        {
+          "role": "受付",
+          "pattern": 1
+        },
+        {
+          "role": "状態",
+          "pattern": 2
+        },
+        {
+          "role": "出力",
+          "pattern": 14
+        },
+        {
+          "role": "観測",
+          "pattern": 32
+        }
+      ]
+    },
+    {
+      "id": "side-effect",
+      "name": "副作用重視構成",
+      "forces": {
+        "F1": "low",
+        "F2": "high"
+      },
+      "layers": [
+        {
+          "role": "受付",
+          "pattern": 1
+        },
+        {
+          "role": "骨格",
+          "pattern": 3
+        },
+        {
+          "role": "補償",
+          "pattern": 4
+        },
+        {
+          "role": "承認",
+          "pattern": 31
+        },
+        {
+          "role": "ツール",
+          "pattern": 19
+        },
+        {
+          "role": "出力",
+          "pattern": 15
+        },
+        {
+          "role": "観測",
+          "pattern": 32
+        }
+      ]
+    },
+    {
+      "id": "untrusted-input",
+      "name": "信頼できない入力構成",
+      "forces": {
+        "F5": "low"
+      },
+      "layers": [
+        {
+          "role": "境界",
+          "pattern": 13
+        },
+        {
+          "role": "検査",
+          "pattern": 42
+        },
+        {
+          "role": "分離",
+          "pattern": 44
+        },
+        {
+          "role": "権限",
+          "pattern": 18
+        },
+        {
+          "role": "被害限定",
+          "pattern": 43
+        },
+        {
+          "role": "ガードレール",
+          "pattern": 29
+        }
+      ]
+    },
+    {
+      "id": "factuality",
+      "name": "事実性重視構成",
+      "forces": {
+        "F2": "high",
+        "F8": "high"
+      },
+      "layers": [
+        {
+          "role": "根拠",
+          "pattern": 27
+        },
+        {
+          "role": "検証",
+          "pattern": 28
+        },
+        {
+          "role": "合議",
+          "pattern": 10
+        },
+        {
+          "role": "契約",
+          "pattern": 14
+        },
+        {
+          "role": "ポリシー",
+          "pattern": 30
+        },
+        {
+          "role": "観測",
+          "pattern": 32
+        }
+      ]
+    },
+    {
+      "id": "cost",
+      "name": "コスト重視構成",
+      "forces": {
+        "F7": "high",
+        "F3": "low"
+      },
+      "layers": [
+        {
+          "role": "ルーティング",
+          "pattern": 37
+        },
+        {
+          "role": "キャッシュ",
+          "pattern": 38
+        },
+        {
+          "role": "プロンプト",
+          "pattern": 39
+        },
+        {
+          "role": "努力配分",
+          "pattern": 56
+        },
+        {
+          "role": "予算",
+          "pattern": 5
+        },
+        {
+          "role": "フォールバック",
+          "pattern": 40
+        }
+      ]
+    },
+    {
+      "id": "continuous-improvement",
+      "name": "継続改善運用構成",
+      "forces": {
+        "F8": "high"
+      },
+      "layers": [
+        {
+          "role": "固定",
+          "pattern": 33
+        },
+        {
+          "role": "評価",
+          "pattern": 34
+        },
+        {
+          "role": "リプレイ",
+          "pattern": 35
+        },
+        {
+          "role": "デプロイ",
+          "pattern": 36
+        },
+        {
+          "role": "変更管理",
+          "pattern": 53
+        },
+        {
+          "role": "観測",
+          "pattern": 54
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule-high-f2-low-f1",
+      "if": {
+        "F2": "high",
+        "F1": "low"
+      },
+      "then_patterns": [
+        31,
+        19,
+        4,
+        3,
+        15
+      ],
+      "rationale": "不可逆かつ高リスク → 人間承認・Dry-Run・Saga補償を必須候補に。ワークフロー骨格で順序を保証し、LLMは判断のみ"
+    },
+    {
+      "id": "rule-high-f2-high-f8",
+      "if": {
+        "F2": "high",
+        "F8": "high"
+      },
+      "then_patterns": [
+        28,
+        30,
+        32,
+        33,
+        10
+      ],
+      "rationale": "高リスク＋監査義務 → 独立検証・ポリシーコード化・全件トレース・バージョン固定。合議で品質を担保"
+    },
+    {
+      "id": "rule-low-f5",
+      "if": {
+        "F5": "low"
+      },
+      "then_patterns": [
+        13,
+        42,
+        44,
+        18,
+        43,
+        29
+      ],
+      "rationale": "信頼できない入力 → 境界防御・権限分離・被害半径制限の多層防御"
+    },
+    {
+      "id": "rule-high-f7",
+      "if": {
+        "F7": "high"
+      },
+      "then_patterns": [
+        37,
+        38,
+        39,
+        56,
+        5,
+        40
+      ],
+      "rationale": "コスト制約 → ルーティング・キャッシュ・努力配分で効率化。予算上限で暴走防止"
+    },
+    {
+      "id": "rule-high-f8",
+      "if": {
+        "F8": "high"
+      },
+      "then_patterns": [
+        32,
+        33,
+        34,
+        30,
+        54,
+        52
+      ],
+      "rationale": "監査・規制 → 全件トレース・バージョン固定・評価CI/CD・ポリシーコード化。憲法で行動原則を体系化"
+    },
+    {
+      "id": "rule-low-f9",
+      "if": {
+        "F9": "low"
+      },
+      "then_patterns": [
+        40,
+        45,
+        46
+      ],
+      "rationale": "プロバイダ不安定 → フォールバック・ランタイム抽象化・互換レイヤーで可用性確保"
+    },
+    {
+      "id": "rule-high-f6",
+      "if": {
+        "F6": "high"
+      },
+      "then_patterns": [
+        59,
+        12,
+        9
+      ],
+      "rationale": "探索的タスク → エージェント自律・マルチ構成・黒板で柔軟な協調"
+    },
+    {
+      "id": "rule-low-f6",
+      "if": {
+        "F6": "low"
+      },
+      "then_patterns": [
+        3,
+        11
+      ],
+      "rationale": "定型タスク → ワークフロー骨格・決定論コアで予測可能性を確保"
+    },
+    {
+      "id": "rule-high-f3",
+      "if": {
+        "F3": "high"
+      },
+      "then_patterns": [
+        10,
+        8,
+        28,
+        37
+      ],
+      "rationale": "高価値リクエスト → 合議・計画-検証分離・独立検証でコストをかけた品質担保"
+    },
+    {
+      "id": "rule-low-f4",
+      "if": {
+        "F4": "low"
+      },
+      "then_patterns": [
+        58,
+        7,
+        38,
+        39
+      ],
+      "rationale": "即応性要求 → 同期ファサード・ストリーミング・キャッシュで低レイテンシ化"
+    }
+  ],
+  "patterns": [
+    {
+      "id": 1,
+      "slug": "request-to-job-gateway",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Request-to-Job Gateway｜非同期受付ゲートウェイ",
+      "tagline": "1リクエストを非同期ジョブとして受け付ける",
+      "forces": [
+        "F4",
+        "F1"
+      ],
+      "related": [
+        2,
+        7,
+        58
+      ],
+      "dials": [
+        "timeout"
+      ],
+      "tradeoffs": [
+        "sync-vs-async",
+        "push-vs-pull"
+      ],
+      "when_to_use": "マルチステップの調査・コンテンツ生成・分析など、数秒〜数分かかるタスク",
+      "when_not": [
+        "F4=低（数秒以内に同期で完了できるタスク）"
+      ],
+      "element_tech": [
+        "FastAPI",
+        "Next.js API Routes",
+        "SQS",
+        "Cloud Pub/Sub",
+        "Kafka",
+        "Cloud Tasks",
+        "Celery",
+        "Redis",
+        "PostgreSQL",
+        "SSE",
+        "WebSocket"
+      ]
+    },
+    {
+      "id": 2,
+      "slug": "durable-agent-session",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Durable Agent Session｜耐久エージェントセッション",
+      "tagline": "状態を永続化し中断・再開に耐える",
+      "forces": [
+        "F1"
+      ],
+      "related": [
+        1,
+        6,
+        4,
+        32
+      ],
+      "dials": [
+        "checkpoint-frequency"
+      ],
+      "tradeoffs": [
+        "in-context-vs-external"
+      ],
+      "when_to_use": "マルチステップの研究・コード生成・データパイプライン、ローリングデプロイ環境",
+      "when_not": [
+        "単発LLM呼び出し",
+        "シリアライズコストが利益を上回るリアルタイム対話"
+      ],
+      "element_tech": [
+        "Redis",
+        "PostgreSQL",
+        "DynamoDB",
+        "Temporal",
+        "Azure Durable Functions",
+        "JSON/Protobuf"
+      ]
+    },
+    {
+      "id": 3,
+      "slug": "workflow-backbone-agent-node",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Workflow Backbone + Agent Node｜決定論骨格＋ノード",
+      "tagline": "骨格は決定論、判断だけ委譲",
+      "forces": [
+        "F6",
+        "F8"
+      ],
+      "related": [
+        59,
+        11,
+        5,
+        14
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "workflow-vs-agent"
+      ],
+      "when_to_use": "固定手順にAI判断を組み込む場面、規制業種で再現性が必要",
+      "when_not": [
+        "F6=高（探索的タスク）",
+        "手順が動的に変化する場合"
+      ],
+      "element_tech": [
+        "Temporal",
+        "Airflow",
+        "Step Functions",
+        "Prefect",
+        "Hatchet",
+        "LangGraph",
+        "OpenAI Agents SDK"
+      ]
+    },
+    {
+      "id": 4,
+      "slug": "agent-saga",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Agent Saga｜補償トランザクション",
+      "tagline": "副作用連鎖を補償で巻き戻す",
+      "forces": [
+        "F1",
+        "F2"
+      ],
+      "related": [
+        2,
+        19,
+        31,
+        1
+      ],
+      "dials": [
+        "checkpoint-frequency"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "複数外部システムへの書き込み連鎖（カレンダー→チケット→メール）",
+      "when_not": [
+        "読み取り専用",
+        "単一サービスのDBトランザクションで完結",
+        "物理的に不可逆な操作"
+      ],
+      "element_tech": [
+        "Temporal",
+        "Step Functions",
+        "冪等キー"
+      ]
+    },
+    {
+      "id": 5,
+      "slug": "time-budgeted-agent-loop",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Time-Budgeted Agent Loop｜予算付きループ",
+      "tagline": "時間・回数・コストを予算化し暴走を止める",
+      "forces": [
+        "F7",
+        "F3"
+      ],
+      "related": [
+        55,
+        6,
+        37
+      ],
+      "dials": [
+        "budget-cap",
+        "timeout"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "SaaSでのコスト制限、マルチテナントの公平性確保",
+      "when_not": [
+        "バッチで必要な分だけ使う方針（ただしコスト上限は常に推奨）"
+      ],
+      "element_tech": [
+        "フレームワーク callback/middleware",
+        "LLM usage API",
+        "ツール呼び出しカウンタ"
+      ]
+    },
+    {
+      "id": 6,
+      "slug": "interruptible-agent",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Interruptible Agent｜中断可能エージェント",
+      "tagline": "途中で停止・方針修正できる",
+      "forces": [
+        "F4"
+      ],
+      "related": [
+        2,
+        5,
+        31,
+        7
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "長時間稼働のインタラクティブエージェント、人間が途中で方針変更する場面",
+      "when_not": [
+        "サブ秒完了タスク",
+        "フラグチェックのオーバーヘッドが許容できない超低レイテンシパス"
+      ],
+      "element_tech": [
+        "Redis Pub/Sub",
+        "DB flag",
+        "WebSocket",
+        "graceful shutdown"
+      ]
+    },
+    {
+      "id": 7,
+      "slug": "streaming-progress",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Streaming Progress｜進捗ストリーミング",
+      "tagline": "過程を監査可能な要約で逐次表示",
+      "forces": [
+        "F4"
+      ],
+      "related": [
+        1,
+        6,
+        32
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "push-vs-pull"
+      ],
+      "when_to_use": "5秒以上のタスク、ユーザーのインタラクティブ監視、規制トレースログ",
+      "when_not": [
+        "サブ秒処理",
+        "バッチのサイレントモード"
+      ],
+      "element_tech": [
+        "SSE",
+        "WebSocket",
+        "gRPC streaming",
+        "Redis Streams",
+        "Kafka",
+        "JSON Lines"
+      ]
+    },
+    {
+      "id": 8,
+      "slug": "planner-executor-reviewer",
+      "category": "02-composition",
+      "category_title": "エージェント構成・分担",
+      "title": "Planner-Executor-Reviewer｜計画・実行・検証の分離",
+      "tagline": "計画/実行/検証を別ロールに分ける",
+      "forces": [
+        "F2",
+        "F3"
+      ],
+      "related": [
+        10,
+        28,
+        50,
+        5
+      ],
+      "dials": [
+        "self-correction-loops"
+      ],
+      "tradeoffs": [
+        "plan-vs-react"
+      ],
+      "when_to_use": "コード生成→テスト→修正、レポートのファクトチェック、検証基準が明確なマルチステップ調査",
+      "when_not": [
+        "単純Q&A",
+        "計算オーバーヘッドがタスクを上回る",
+        "F4=低（リアルタイム）"
+      ],
+      "element_tech": [
+        "LangGraph",
+        "CrewAI",
+        "LLM/ルール検証"
+      ]
+    },
+    {
+      "id": 9,
+      "slug": "supervisor-specialist-agents",
+      "category": "02-composition",
+      "category_title": "エージェント構成・分担",
+      "title": "Supervisor & Specialist Agents｜統括と専門",
+      "tagline": "統括役が専門役へ委譲する",
+      "forces": [
+        "F6",
+        "F7"
+      ],
+      "related": [
+        8,
+        12,
+        47,
+        37
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "single-vs-multi-agent"
+      ],
+      "when_to_use": "多様なタスク種別（FAQ/技術/請求）、マルチモーダル、ドメイン専門性が分離可能",
+      "when_not": [
+        "タスク種別が少ない",
+        "専門化の利益が薄い",
+        "専門家間の密結合"
+      ],
+      "element_tech": [
+        "LangGraph conditional routing",
+        "OpenAI Swarm",
+        "カスタムルーティング"
+      ]
+    },
+    {
+      "id": 10,
+      "slug": "agent-ensemble-debate",
+      "category": "02-composition",
+      "category_title": "エージェント構成・分担",
+      "title": "Agent Ensemble & Debate｜アンサンブル・討論",
+      "tagline": "複数で解き合議・討論で頑健化",
+      "forces": [
+        "F2",
+        "F3"
+      ],
+      "related": [
+        8,
+        28,
+        37
+      ],
+      "dials": [
+        "best-of-n"
+      ],
+      "tradeoffs": [
+        "same-vs-different-model"
+      ],
+      "when_to_use": "高リスク判断（医療・金融）、正確性検証、不一致検出が高価値",
+      "when_not": [
+        "大量低コストリクエスト（N倍コスト）",
+        "主観的クリエイティブ",
+        "F4=厳格（同期）"
+      ],
+      "element_tech": [
+        "並列 asyncio/thread pool",
+        "モデルミックス",
+        "投票/スコアリング"
+      ]
+    },
+    {
+      "id": 11,
+      "slug": "deterministic-core-probabilistic-edge",
+      "category": "02-composition",
+      "category_title": "エージェント構成・分担",
+      "title": "Deterministic Core, Probabilistic Edge｜決定論コア",
+      "tagline": "中核は決定論、周辺だけAI",
+      "forces": [
+        "F2",
+        "F8"
+      ],
+      "related": [
+        3,
+        14,
+        30
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "prompt-vs-code"
+      ],
+      "when_to_use": "金融・保険・医療プロトコル、正確な金額・ロジックが必須",
+      "when_not": [
+        "探索的リサーチ",
+        "クリエイティブ生成",
+        "ルールが曖昧でコード化困難"
+      ],
+      "element_tech": [
+        "Drools/OPA",
+        "ルールエンジン",
+        "ステートマシン",
+        "テンプレート+LLM"
+      ]
+    },
+    {
+      "id": 12,
+      "slug": "blackboard",
+      "category": "02-composition",
+      "category_title": "エージェント構成・分担",
+      "title": "Blackboard｜共有黒板",
+      "tagline": "共有黒板で疎結合に協調",
+      "forces": [
+        "F6"
+      ],
+      "related": [
+        9,
+        23,
+        3
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "orchestration-vs-choreography"
+      ],
+      "when_to_use": "複雑なマルチエージェント分析、動的なエージェント参加、探索的問題解決",
+      "when_not": [
+        "固定順序ワークフロー（#3を使用）",
+        "高競合の並行書き込み"
+      ],
+      "element_tech": [
+        "Redis",
+        "PostgreSQL JSONB",
+        "Firebase",
+        "Pub/Sub"
+      ]
+    },
+    {
+      "id": 13,
+      "slug": "natural-language-boundary-adapter",
+      "category": "03-io-contract",
+      "category_title": "入出力・契約化",
+      "title": "Natural Language Boundary Adapter｜自然言語境界",
+      "tagline": "自然言語を構造化意図へ変換",
+      "forces": [
+        "F5"
+      ],
+      "related": [
+        14,
+        16,
+        29
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "明確なアクション分類（注文・チケット・検索）、有限のインテント種別",
+      "when_not": [
+        "自由形式の創作",
+        "インテント列挙が曖昧"
+      ],
+      "element_tech": [
+        "LLM function calling",
+        "Claude tool_use",
+        "Rasa",
+        "Dialogflow",
+        "Amazon Lex",
+        "JSON Schema",
+        "Pydantic"
+      ]
+    },
+    {
+      "id": 14,
+      "slug": "structured-output-contract",
+      "category": "03-io-contract",
+      "category_title": "入出力・契約化",
+      "title": "Structured Output Contract｜構造化出力契約",
+      "tagline": "出力をスキーマで契約化",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        13,
+        15,
+        30
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "structured-vs-freeform"
+      ],
+      "when_to_use": "APIレスポンス生成、フォーム入力、データ抽出、ワークフロールーティング",
+      "when_not": [
+        "自由テキスト（レポート・メール）",
+        "フォーマットが表現力を潰す場合"
+      ],
+      "element_tech": [
+        "OpenAI response_format",
+        "Anthropic tool_use",
+        "Pydantic",
+        "Zod",
+        "JSON Schema",
+        "Instructor"
+      ]
+    },
+    {
+      "id": 15,
+      "slug": "inverted-structured-output",
+      "category": "03-io-contract",
+      "category_title": "入出力・契約化",
+      "title": "Inverted Structured Output｜反転構造化出力",
+      "tagline": "最終実行でなく中間判断を出させる",
+      "forces": [
+        "F2"
+      ],
+      "related": [
+        14,
+        3,
+        19
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "llm-vs-tool"
+      ],
+      "when_to_use": "承認・分類・ルーティング判断、判断のみ（実行はコード）",
+      "when_not": [
+        "LLMが最終成果物を生成する場合（コード・テキスト）",
+        "選択肢が無限"
+      ],
+      "element_tech": [
+        "Function calling",
+        "Enum actions",
+        "決定論的 executor"
+      ]
+    },
+    {
+      "id": 16,
+      "slug": "ambiguity-negotiation",
+      "category": "03-io-contract",
+      "category_title": "入出力・契約化",
+      "title": "Ambiguity Negotiation｜曖昧性交渉",
+      "tagline": "曖昧なら確認してから実行",
+      "forces": [
+        "F1",
+        "F2"
+      ],
+      "related": [
+        13,
+        31,
+        51
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "可逆な操作、複数解釈可能な入力（ファイル削除）、スロット不足の入力",
+      "when_not": [
+        "リアルタイム即時応答",
+        "事前構造化されたフォーム入力"
+      ],
+      "element_tech": [
+        "Confidence/logprobs",
+        "スロット充填率",
+        "インタラクティブUI"
+      ]
+    },
+    {
+      "id": 17,
+      "slug": "tool-mcp-gateway",
+      "category": "04-tools-mcp",
+      "category_title": "ツール・MCP・外部システム接続",
+      "title": "Tool / MCP Gateway｜ツール・MCPゲートウェイ",
+      "tagline": "ツール接続を集約し認可・監査",
+      "forces": [
+        "F5",
+        "F8"
+      ],
+      "related": [
+        18,
+        21,
+        32
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "複数ツール/MCPシステム、マルチテナント、認可・監査の一元化が必要",
+      "when_not": [
+        "1–2ツール",
+        "認証不要",
+        "超低レイテンシ不許容"
+      ],
+      "element_tech": [
+        "MCP Gateway/Proxy",
+        "Kong",
+        "Envoy",
+        "AWS API Gateway",
+        "OPA/Cedar",
+        "OpenTelemetry"
+      ]
+    },
+    {
+      "id": 18,
+      "slug": "least-privilege-tool-binding",
+      "category": "04-tools-mcp",
+      "category_title": "ツール・MCP・外部システム接続",
+      "title": "Least-Privilege Tool Binding｜最小権限バインディング",
+      "tagline": "セッション毎に最小権限を束縛",
+      "forces": [
+        "F5",
+        "F2"
+      ],
+      "related": [
+        17,
+        43,
+        44
+      ],
+      "dials": [
+        "exposed-tool-count"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "10以上のツール、マルチテナント、ユーザー毎に異なる権限",
+      "when_not": [
+        "2–3ツールで全ユーザー同一権限",
+        "探索的ディスカバリが必要"
+      ],
+      "element_tech": [
+        "MCP tools/list フィルタリング",
+        "RBAC/ABAC",
+        "OPA/Cedar"
+      ]
+    },
+    {
+      "id": 19,
+      "slug": "dry-run-first-tool-execution",
+      "category": "04-tools-mcp",
+      "category_title": "ツール・MCP・外部システム接続",
+      "title": "Dry-Run First Tool Execution｜ドライラン優先実行",
+      "tagline": "副作用はまず模擬実行→承認",
+      "forces": [
+        "F1",
+        "F2"
+      ],
+      "related": [
+        4,
+        31,
+        15
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "データ変更（削除・API書き込み）、インフラ変更（Terraform的操作）",
+      "when_not": [
+        "読み取り専用",
+        "失敗コスト低",
+        "リアルタイム速度重視"
+      ],
+      "element_tech": [
+        "--dry-run フラグ",
+        "DB transaction→result→rollback",
+        "API dryRun パラメータ",
+        "diff-view UI"
+      ]
+    },
+    {
+      "id": 20,
+      "slug": "sandboxed-tool-runtime",
+      "category": "04-tools-mcp",
+      "category_title": "ツール・MCP・外部システム接続",
+      "title": "Sandboxed Tool Runtime｜サンドボックス実行",
+      "tagline": "コード/操作を隔離環境で実行",
+      "forces": [
+        "F5"
+      ],
+      "related": [
+        18,
+        21,
+        43
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "コード実行エージェント、データ分析、ユーザー提供コード、CI/CD",
+      "when_not": [
+        "直接FS/ネットアクセスが必須",
+        "デプロイ/sysadmin ネイティブ"
+      ],
+      "element_tech": [
+        "Docker gVisor",
+        "Firecracker",
+        "WASM",
+        "AWS Lambda",
+        "Cloud Run",
+        "Modal",
+        "cgroups/seccomp"
+      ]
+    },
+    {
+      "id": 21,
+      "slug": "mcp-adapter-isolation",
+      "category": "04-tools-mcp",
+      "category_title": "ツール・MCP・外部システム接続",
+      "title": "MCP Adapter Isolation｜MCPアダプタ分離",
+      "tagline": "MCPを信頼境界ごとに分離",
+      "forces": [
+        "F5",
+        "F8"
+      ],
+      "related": [
+        17,
+        20,
+        41
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "信頼度が異なるアダプタの混在（内部DB＋外部API）、PCI-DSS規制データ",
+      "when_not": [
+        "単一アダプタ",
+        "全て同一信頼レベル",
+        "分離コストが利益を超える"
+      ],
+      "element_tech": [
+        "Kubernetes Pod/Sidecar",
+        "Docker Compose",
+        "stdio/SSE MCP transport",
+        "Vault",
+        "AWS Secrets Manager"
+      ]
+    },
+    {
+      "id": 22,
+      "slug": "anti-corruption-layer",
+      "category": "04-tools-mcp",
+      "category_title": "ツール・MCP・外部システム接続",
+      "title": "Anti-Corruption Layer｜アンチコラプション層",
+      "tagline": "レガシーとの概念汚染を防ぐ翻訳層",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        48,
+        17,
+        14
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "レガシーシステム統合、外部APIモデルの正規化",
+      "when_not": [
+        "外部モデルが内部と一致",
+        "変換オーバーヘッドが無視できる"
+      ],
+      "element_tech": [
+        "Adapter/Facade パターン",
+        "MCP as ACL",
+        "Protocol Buffers",
+        "GraphQL スキーマ変換"
+      ]
+    },
+    {
+      "id": 23,
+      "slug": "layered-memory",
+      "category": "05-memory-context",
+      "category_title": "メモリ・コンテキスト管理",
+      "title": "Layered Memory｜階層化メモリ",
+      "tagline": "短期/長期/共有に記憶を階層化",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        24,
+        25,
+        26,
+        12
+      ],
+      "dials": [
+        "summarization-timing"
+      ],
+      "tradeoffs": [
+        "in-context-vs-external"
+      ],
+      "when_to_use": "長時間ユーザー対話、マルチエージェント協調、パーソナライズが必要",
+      "when_not": [
+        "ステートレスな単発Q&A",
+        "階層のオーバーヘッドが利益を超える"
+      ],
+      "element_tech": [
+        "Redis TTL",
+        "PostgreSQL+pgvector",
+        "Pinecone",
+        "Weaviate",
+        "LLM要約"
+      ]
+    },
+    {
+      "id": 24,
+      "slug": "context-pack-assembly",
+      "category": "05-memory-context",
+      "category_title": "メモリ・コンテキスト管理",
+      "title": "Context Pack / Assembly｜コンテキスト組立・RAG",
+      "tagline": "文脈を組み立てグラウンディング",
+      "forces": [
+        "F4",
+        "F7"
+      ],
+      "related": [
+        23,
+        27,
+        39
+      ],
+      "dials": [
+        "retrieval-top-k"
+      ],
+      "tradeoffs": [
+        "rag-vs-finetuning"
+      ],
+      "when_to_use": "社内ナレッジ、サポート、法務・医療の最新情報依存",
+      "when_not": [
+        "モデルの汎用知識で十分",
+        "極端なリアルタイムストリーム要求"
+      ],
+      "element_tech": [
+        "Pinecone",
+        "pgvector",
+        "Cohere Rerank",
+        "HyDE",
+        "RecursiveCharacterTextSplitter"
+      ]
+    },
+    {
+      "id": 25,
+      "slug": "memory-write-gate",
+      "category": "05-memory-context",
+      "category_title": "メモリ・コンテキスト管理",
+      "title": "Memory Write Gate｜メモリ書き込みゲート",
+      "tagline": "長期保存を承認制にする",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        23,
+        26,
+        31
+      ],
+      "dials": [
+        "memory-write-eagerness"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "顧客対話履歴、医療・法務記録、マルチセッションのパーソナライズ",
+      "when_not": [
+        "使い捨てタスク",
+        "ステートレス",
+        "ゲートのオーバーヘッドが不適"
+      ],
+      "element_tech": [
+        "Presidio",
+        "DLP",
+        "NER",
+        "ルール/LLM分類",
+        "メタデータ付きKVS/VectorDB"
+      ]
+    },
+    {
+      "id": 26,
+      "slug": "forgetting-and-expiration",
+      "category": "05-memory-context",
+      "category_title": "メモリ・コンテキスト管理",
+      "title": "Forgetting and Expiration｜忘却・失効",
+      "tagline": "記憶に失効・鮮度を持たせる",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        23,
+        25,
+        32
+      ],
+      "dials": [
+        "memory-ttl"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "顧客データの継続性、ニュース・市場情報の鮮度、GDPR/データ保持コンプライアンス",
+      "when_not": [
+        "法的アーカイブ（失効ではなく保持が必要）",
+        "不変のマスタデータ"
+      ],
+      "element_tech": [
+        "Redis TTL",
+        "DynamoDB TTL",
+        "PostgreSQL パーティションプルーニング",
+        "cron/Cloud Scheduler"
+      ]
+    },
+    {
+      "id": 27,
+      "slug": "evidence-first-answer",
+      "category": "06-reliability",
+      "category_title": "信頼性・検証・ガードレール・自律",
+      "title": "Evidence-First Answer｜根拠優先回答",
+      "tagline": "回答前に根拠を取得・引用",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        24,
+        28,
+        14
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "rag-vs-finetuning"
+      ],
+      "when_to_use": "法務・医療・金融Q&A、社内ナレッジ検索、監査証跡が必要なサポート",
+      "when_not": [
+        "クリエイティブ・ブレインストーミング（正解ソースなし）",
+        "根拠ソースが存在しない"
+      ],
+      "element_tech": [
+        "RAGパイプライン",
+        "Web検索API",
+        "社内ドキュメントAPI",
+        "信頼度評価",
+        "引用メタデータ"
+      ]
+    },
+    {
+      "id": 28,
+      "slug": "verifier-agent-critic",
+      "category": "06-reliability",
+      "category_title": "信頼性・検証・ガードレール・自律",
+      "title": "Verifier Agent / Critic｜検証エージェント",
+      "tagline": "独立した検証器で出荷前検査",
+      "forces": [
+        "F2",
+        "F4"
+      ],
+      "related": [
+        8,
+        27,
+        29
+      ],
+      "dials": [
+        "self-correction-loops"
+      ],
+      "tradeoffs": [
+        "inline-vs-post-verification",
+        "same-vs-different-model"
+      ],
+      "when_to_use": "コード生成（テスト検証）、金融レポート、法務文書、公開コンテンツ",
+      "when_not": [
+        "リアルタイムチャット",
+        "失敗コスト低のブレインストーミング"
+      ],
+      "element_tech": [
+        "別LLM/ルールチェッカ",
+        "ユニットテスト実行",
+        "URL検証",
+        "max-retry+timeout"
+      ]
+    },
+    {
+      "id": 29,
+      "slug": "guardrail-sidecar-self-correction",
+      "category": "06-reliability",
+      "category_title": "信頼性・検証・ガードレール・自律",
+      "title": "Guardrail Sidecar + Self-Correction｜ガードレール",
+      "tagline": "入出力検査し誤りを自己修正",
+      "forces": [
+        "F5",
+        "F4"
+      ],
+      "related": [
+        30,
+        28,
+        44
+      ],
+      "dials": [
+        "guardrail-strictness"
+      ],
+      "tradeoffs": [
+        "inline-vs-post-verification"
+      ],
+      "when_to_use": "公開チャットボット、外部API入力、コンプライアンス要件、自動修正が許容",
+      "when_not": [
+        "内部信頼入力のみ",
+        "リアルタイムゼロレイテンシ要求",
+        "オフラインバッチ"
+      ],
+      "element_tech": [
+        "Guardrails AI",
+        "NeMo Guardrails",
+        "LLM-Guard",
+        "PII検出",
+        "有害分類器"
+      ]
+    },
+    {
+      "id": 30,
+      "slug": "policy-as-code-guardrail",
+      "category": "06-reliability",
+      "category_title": "信頼性・検証・ガードレール・自律",
+      "title": "Policy-as-Code Guardrail｜ポリシー・アズ・コード",
+      "tagline": "制約をコード化し別途判定",
+      "forces": [
+        "F2",
+        "F8"
+      ],
+      "related": [
+        29,
+        18,
+        52
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "prompt-vs-code"
+      ],
+      "when_to_use": "金融・医療・法務の高失敗コスト操作、監査証跡が必要、決定論的ルールが可能",
+      "when_not": [
+        "曖昧なルール（トーン判断）",
+        "形式が曖昧なドメイン"
+      ],
+      "element_tech": [
+        "OPA/Rego",
+        "Google CEL",
+        "AWS Cedar",
+        "Python関数",
+        "Git管理",
+        "ポリシーテストスイート"
+      ]
+    },
+    {
+      "id": 31,
+      "slug": "human-approval-checkpoint",
+      "category": "06-reliability",
+      "category_title": "信頼性・検証・ガードレール・自律",
+      "title": "Human Approval Checkpoint｜人間承認チェックポイント",
+      "tagline": "高リスク前に人間承認",
+      "forces": [
+        "F2",
+        "F1"
+      ],
+      "related": [
+        57,
+        19,
+        6
+      ],
+      "dials": [
+        "autonomy-level",
+        "hitl-frequency"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "金融、インフラ変更、顧客メール送信、契約確認",
+      "when_not": [
+        "リアルタイムチャット",
+        "人間不在（#30の自動化に切替）",
+        "読み取り専用"
+      ],
+      "element_tech": [
+        "Durable Session",
+        "Slack/Teams/email通知",
+        "承認UIダッシュボード",
+        "RBAC",
+        "タイムアウトロジック"
+      ]
+    },
+    {
+      "id": 32,
+      "slug": "agent-trace",
+      "category": "07-observability",
+      "category_title": "観測性・監査・評価",
+      "title": "Agent Trace｜エージェントトレース",
+      "tagline": "全ステップを追記ログ化・再生",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        54,
+        33,
+        35
+      ],
+      "dials": [
+        "trace-sampling-rate"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "マルチステップエージェント、規制監査、モデル/ツール組合せの複雑なシステム",
+      "when_not": [
+        "単一呼び出しステートレスAPI",
+        "標準アプリログで十分"
+      ],
+      "element_tech": [
+        "OpenTelemetry",
+        "Langfuse",
+        "LangSmith",
+        "Arize Phoenix",
+        "ClickHouse",
+        "BigQuery",
+        "S3+Parquet"
+      ]
+    },
+    {
+      "id": 33,
+      "slug": "version-pinning",
+      "category": "07-observability",
+      "category_title": "観測性・監査・評価",
+      "title": "Prompt/Model/Tool Version Pinning｜バージョン固定",
+      "tagline": "プロンプト/モデル/ツールを固定",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        34,
+        32,
+        35
+      ],
+      "dials": [
+        "prompt-storage"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "本番エージェント、マルチモデル比較、モデル自動アップグレードリスク",
+      "when_not": [
+        "実験的プロトタイプで常に最新が好ましい"
+      ],
+      "element_tech": [
+        "Git tag+hash",
+        "Langfuse Registry",
+        "Humanloop",
+        "モデルスナップショットID",
+        "Docker image tag"
+      ]
+    },
+    {
+      "id": 34,
+      "slug": "evaluation-ci-cd",
+      "category": "07-observability",
+      "category_title": "観測性・監査・評価",
+      "title": "Evaluation CI/CD｜評価CI/CD",
+      "tagline": "変更毎に自動評価で回帰検知",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        33,
+        35,
+        36
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "週次以上のプロンプト/モデル更新、品質SLA、複数人編集",
+      "when_not": [
+        "初期プロトタイプ（時期尚早なコスト）",
+        "単独操作者の手動チューニング"
+      ],
+      "element_tech": [
+        "promptfoo",
+        "Braintrust",
+        "Langfuse Eval",
+        "GitHub Actions",
+        "LLM-as-Judge"
+      ]
+    },
+    {
+      "id": 35,
+      "slug": "production-replay",
+      "category": "07-observability",
+      "category_title": "観測性・監査・評価",
+      "title": "Production Replay｜本番リプレイ",
+      "tagline": "本番ログを再生し新旧比較",
+      "forces": [
+        "F8",
+        "F9"
+      ],
+      "related": [
+        32,
+        34,
+        33,
+        36
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "大規模モデル/プロンプト更新、プロバイダ切替、評価データセットの陳腐化",
+      "when_not": [
+        "機密PIIの高マスクコスト",
+        "トレース履歴なし"
+      ],
+      "element_tech": [
+        "BigQuery/ClickHouse抽出",
+        "promptfoo/Braintrust replay",
+        "LLM-as-Judge",
+        "Presidio/DLP マスキング"
+      ]
+    },
+    {
+      "id": 36,
+      "slug": "shadow-canary-deployment",
+      "category": "07-observability",
+      "category_title": "観測性・監査・評価",
+      "title": "Shadow / Canary Deployment｜シャドー／カナリア",
+      "tagline": "段階投入と自動ロールバック",
+      "forces": [
+        "F9"
+      ],
+      "related": [
+        34,
+        35,
+        33
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "十分な本番ボリューム、厳格なSLA、モデルアップグレード/プロンプト大幅改修",
+      "when_not": [
+        "低リクエスト量",
+        "副作用の読み取り専用モックが複雑",
+        "全タスク均一"
+      ],
+      "element_tech": [
+        "Envoy/Istio/ALB weighted routing",
+        "LaunchDarkly",
+        "Datadog/Prometheus",
+        "Argo Rollouts",
+        "Flagger"
+      ]
+    },
+    {
+      "id": 37,
+      "slug": "semantic-gateway-cost-aware-router",
+      "category": "08-cost-scaling",
+      "category_title": "コスト・性能・スケーリング",
+      "title": "Semantic Gateway & Cost-Aware Router｜動的ルーティング",
+      "tagline": "難易度でモデルを動的選択",
+      "forces": [
+        "F7",
+        "F3"
+      ],
+      "related": [
+        56,
+        40,
+        38
+      ],
+      "dials": [
+        "model-tier-routing"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "難易度分布が広い（70%簡単、30%複雑）、月間コスト上限あり",
+      "when_not": [
+        "均一な難易度分布",
+        "誤ルーティングの許容度が低い"
+      ],
+      "element_tech": [
+        "Martian",
+        "Unify",
+        "OpenRouter",
+        "小型LLM/fasttext分類器",
+        "LiteLLM",
+        "Helicone"
+      ]
+    },
+    {
+      "id": 38,
+      "slug": "semantic-result-cache",
+      "category": "08-cost-scaling",
+      "category_title": "コスト・性能・スケーリング",
+      "title": "Semantic Result Cache｜セマンティック結果キャッシュ",
+      "tagline": "意味的に近い結果を再利用",
+      "forces": [
+        "F4",
+        "F7"
+      ],
+      "related": [
+        39,
+        37,
+        24
+      ],
+      "dials": [
+        "cache-similarity"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "繰り返しFAQ的クエリ、カスタマーサポート、ドキュメント検索",
+      "when_not": [
+        "コンテキスト依存（ユーザー状態、リアルタイム）",
+        "鮮度重視（株価・ニュース）"
+      ],
+      "element_tech": [
+        "OpenAI/Cohere Embedding",
+        "Redis VSS",
+        "Pinecone",
+        "pgvector",
+        "GPTCache",
+        "LangChain SemanticCache"
+      ]
+    },
+    {
+      "id": 39,
+      "slug": "prompt-cache-optimized-context",
+      "category": "08-cost-scaling",
+      "category_title": "コスト・性能・スケーリング",
+      "title": "Prompt Cache Optimized Context｜プロンプトキャッシュ",
+      "tagline": "共通prefixでキャッシュを効かせる",
+      "forces": [
+        "F7",
+        "F4"
+      ],
+      "related": [
+        38,
+        24,
+        37
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "長いシステムプロンプト/few-shot例、同カテゴリのバッチリクエスト、大量RAGコンテキスト",
+      "when_not": [
+        "リクエスト毎に構造が大きく異なる",
+        "プロバイダがキャッシュ非対応",
+        "prefix短すぎ"
+      ],
+      "element_tech": [
+        "Anthropic Prompt Caching",
+        "OpenAI Automatic",
+        "Google Context Caching"
+      ]
+    },
+    {
+      "id": 40,
+      "slug": "fallback-graceful-degradation",
+      "category": "08-cost-scaling",
+      "category_title": "コスト・性能・スケーリング",
+      "title": "Fallback & Graceful Degradation｜フォールバック縮退",
+      "tagline": "障害時に段階縮退で継続",
+      "forces": [
+        "F9"
+      ],
+      "related": [
+        37,
+        38,
+        36
+      ],
+      "dials": [
+        "retry-count"
+      ],
+      "tradeoffs": [
+        "fail-fast-vs-degradation"
+      ],
+      "when_to_use": "厳格なSLA、マルチプロバイダ利用可能、24/7運用（サポート・ワークフロー自動化）",
+      "when_not": [
+        "単一プロバイダ固定",
+        "専門モデルのみ成功可能（特化モデル依存）"
+      ],
+      "element_tech": [
+        "LiteLLM Fallback",
+        "Portkey Gateway",
+        "resilience4j/Polly",
+        "サーキットブレーカー"
+      ]
+    },
+    {
+      "id": 41,
+      "slug": "tenant-isolated-agent-runtime",
+      "category": "09-security",
+      "category_title": "セキュリティ・マルチテナント",
+      "title": "Tenant-Isolated Agent Runtime｜テナント分離ランタイム",
+      "tagline": "テナント毎に実行・記憶を分離",
+      "forces": [
+        "F5",
+        "F8"
+      ],
+      "related": [
+        42,
+        43,
+        18
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "マルチテナントSaaS、規制業種（金融・医療）、数百規模のテナント",
+      "when_not": [
+        "シングルテナント社内ツール",
+        "数千テナントでコスト禁止的"
+      ],
+      "element_tech": [
+        "Kubernetes Namespace",
+        "Firecracker",
+        "gVisor",
+        "Row-Level Security",
+        "OPA/Cedar"
+      ]
+    },
+    {
+      "id": 42,
+      "slug": "data-boundary-firewall",
+      "category": "09-security",
+      "category_title": "セキュリティ・マルチテナント",
+      "title": "Data Boundary Firewall｜データ境界ファイアウォール",
+      "tagline": "入出力でPII/機密を検査・マスク",
+      "forces": [
+        "F5",
+        "F8"
+      ],
+      "related": [
+        41,
+        29,
+        17
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "PII/健康/金融データを扱うエージェント、外部LLM API、GDPR/規制対象",
+      "when_not": [
+        "公開データのみ",
+        "マスキングがビジネスロジックを破壊"
+      ],
+      "element_tech": [
+        "Presidio",
+        "DLP",
+        "spaCy NER",
+        "PIIマスキング",
+        "OPA/Rego",
+        "監査イベントログ"
+      ]
+    },
+    {
+      "id": 43,
+      "slug": "confused-deputy-damage-limitation",
+      "category": "09-security",
+      "category_title": "セキュリティ・マルチテナント",
+      "title": "Confused-Deputy Damage Limitation｜被害限定",
+      "tagline": "騙されても被害半径を制限",
+      "forces": [
+        "F5"
+      ],
+      "related": [
+        44,
+        41,
+        18,
+        4
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "外部データ処理（メール・Web・ユーザー入力）、高インパクトツールアクセス",
+      "when_not": [
+        "読み取り専用で副作用なし",
+        "信頼境界が明確（全て内部）"
+      ],
+      "element_tech": [
+        "最小権限",
+        "レートリミッタ/金額上限",
+        "承認キュー",
+        "コンテナ隔離/RLS"
+      ]
+    },
+    {
+      "id": 44,
+      "slug": "dual-llm-privilege-separation",
+      "category": "09-security",
+      "category_title": "セキュリティ・マルチテナント",
+      "title": "Dual-LLM Privilege Separation｜デュアルLLM権限分離",
+      "tagline": "隔離LLMと特権LLMを分離",
+      "forces": [
+        "F5",
+        "F2"
+      ],
+      "related": [
+        43,
+        15,
+        20
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "信頼できない入力→ツールチェーン、高リスク副作用（決済・削除・通知）",
+      "when_not": [
+        "信頼入力のクローズド環境",
+        "2LLMデュアルパスのレイテンシ/コスト不許容"
+      ],
+      "element_tech": [
+        "隔離LLM（小型/サンドボックス）",
+        "スキーマバリデーション",
+        "特権LLM（ツール実行）"
+      ]
+    },
+    {
+      "id": 45,
+      "slug": "agent-runtime-abstraction",
+      "category": "10-deployment",
+      "category_title": "デプロイ・ベンダー抽象化・移行",
+      "title": "Agent Runtime Abstraction｜ランタイム抽象化",
+      "tagline": "実行基盤を差替可能に",
+      "forces": [
+        "F9",
+        "F8"
+      ],
+      "related": [
+        46,
+        47,
+        48
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "build-vs-buy"
+      ],
+      "when_to_use": "複数年の本番運用、マルチフレームワーク評価、将来のベンダーリスク",
+      "when_not": [
+        "PoC/短期",
+        "フレームワーク固有機能への重依存",
+        "スピード優先プロトタイプ"
+      ],
+      "element_tech": [
+        "Python Protocol/ABC",
+        "TypeScript interface",
+        "DI (dependency-injector/tsyringe)",
+        "LangChain/LangGraph/OpenAI SDK/Semantic Kernel"
+      ]
+    },
+    {
+      "id": 46,
+      "slug": "model-behavior-compatibility-layer",
+      "category": "10-deployment",
+      "category_title": "デプロイ・ベンダー抽象化・移行",
+      "title": "Model Behavior Compatibility Layer｜互換レイヤー",
+      "tagline": "モデル差を吸収する互換層",
+      "forces": [
+        "F9"
+      ],
+      "related": [
+        45,
+        40,
+        37
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "single-vs-multi-provider"
+      ],
+      "when_to_use": "マルチモデル運用/比較、プロバイダフォールバック、コスト動的ルーティング",
+      "when_not": [
+        "単一ベンダーロックイン許容",
+        "ベンダー固有API最大活用"
+      ],
+      "element_tech": [
+        "LiteLLM",
+        "OpenRouter",
+        "AI SDK (Vercel)",
+        "アダプタラッパー",
+        "ゴールデンテスト回帰"
+      ]
+    },
+    {
+      "id": 47,
+      "slug": "agent-capability-registry",
+      "category": "10-deployment",
+      "category_title": "デプロイ・ベンダー抽象化・移行",
+      "title": "Agent Capability Registry｜能力レジストリ",
+      "tagline": "能力・権限・コストを台帳管理",
+      "forces": [
+        "F8"
+      ],
+      "related": [
+        45,
+        9,
+        37
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "10以上のエージェント運用、監査/コンプライアンス要件、エージェントコスト/SLA可視化",
+      "when_not": [
+        "1–3エージェントで設定ファイル十分",
+        "ディスカバリ不要"
+      ],
+      "element_tech": [
+        "PostgreSQL/DynamoDB",
+        "etcd/Consul",
+        "gRPC/REST",
+        "管理ダッシュボード"
+      ]
+    },
+    {
+      "id": 48,
+      "slug": "strangler-fig",
+      "category": "10-deployment",
+      "category_title": "デプロイ・ベンダー抽象化・移行",
+      "title": "Strangler Fig｜段階的置換",
+      "tagline": "既存処理を段階的に置換",
+      "forces": [
+        "F2",
+        "F8"
+      ],
+      "related": [
+        36,
+        45,
+        40
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "既存システムのエージェント置換（段階的リスク管理）、ルールベース→AI段階移行",
+      "when_not": [
+        "グリーンフィールド新規",
+        "全か無かの結合",
+        "カテゴリ分割不可能"
+      ],
+      "element_tech": [
+        "Feature Flag (LaunchDarkly/Unleash)",
+        "Production Replay比較",
+        "Eval CI/CD",
+        "フォールバック"
+      ]
+    },
+    {
+      "id": 49,
+      "slug": "agent-workbench",
+      "category": "11-ux",
+      "category_title": "UI/UX・人間協調",
+      "title": "Agent Workbench｜エージェントワークベンチ",
+      "tagline": "計画/進捗/承認を一画面管理",
+      "forces": [
+        "F4"
+      ],
+      "related": [
+        50,
+        51,
+        7,
+        31
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "マルチステップ5分以上のタスク（調査・コード・分析）、途中承認が必要なワークフロー",
+      "when_not": [
+        "単発Q&A",
+        "秒で完了するタスク",
+        "チャットのみで十分"
+      ],
+      "element_tech": [
+        "React/Next.js",
+        "SSE/WebSocket",
+        "計画/進捗/成果物/承認パネル"
+      ]
+    },
+    {
+      "id": 50,
+      "slug": "editable-plan",
+      "category": "11-ux",
+      "category_title": "UI/UX・人間協調",
+      "title": "Editable Plan｜編集可能プラン",
+      "tagline": "実行前に計画を人が編集",
+      "forces": [
+        "F6"
+      ],
+      "related": [
+        49,
+        8,
+        51
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "plan-vs-react"
+      ],
+      "when_to_use": "マルチステップ、手順が変動、再実行コストが高い",
+      "when_not": [
+        "1–2ステップの自動化",
+        "リアルタイムゼロレビュー要求",
+        "完全自律バッチ"
+      ],
+      "element_tech": [
+        "JSON/YAMLプラン構造",
+        "ドラッグ&ドロップ",
+        "インライン編集",
+        "再計画提案ループ"
+      ]
+    },
+    {
+      "id": 51,
+      "slug": "agent-to-human-escalation",
+      "category": "11-ux",
+      "category_title": "UI/UX・人間協調",
+      "title": "Agent-to-Human Escalation｜人間へのエスカレーション",
+      "tagline": "自信/権限不足で人間へ引き継ぎ",
+      "forces": [
+        "F2",
+        "F4"
+      ],
+      "related": [
+        31,
+        49,
+        57
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "サポート/法務/医療ドメイン、不確実→エスカレーションが推測より良い、専門家判断が必要",
+      "when_not": [
+        "オフラインバッチで人間不在",
+        "信頼度が常に高い（低複雑度）"
+      ],
+      "element_tech": [
+        "信頼度スコア/self-assess",
+        "Slack/Teams/email通知",
+        "構造化コンテキスト引継ぎ",
+        "SLA応答モニター"
+      ]
+    },
+    {
+      "id": 52,
+      "slug": "agent-constitution",
+      "category": "12-governance",
+      "category_title": "組織・ガバナンス・ライフサイクル",
+      "title": "Agent Constitution｜エージェント憲法",
+      "tagline": "行動原則を体系的に展開",
+      "forces": [
+        "F8",
+        "F2"
+      ],
+      "related": [
+        30,
+        53,
+        33
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "マルチエージェント組織、規制業種、監査証跡が必要、行動一貫性が重要",
+      "when_not": [
+        "シングルエージェント実験",
+        "原則がまだ形成途中（まず学習段階）"
+      ],
+      "element_tech": [
+        "YAML/JSON原則階層",
+        "Git管理",
+        "Jinja2テンプレートエンジン",
+        "ポリシーエンジン"
+      ]
+    },
+    {
+      "id": 53,
+      "slug": "agent-change-management",
+      "category": "12-governance",
+      "category_title": "組織・ガバナンス・ライフサイクル",
+      "title": "Agent Change Management｜エージェント変更管理",
+      "tagline": "変更を厳格なCI/カナリア対象に",
+      "forces": [
+        "F8",
+        "F9"
+      ],
+      "related": [
+        34,
+        36,
+        52,
+        33
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "本番エージェント運用、複数人開発、規制上の変更ログが必要",
+      "when_not": [
+        "高速イテレーションプロトタイプ",
+        "単独開発者のPoC"
+      ],
+      "element_tech": [
+        "Git（プロンプト/ポリシー/設定）",
+        "Eval CI/CD回帰",
+        "Shadow/Canary段階投入",
+        "PR承認フロー"
+      ]
+    },
+    {
+      "id": 54,
+      "slug": "tiered-observability",
+      "category": "07-observability",
+      "category_title": "観測性・監査・評価",
+      "title": "Tiered (Hot/Cold) Observability｜二層観測",
+      "tagline": "観測を高速層と安価層に二分",
+      "forces": [
+        "F8",
+        "F7"
+      ],
+      "related": [
+        32,
+        35,
+        33
+      ],
+      "dials": [
+        "trace-sampling-rate",
+        "log-retention"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "高トラフィックエージェントシステム、規制上の長期保持、コスト最適化優先",
+      "when_not": [
+        "低トラフィックで単一層で十分",
+        "超高速コールドアクセスが必要"
+      ],
+      "element_tech": [
+        "ClickHouse",
+        "Elasticsearch",
+        "Prometheus",
+        "S3+Parquet",
+        "BigQuery",
+        "Glacier",
+        "ライフサイクルポリシー"
+      ]
+    },
+    {
+      "id": 55,
+      "slug": "deadline-budget-cascade",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Deadline & Budget Cascade｜期限・予算のカスケード",
+      "tagline": "期限・予算を呼出ツリーへ伝播",
+      "forces": [
+        "F7",
+        "F3"
+      ],
+      "related": [
+        5,
+        9,
+        37
+      ],
+      "dials": [
+        "budget-cap"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "マルチエージェント構成、再帰的ツール呼び出し、SaaSの厳格なコスト制限",
+      "when_not": [
+        "単一エージェントの1ショット",
+        "オーバーヘッドが利益を超える軽量タスク"
+      ],
+      "element_tech": [
+        "gRPC metadata",
+        "HTTP header context",
+        "コンテキストオブジェクト"
+      ]
+    },
+    {
+      "id": 56,
+      "slug": "adaptive-effort",
+      "category": "08-cost-scaling",
+      "category_title": "コスト・性能・スケーリング",
+      "title": "Adaptive Effort｜適応的努力配分",
+      "tagline": "難易度で投入計算量を増減",
+      "forces": [
+        "F7",
+        "F2"
+      ],
+      "related": [
+        37,
+        5,
+        28
+      ],
+      "dials": [],
+      "tradeoffs": [],
+      "when_to_use": "難易度が変動するワークロード、thinking-budget API利用可能、コスト制約下の品質柔軟性",
+      "when_not": [
+        "均一な複雑さ",
+        "常に最大努力が必要（医療診断）",
+        "コスト>>品質"
+      ],
+      "element_tech": [
+        "軽量難易度分類器",
+        "Anthropic thinking budget",
+        "OpenAI reasoning effort",
+        "動的 max_tokens"
+      ]
+    },
+    {
+      "id": 57,
+      "slug": "autonomy-ladder",
+      "category": "06-reliability",
+      "category_title": "信頼性・検証・ガードレール・自律",
+      "title": "Autonomy Ladder｜自律性のはしご",
+      "tagline": "実績に応じ自律性を段階的に昇格",
+      "forces": [
+        "F1",
+        "F2"
+      ],
+      "related": [
+        31,
+        5,
+        51
+      ],
+      "dials": [
+        "autonomy-level"
+      ],
+      "tradeoffs": [],
+      "when_to_use": "エージェント権限の段階的ロールアウト、タスク種別ごとにリスクレベルが異なる",
+      "when_not": [
+        "固定要件（常にL1またはL3）",
+        "統計に十分なタスク量がない"
+      ],
+      "element_tech": [
+        "Feature Flag (LaunchDarkly/Unleash)",
+        "成功/失敗カウンタ",
+        "信頼区間スコアリング"
+      ]
+    },
+    {
+      "id": 58,
+      "slug": "sync-facade-over-async-core",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Sync Facade over Async Core｜同期ファサード",
+      "tagline": "短ければ同期、超えたら非同期へ昇格",
+      "forces": [
+        "F4",
+        "F1"
+      ],
+      "related": [
+        1,
+        2,
+        7
+      ],
+      "dials": [
+        "timeout"
+      ],
+      "tradeoffs": [
+        "sync-vs-async"
+      ],
+      "when_to_use": "軽い挨拶と重い調査が同じエンドポイントに混在するハイブリッドワークロード",
+      "when_not": [
+        "一様に高速または低速",
+        "全非同期専用クライアント設計"
+      ],
+      "element_tech": [
+        "FastAPI asyncio.wait_for",
+        "Next.js AbortController"
+      ]
+    },
+    {
+      "id": 59,
+      "slug": "workflow-agent-spectrum-selector",
+      "category": "01-execution",
+      "category_title": "実行・セッション・オーケストレーション",
+      "title": "Workflow–Agent Spectrum Selector｜選定メタ",
+      "tagline": "サブタスク毎に決定論↔自律を選定",
+      "forces": [
+        "F6",
+        "F2"
+      ],
+      "related": [
+        3,
+        11,
+        57,
+        48
+      ],
+      "dials": [],
+      "tradeoffs": [
+        "workflow-vs-agent"
+      ],
+      "when_to_use": "複数サブタスクのシステム設計、定型と探索が混在するタスク",
+      "when_not": [
+        "単一タスクの自明なケース",
+        "全て明確に定型または探索"
+      ],
+      "element_tech": [
+        "スコアリングマトリクス",
+        "動的分類器"
+      ]
+    }
+  ]
+}

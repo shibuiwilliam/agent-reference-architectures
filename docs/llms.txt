@@ -1,0 +1,131 @@
+# AIエージェント本番アーキテクチャ・パターン
+
+> 確率的なコアを、決定論的な殻——契約・検証・予算・権限・観測——で囲む。
+> Version: 1.0.0
+
+## 土台（Foundations）
+
+- [駆動変数（フォース）F1–F9](https://shibuiwilliam.github.io/agent-reference-architectures/foundations/forces/): パターンの程度と選定を決める9つの環境変数
+- [特性](https://shibuiwilliam.github.io/agent-reference-architectures/foundations/characteristics/): AIエージェントの非決定論的特性
+
+## 意思決定層（Decisions）
+
+- [意思決定の進め方](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/decision-flow/): フォース評価→二者択一→ダイヤル→パターン選定
+- [程度（チューニング）ダイヤル](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/tuning-dials/): 20のパラメータとその目安値
+- [相反する仕組みの選定基準](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/tradeoffs/): 16の二者択一カタログ
+- [フォース別逆引き](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/by-force/): フォースから関連パターン・ダイヤル・二者択一を引く
+- [通し例](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/worked-examples/): 3システムの一気通貫例
+- [パラメータ化](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/parameterization/): パターンのパラメータ化の考え方
+
+## パターン（59 Patterns）
+
+### I. 実行・セッション・オーケストレーション
+
+- [#1 Request-to-Job Gateway｜非同期受付ゲートウェイ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/01-request-to-job-gateway/): 1リクエストを非同期ジョブとして受け付ける [F4, F1]
+- [#2 Durable Agent Session｜耐久エージェントセッション](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/02-durable-agent-session/): 状態を永続化し中断・再開に耐える [F1]
+- [#3 Workflow Backbone + Agent Node｜決定論骨格＋ノード](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/03-workflow-backbone-agent-node/): 骨格は決定論、判断だけ委譲 [F6, F8]
+- [#4 Agent Saga｜補償トランザクション](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/04-agent-saga/): 副作用連鎖を補償で巻き戻す [F1, F2]
+- [#5 Time-Budgeted Agent Loop｜予算付きループ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/05-time-budgeted-agent-loop/): 時間・回数・コストを予算化し暴走を止める [F7, F3]
+- [#6 Interruptible Agent｜中断可能エージェント](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/06-interruptible-agent/): 途中で停止・方針修正できる [F4]
+- [#7 Streaming Progress｜進捗ストリーミング](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/07-streaming-progress/): 過程を監査可能な要約で逐次表示 [F4]
+- [#55 Deadline & Budget Cascade｜期限・予算のカスケード](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/55-deadline-budget-cascade/): 期限・予算を呼出ツリーへ伝播 [F7, F3]
+- [#58 Sync Facade over Async Core｜同期ファサード](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/58-sync-facade-over-async-core/): 短ければ同期、超えたら非同期へ昇格 [F4, F1]
+- [#59 Workflow–Agent Spectrum Selector｜選定メタ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/01-execution/59-workflow-agent-spectrum-selector/): サブタスク毎に決定論↔自律を選定 [F6, F2]
+
+### II. エージェント構成・分担
+
+- [#8 Planner-Executor-Reviewer｜計画・実行・検証の分離](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/02-composition/08-planner-executor-reviewer/): 計画/実行/検証を別ロールに分ける [F2, F3]
+- [#9 Supervisor & Specialist Agents｜統括と専門](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/02-composition/09-supervisor-specialist-agents/): 統括役が専門役へ委譲する [F6, F7]
+- [#10 Agent Ensemble & Debate｜アンサンブル・討論](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/02-composition/10-agent-ensemble-debate/): 複数で解き合議・討論で頑健化 [F2, F3]
+- [#11 Deterministic Core, Probabilistic Edge｜決定論コア](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/02-composition/11-deterministic-core-probabilistic-edge/): 中核は決定論、周辺だけAI [F2, F8]
+- [#12 Blackboard｜共有黒板](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/02-composition/12-blackboard/): 共有黒板で疎結合に協調 [F6]
+
+### III. 入出力・契約化
+
+- [#13 Natural Language Boundary Adapter｜自然言語境界](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/03-io-contract/13-natural-language-boundary-adapter/): 自然言語を構造化意図へ変換 [F5]
+- [#14 Structured Output Contract｜構造化出力契約](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/03-io-contract/14-structured-output-contract/): 出力をスキーマで契約化 [F8]
+- [#15 Inverted Structured Output｜反転構造化出力](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/03-io-contract/15-inverted-structured-output/): 最終実行でなく中間判断を出させる [F2]
+- [#16 Ambiguity Negotiation｜曖昧性交渉](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/03-io-contract/16-ambiguity-negotiation/): 曖昧なら確認してから実行 [F1, F2]
+
+### IV. ツール・MCP・外部システム接続
+
+- [#17 Tool / MCP Gateway｜ツール・MCPゲートウェイ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/04-tools-mcp/17-tool-mcp-gateway/): ツール接続を集約し認可・監査 [F5, F8]
+- [#18 Least-Privilege Tool Binding｜最小権限バインディング](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/04-tools-mcp/18-least-privilege-tool-binding/): セッション毎に最小権限を束縛 [F5, F2]
+- [#19 Dry-Run First Tool Execution｜ドライラン優先実行](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/04-tools-mcp/19-dry-run-first-tool-execution/): 副作用はまず模擬実行→承認 [F1, F2]
+- [#20 Sandboxed Tool Runtime｜サンドボックス実行](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/04-tools-mcp/20-sandboxed-tool-runtime/): コード/操作を隔離環境で実行 [F5]
+- [#21 MCP Adapter Isolation｜MCPアダプタ分離](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/04-tools-mcp/21-mcp-adapter-isolation/): MCPを信頼境界ごとに分離 [F5, F8]
+- [#22 Anti-Corruption Layer｜アンチコラプション層](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/04-tools-mcp/22-anti-corruption-layer/): レガシーとの概念汚染を防ぐ翻訳層 [F8]
+
+### V. メモリ・コンテキスト管理
+
+- [#23 Layered Memory｜階層化メモリ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/05-memory-context/23-layered-memory/): 短期/長期/共有に記憶を階層化 [F8]
+- [#24 Context Pack / Assembly｜コンテキスト組立・RAG](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/05-memory-context/24-context-pack-assembly/): 文脈を組み立てグラウンディング [F4, F7]
+- [#25 Memory Write Gate｜メモリ書き込みゲート](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/05-memory-context/25-memory-write-gate/): 長期保存を承認制にする [F8]
+- [#26 Forgetting and Expiration｜忘却・失効](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/05-memory-context/26-forgetting-and-expiration/): 記憶に失効・鮮度を持たせる [F8]
+
+### VI. 信頼性・検証・ガードレール・自律
+
+- [#27 Evidence-First Answer｜根拠優先回答](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/06-reliability/27-evidence-first-answer/): 回答前に根拠を取得・引用 [F8]
+- [#28 Verifier Agent / Critic｜検証エージェント](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/06-reliability/28-verifier-agent-critic/): 独立した検証器で出荷前検査 [F2, F4]
+- [#29 Guardrail Sidecar + Self-Correction｜ガードレール](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/06-reliability/29-guardrail-sidecar-self-correction/): 入出力検査し誤りを自己修正 [F5, F4]
+- [#30 Policy-as-Code Guardrail｜ポリシー・アズ・コード](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/06-reliability/30-policy-as-code-guardrail/): 制約をコード化し別途判定 [F2, F8]
+- [#31 Human Approval Checkpoint｜人間承認チェックポイント](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/06-reliability/31-human-approval-checkpoint/): 高リスク前に人間承認 [F2, F1]
+- [#57 Autonomy Ladder｜自律性のはしご](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/06-reliability/57-autonomy-ladder/): 実績に応じ自律性を段階的に昇格 [F1, F2]
+
+### VII. 観測性・監査・評価
+
+- [#32 Agent Trace｜エージェントトレース](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/07-observability/32-agent-trace/): 全ステップを追記ログ化・再生 [F8]
+- [#54 Tiered (Hot/Cold) Observability｜二層観測](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/07-observability/54-tiered-observability/): 観測を高速層と安価層に二分 [F8, F7]
+- [#33 Prompt/Model/Tool Version Pinning｜バージョン固定](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/07-observability/33-version-pinning/): プロンプト/モデル/ツールを固定 [F8]
+- [#34 Evaluation CI/CD｜評価CI/CD](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/07-observability/34-evaluation-ci-cd/): 変更毎に自動評価で回帰検知 [F8]
+- [#35 Production Replay｜本番リプレイ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/07-observability/35-production-replay/): 本番ログを再生し新旧比較 [F8, F9]
+- [#36 Shadow / Canary Deployment｜シャドー／カナリア](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/07-observability/36-shadow-canary-deployment/): 段階投入と自動ロールバック [F9]
+
+### VIII. コスト・性能・スケーリング
+
+- [#37 Semantic Gateway & Cost-Aware Router｜動的ルーティング](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router/): 難易度でモデルを動的選択 [F7, F3]
+- [#38 Semantic Result Cache｜セマンティック結果キャッシュ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/08-cost-scaling/38-semantic-result-cache/): 意味的に近い結果を再利用 [F4, F7]
+- [#39 Prompt Cache Optimized Context｜プロンプトキャッシュ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/08-cost-scaling/39-prompt-cache-optimized-context/): 共通prefixでキャッシュを効かせる [F7, F4]
+- [#40 Fallback & Graceful Degradation｜フォールバック縮退](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/08-cost-scaling/40-fallback-graceful-degradation/): 障害時に段階縮退で継続 [F9]
+- [#56 Adaptive Effort｜適応的努力配分](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/08-cost-scaling/56-adaptive-effort/): 難易度で投入計算量を増減 [F7, F2]
+
+### IX. セキュリティ・マルチテナント
+
+- [#41 Tenant-Isolated Agent Runtime｜テナント分離ランタイム](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/09-security/41-tenant-isolated-agent-runtime/): テナント毎に実行・記憶を分離 [F5, F8]
+- [#42 Data Boundary Firewall｜データ境界ファイアウォール](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/09-security/42-data-boundary-firewall/): 入出力でPII/機密を検査・マスク [F5, F8]
+- [#43 Confused-Deputy Damage Limitation｜被害限定](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/09-security/43-confused-deputy-damage-limitation/): 騙されても被害半径を制限 [F5]
+- [#44 Dual-LLM Privilege Separation｜デュアルLLM権限分離](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/09-security/44-dual-llm-privilege-separation/): 隔離LLMと特権LLMを分離 [F5, F2]
+
+### X. デプロイ・ベンダー抽象化・移行
+
+- [#45 Agent Runtime Abstraction｜ランタイム抽象化](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/10-deployment/45-agent-runtime-abstraction/): 実行基盤を差替可能に [F9, F8]
+- [#46 Model Behavior Compatibility Layer｜互換レイヤー](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/10-deployment/46-model-behavior-compatibility-layer/): モデル差を吸収する互換層 [F9]
+- [#47 Agent Capability Registry｜能力レジストリ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/10-deployment/47-agent-capability-registry/): 能力・権限・コストを台帳管理 [F8]
+- [#48 Strangler Fig｜段階的置換](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/10-deployment/48-strangler-fig/): 既存処理を段階的に置換 [F2, F8]
+
+### XI. UI/UX・人間協調
+
+- [#49 Agent Workbench｜エージェントワークベンチ](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/11-ux/49-agent-workbench/): 計画/進捗/承認を一画面管理 [F4]
+- [#50 Editable Plan｜編集可能プラン](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/11-ux/50-editable-plan/): 実行前に計画を人が編集 [F6]
+- [#51 Agent-to-Human Escalation｜人間へのエスカレーション](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/11-ux/51-agent-to-human-escalation/): 自信/権限不足で人間へ引き継ぎ [F2, F4]
+
+### XII. 組織・ガバナンス・ライフサイクル
+
+- [#52 Agent Constitution｜エージェント憲法](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/12-governance/52-agent-constitution/): 行動原則を体系的に展開 [F8, F2]
+- [#53 Agent Change Management｜エージェント変更管理](https://shibuiwilliam.github.io/agent-reference-architectures/patterns/12-governance/53-agent-change-management/): 変更を厳格なCI/カナリア対象に [F8, F9]
+
+## リファレンスアーキテクチャ（Reference Architectures）
+
+- [最小構成（MVP）](https://shibuiwilliam.github.io/agent-reference-architectures/reference-architectures/01-mvp/): フォース {'F1': 'high', 'F2': 'low', 'F5': 'high', 'F7': 'low', 'F8': 'low'}
+- [副作用重視構成](https://shibuiwilliam.github.io/agent-reference-architectures/reference-architectures/02-side-effect-first/): フォース {'F1': 'low', 'F2': 'high'}
+- [信頼できない入力構成](https://shibuiwilliam.github.io/agent-reference-architectures/reference-architectures/03-untrusted-input/): フォース {'F5': 'low'}
+- [事実性重視構成](https://shibuiwilliam.github.io/agent-reference-architectures/reference-architectures/04-factuality-first/): フォース {'F2': 'high', 'F8': 'high'}
+- [コスト重視構成](https://shibuiwilliam.github.io/agent-reference-architectures/reference-architectures/05-cost-first/): フォース {'F7': 'high', 'F3': 'low'}
+- [継続改善運用構成](https://shibuiwilliam.github.io/agent-reference-architectures/reference-architectures/06-continuous-improvement/): フォース {'F8': 'high'}
+
+## 機械可読データ（Machine-Readable）
+
+- [catalog.json](https://shibuiwilliam.github.io/agent-reference-architectures/catalog.json): 全パターン・フォース・ダイヤル・二者択一・決定規則の構造化データ
+- [エージェント利用ガイド](https://shibuiwilliam.github.io/agent-reference-architectures/agent-guide/): コーディングエージェント向け利用手順
+- [提案テンプレート](https://shibuiwilliam.github.io/agent-reference-architectures/agent-proposal-template/): アーキテクチャ提案の出力様式
+
