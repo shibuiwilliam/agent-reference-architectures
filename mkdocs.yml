@@ -237,3 +237,6 @@ nav:
           - プロンプトをセキュリティ境界にする: anti-patterns/10-prompt-as-security.md
           - LLMに算術や厳密検索をやらせる: anti-patterns/11-llm-as-calculator.md
       - パターン早見表: pattern-index.md
+  - エージェント統合:
+      - コーディングエージェント向けガイド: agent-guide.md
+      - アーキテクチャ提案テンプレート: agent-proposal-template.md
