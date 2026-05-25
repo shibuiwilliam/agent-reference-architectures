@@ -73,7 +73,17 @@ nav:
   - はじめに: index.md
   - 意思決定:
       - 意思決定の進め方: decisions/decision-flow.md
-      - AIエージェントの特性: foundations/characteristics.md
+      - AIエージェントの特性:
+          - foundations/characteristics.md
+          - "[C1] 非決定論的な出力": foundations/characteristics/c1-non-determinism.md
+          - "[C2] 長時間・可変長の実行": foundations/characteristics/c2-variable-duration.md
+          - "[C3] 外部世界への副作用": foundations/characteristics/c3-side-effects.md
+          - "[C4] ハルシネーション": foundations/characteristics/c4-hallucination.md
+          - "[C5] コンテキスト窓の有限性": foundations/characteristics/c5-context-window.md
+          - "[C6] 外部LLMへの依存": foundations/characteristics/c6-external-llm-dependency.md
+          - "[C7] 攻撃面としての自然言語": foundations/characteristics/c7-attack-surface.md
+          - "[C8] トークン比例コスト": foundations/characteristics/c8-token-cost.md
+          - "[C9] モデル更新による挙動変更": foundations/characteristics/c9-model-update-drift.md
       - 駆動変数（フォース）:
           - foundations/forces.md
           - "[F1] 可逆性": foundations/forces/f1-reversibility.md

@@ -13,19 +13,45 @@ title: AIエージェントの特性
 
 パターンは「問題に対する解」である。そのため、AIエージェントのアーキテクチャパターンを理解するには、まずAIエージェントが本番環境にどのような**新しい壊れ方**を持ち込むのかを把握しておく必要がある。
 
-## 特性一覧
+## 方針
 
-| # | 特性 | 説明 | 主な対応パターン |
-|---|------|------|-----------------|
-| C1 | **非決定論的な出力** | 同じ入力でも異なる出力を返す。テスト・再現・比較が従来手法では困難 | [#14 Structured Output Contract](../patterns/03-io-contract/14-structured-output-contract.md), [#28 Verifier Agent](../patterns/06-reliability/28-verifier-agent-critic.md), [#34 Evaluation CI/CD](../patterns/07-observability/34-evaluation-ci-cd.md) |
-| C2 | **長時間・可変長の実行** | 数秒〜数十分、ステップ数も事前に読めない。HTTPタイムアウトやリソース占有の問題 | [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md), [#5 Time-Budgeted Agent Loop](../patterns/01-execution/05-time-budgeted-agent-loop.md), [#6 Interruptible Agent](../patterns/01-execution/06-interruptible-agent.md) |
-| C3 | **外部世界への副作用** | ツール呼び出しでメール送信・DB更新など不可逆な操作を行う | [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md), [#19 Dry-Run First](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md), [#31 Human Approval Checkpoint](../patterns/06-reliability/31-human-approval-checkpoint.md) |
-| C4 | **ハルシネーション** | 事実と異なる情報を自信を持って生成する | [#27 Evidence-First Answer](../patterns/06-reliability/27-evidence-first-answer.md), [#29 Guardrail Sidecar](../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) |
-| C5 | **コンテキスト窓の有限性** | 入力長に制限があり、長い会話や大量の文書を一度に扱えない | [#23 Layered Memory](../patterns/05-memory-context/23-layered-memory.md), [#24 Context Pack](../patterns/05-memory-context/24-context-pack-assembly.md), [#26 Forgetting and Expiration](../patterns/05-memory-context/26-forgetting-and-expiration.md) |
-| C6 | **外部LLMへの依存** | 推論エンジンが外部サービス。レイテンシ・可用性・価格が自社で制御できない | [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md), [#40 Fallback](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md), [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md) |
-| C7 | **自然言語インターフェース＝攻撃面** | プロンプトインジェクション・データ漏洩など新しい攻撃ベクトル | [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md), [#43 Confused-Deputy](../patterns/09-security/43-confused-deputy-damage-limitation.md), [#44 Dual-LLM Privilege Separation](../patterns/09-security/44-dual-llm-privilege-separation.md) |
-| C8 | **コストが入力/出力量に比例** | トークン課金のため、使い方次第でコストが桁違いに変動する | [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md), [#39 Prompt Cache](../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md), [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) |
-| C9 | **挙動変更＝モデル更新** | コード変更なしにモデル更新で挙動が変わる。従来のCI/CDでは検知できない | [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md), [#35 Production Replay](../patterns/07-observability/35-production-replay.md), [#36 Shadow/Canary Deployment](../patterns/07-observability/36-shadow-canary-deployment.md) |
+特性はパターン選定の**前提**である。「なぜこのパターンが必要か」を説明する根拠として使う。特性を把握せずにパターンを適用すると、不要な防波堤を立てて複雑性だけが増す、あるいは必要な防波堤を見落として本番障害を招く、といった事態になりかねない。
+
+特性のリスク度合いはシステムの文脈——すなわち [駆動変数（フォース）](forces.md) によって決まる。同じ特性であっても、フォースの値域が変われば対処の優先度は異なる。
+
+## 特性の分類
+
+9つの特性は3つのグループに分類できる。
+
+### 出力の不確実性
+
+AIエージェントの出力が従来のソフトウェアと根本的に異なる点。テスト・検証・品質保証に影響する。
+
+| # | 特性 | 壊れ方 | 詳細 |
+|---|------|--------|------|
+| C1 | **非決定論的な出力** | テスト・再現・比較が従来手法では困難 | [→](characteristics/c1-non-determinism.md) |
+| C4 | **ハルシネーション** | 事実と異なる情報を自信を持って生成する | [→](characteristics/c4-hallucination.md) |
+| C9 | **挙動変更＝モデル更新** | コード変更なしにモデル更新で挙動が変わる | [→](characteristics/c9-model-update-drift.md) |
+
+### 実行の予測不能性
+
+処理時間・副作用・リソース消費が事前に読めない。運用・スケーリング・安全性に影響する。
+
+| # | 特性 | 壊れ方 | 詳細 |
+|---|------|--------|------|
+| C2 | **長時間・可変長の実行** | HTTPタイムアウトやリソース占有 | [→](characteristics/c2-variable-duration.md) |
+| C3 | **外部世界への副作用** | 不可逆な操作を意図せず実行する | [→](characteristics/c3-side-effects.md) |
+| C5 | **コンテキスト窓の有限性** | 長い会話や大量の文書を一度に扱えない | [→](characteristics/c5-context-window.md) |
+
+### 外部依存とコスト
+
+外部サービスへの依存と、それに伴うコスト・セキュリティ・可用性の課題。
+
+| # | 特性 | 壊れ方 | 詳細 |
+|---|------|--------|------|
+| C6 | **外部LLMへの依存** | レイテンシ・可用性・価格が自社で制御できない | [→](characteristics/c6-external-llm-dependency.md) |
+| C7 | **自然言語インターフェース＝攻撃面** | プロンプトインジェクション等の新しい攻撃ベクトル | [→](characteristics/c7-attack-surface.md) |
+| C8 | **コストが入力/出力量に比例** | 使い方次第でコストが桁違いに変動する | [→](characteristics/c8-token-cost.md) |
 
 ## 特性と駆動変数の関係
 
