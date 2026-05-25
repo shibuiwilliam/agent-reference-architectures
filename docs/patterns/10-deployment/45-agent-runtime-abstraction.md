@@ -11,6 +11,26 @@ tags:
 !!! abstract "一言"
     エージェントの実行基盤を抽象化し、特定フレームワークやSDKへのロックインを防ぐ。
 
+
+<!-- BEGIN:GEN:meta -->
+<details markdown="1">
+<summary>メタデータ（機械可読） — #45 Agent Runtime Abstraction｜ランタイム抽象化</summary>
+
+| 項目 | 値 |
+|------|-----|
+| **ID** | 45 |
+| **カテゴリ** | 10-deployment — デプロイ・ベンダー抽象化・移行 |
+| **フォース** | `[F9]`, `[F8]` |
+| **ダイヤル** | — |
+| **二者択一** | build-vs-buy |
+| **関連パターン** | #46, #47, #48 |
+| **向き** | 複数年の本番運用、マルチフレームワーク評価、将来のベンダーリスク |
+| **不向き** | PoC/短期; フレームワーク固有機能への重依存; スピード優先プロトタイプ |
+| **要素技術** | Python Protocol/ABC, TypeScript interface, DI (dependency-injector/tsyringe), LangChain/LangGraph/OpenAI SDK/Semantic Kernel |
+
+</details>
+<!-- END:GEN:meta -->
+
 ## 概要
 
 半年前に選んだエージェントフレームワークの開発が停滞し、セキュリティパッチも出なくなった――フレームワークのライフサイクルが短いこの領域では、こうした事態は珍しくない。コードベース全体がそのSDKに密結合していたら、移行は大規模な書き換えになってしまう。

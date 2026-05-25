@@ -11,6 +11,26 @@ tags:
 !!! abstract "一言"
     1リクエストを同期APIでなく**非同期ジョブ**として受け付け、実処理をWebのライフサイクルから切り離す。
 
+
+<!-- BEGIN:GEN:meta -->
+<details markdown="1">
+<summary>メタデータ（機械可読） — #1 Request-to-Job Gateway｜非同期受付ゲートウェイ</summary>
+
+| 項目 | 値 |
+|------|-----|
+| **ID** | 1 |
+| **カテゴリ** | 01-execution — 実行・セッション・オーケストレーション |
+| **フォース** | `[F4]`, `[F1]` |
+| **ダイヤル** | timeout |
+| **二者択一** | sync-vs-async, push-vs-pull |
+| **関連パターン** | #2, #7, #58 |
+| **向き** | マルチステップの調査・コンテンツ生成・分析など、数秒〜数分かかるタスク |
+| **不向き** | F4=低（数秒以内に同期で完了できるタスク） |
+| **要素技術** | FastAPI, Next.js API Routes, SQS, Cloud Pub/Sub, Kafka, Cloud Tasks, Celery, Redis, PostgreSQL, SSE, WebSocket |
+
+</details>
+<!-- END:GEN:meta -->
+
 ## 概要
 
 AIエージェントにリサーチや資料作成を任せると、処理に数分以上かかることも珍しくない。これを通常のHTTPリクエストのように同期で待つと、ロードバランサやプロキシのタイムアウトで途中切断されてしまう。

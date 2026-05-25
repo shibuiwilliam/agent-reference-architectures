@@ -11,6 +11,26 @@ tags:
 !!! abstract "一言"
     MCP サーバー（アダプタ）を**信頼境界ごとに独立したプロセス・コンテナに分離**し、侵害の横展開を防ぐ。
 
+
+<!-- BEGIN:GEN:meta -->
+<details markdown="1">
+<summary>メタデータ（機械可読） — #21 MCP Adapter Isolation｜MCPアダプタ分離</summary>
+
+| 項目 | 値 |
+|------|-----|
+| **ID** | 21 |
+| **カテゴリ** | 04-tools-mcp — ツール・MCP・外部システム接続 |
+| **フォース** | `[F5]`, `[F8]` |
+| **ダイヤル** | — |
+| **二者択一** | — |
+| **関連パターン** | #17, #20, #41 |
+| **向き** | 信頼度が異なるアダプタの混在（内部DB＋外部API）、PCI-DSS規制データ |
+| **不向き** | 単一アダプタ; 全て同一信頼レベル; 分離コストが利益を超える |
+| **要素技術** | Kubernetes Pod/Sidecar, Docker Compose, stdio/SSE MCP transport, Vault, AWS Secrets Manager |
+
+</details>
+<!-- END:GEN:meta -->
+
 ## 概要
 
 社内データベースのMCPサーバーと、外部の第三者APIを接続するMCPサーバーを同じプロセスで動かしていたらどうなるか。外部APIアダプタの脆弱性を突かれた場合、攻撃者が社内DBのクレデンシャルまで手に入れてしまう可能性がある。

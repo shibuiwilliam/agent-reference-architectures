@@ -10,6 +10,26 @@ tags:
 !!! abstract "一言"
     LLM の出力を**JSON Schema 等のスキーマで契約化**し、下流が安全にパースできることを保証する。
 
+
+<!-- BEGIN:GEN:meta -->
+<details markdown="1">
+<summary>メタデータ（機械可読） — #14 Structured Output Contract｜構造化出力契約</summary>
+
+| 項目 | 値 |
+|------|-----|
+| **ID** | 14 |
+| **カテゴリ** | 03-io-contract — 入出力・契約化 |
+| **フォース** | `[F8]` |
+| **ダイヤル** | — |
+| **二者択一** | structured-vs-freeform |
+| **関連パターン** | #13, #15, #30 |
+| **向き** | APIレスポンス生成、フォーム入力、データ抽出、ワークフロールーティング |
+| **不向き** | 自由テキスト（レポート・メール）; フォーマットが表現力を潰す場合 |
+| **要素技術** | OpenAI response_format, Anthropic tool_use, Pydantic, Zod, JSON Schema, Instructor |
+
+</details>
+<!-- END:GEN:meta -->
+
 ## 概要
 
 LLMに「JSONで返して」と頼んでも、ある時はコードブロック付き、ある時は余計な説明文付き、ある時はフィールド名が微妙に違う――このフォーマットの揺れが後続のパース処理を壊してしまう場面は実装者なら誰しも経験がある。

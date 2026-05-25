@@ -10,6 +10,26 @@ tags:
 !!! abstract "一言"
     エージェントの実行状態を外部ストアに永続化し、プロセス障害・再起動・中断後も途中から再開できるようにする。
 
+
+<!-- BEGIN:GEN:meta -->
+<details markdown="1">
+<summary>メタデータ（機械可読） — #2 Durable Agent Session｜耐久エージェントセッション</summary>
+
+| 項目 | 値 |
+|------|-----|
+| **ID** | 2 |
+| **カテゴリ** | 01-execution — 実行・セッション・オーケストレーション |
+| **フォース** | `[F1]` |
+| **ダイヤル** | checkpoint-frequency |
+| **二者択一** | in-context-vs-external |
+| **関連パターン** | #1, #6, #4, #32 |
+| **向き** | マルチステップの研究・コード生成・データパイプライン、ローリングデプロイ環境 |
+| **不向き** | 単発LLM呼び出し; シリアライズコストが利益を上回るリアルタイム対話 |
+| **要素技術** | Redis, PostgreSQL, DynamoDB, Temporal, Azure Durable Functions, JSON/Protobuf |
+
+</details>
+<!-- END:GEN:meta -->
+
 ## 概要
 
 エージェントが数十分かけて調査を進めている途中でプロセスがクラッシュしたら、最初からやり直しになる――これは本番環境では許容できない。
