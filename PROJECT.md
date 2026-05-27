@@ -1,148 +1,121 @@
 # PROJECT.md
 
-A documentation site for architecture patterns for embedding AI agents into production systems, **centered on decision-making (forces, dials, and tradeoffs)**. Built with **MkDocs (Material)** and published to **GitHub Pages**. The information architecture puts "decisions as backbone, patterns as vocabulary."
+This is the documentation site for **AI Agent Production Architecture Patterns** — 59 patterns across 12 categories for taking AI agents from prototype to production. Built with MkDocs (Material) and published to GitHub Pages.
 
-- Audience: Architects / engineers embedding AI agents in production **+ coding agents**
-- Scale: 12 categories, 59 patterns + decision layer (core), composite configurations, anti-patterns
-- Single source of truth: [`patterns.yml`](patterns.yml) + [`decisions.yml`](decisions.yml)
-- Writing rules: [`CLAUDE.md`](CLAUDE.md)
-- Agent integration: [`AGENTS.md`](AGENTS.md)
+The organizing principle: **decisions are the backbone, patterns are the vocabulary**. Rather than a flat pattern catalog, the site guides readers through force evaluation → tradeoff resolution → dial tuning → pattern selection → architecture composition.
+
+**At a glance:**
+
+- **Audience:** Architects and engineers shipping AI agents to production, plus coding agents that consume the catalog programmatically
+- **Scale:** 12 categories, 59 patterns, 9 forces, 20 dials, 16 tradeoffs, 6 reference architectures, 11 anti-patterns
+- **Source of truth:** [`patterns.yml`](patterns.yml) + [`decisions.yml`](decisions.yml) + [`anti-patterns.yml`](anti-patterns.yml)
+- **Writing rules:** [`CLAUDE.md`](CLAUDE.md)
+- **Agent integration:** [`AGENTS.md`](AGENTS.md)
 
 ---
 
 ## Tech Stack
 
-| Role | Choice |
-|------|--------|
+| Role | Tool |
+|------|------|
 | Static site generator | MkDocs |
 | Theme | Material for MkDocs |
 | Diagrams | Mermaid (via `pymdownx.superfences`) |
 | Hosting | GitHub Pages (`gh-pages` branch) |
 | CI/CD | GitHub Actions (`.github/workflows/deploy.yml`) |
-| Language | Japanese (`theme.language: ja`, search also `lang: ja`) |
+| Site language | Japanese (`theme.language: ja`) |
 
 ---
 
-## Directory Structure
+## Directory Layout
 
 ```text
 agent-architecture-patterns/
-├─ mkdocs.yml                  # Site config & navigation (nav is manually managed)
+├─ mkdocs.yml                  # Site config & nav (manually managed)
 ├─ requirements.txt            # mkdocs-material, pymdown-extensions
-├─ patterns.yml                # ★ Single source of truth for 59 patterns (scaffold + generate reference this)
-├─ decisions.yml               # ★ Single source of truth for decisions (forces/dials/tradeoffs/rules)
-├─ anti-patterns.yml           # ★ Single source of truth for 11 anti-patterns
-├─ PROJECT.md                  # This file
+├─ patterns.yml                # ★ Source of truth: 59 patterns
+├─ decisions.yml               # ★ Source of truth: forces, dials, tradeoffs, rules
+├─ anti-patterns.yml           # ★ Source of truth: 11 anti-patterns
+├─ PROJECT.md                  # You are here
 ├─ CLAUDE.md                   # Writing instructions for Claude Code
-├─ AGENTS.md                   # Integration guide for coding agents
-├─ CHANGELOG.md                # Catalog changelog
-├─ schemas/                    # JSON Schema (patterns/decisions/catalog)
-├─ .github/workflows/deploy.yml# Auto-deploy to Pages (runs generate.py)
+├─ AGENTS.md                   # Coding agent integration guide
+├─ CHANGELOG.md                # Release history
+├─ schemas/                    # JSON Schema (patterns / decisions / catalog)
+├─ .github/workflows/deploy.yml
 ├─ scripts/
-│  ├─ scaffold.py              # Generate stubs from patterns.yml (idempotent)
-│  └─ generate.py              # Source YAML → catalog.json/llms.txt/meta blocks etc.
+│  ├─ scaffold.py              # Stub generator from patterns.yml (idempotent)
+│  └─ generate.py              # YAML → catalog.json, llms.txt, meta blocks, etc.
 ├─ mcp-server/
 │  └─ server.py                # MCP server (reads catalog.json)
 ├─ templates/
-│  └─ pattern.md               # Pattern writing template (not a build target)
-└─ docs/                       # ★ Build target — site content lives here
-   ├─ index.md                 # Top page
-   ├─ assets/stylesheets/extra.css
+│  └─ pattern.md               # Writing template (not part of the build)
+└─ docs/                       # ★ Build target — everything the site serves
+   ├─ index.md                 # Landing page
    ├─ foundations/
    │  ├─ characteristics.md     # AI agent characteristics
    │  └─ forces.md              # Driving variables F1–F9
    ├─ patterns/
-   │  ├─ 01-execution/          # I. Execution, Session & Orchestration
-   │  │  ├─ index.md            # Category overview
-   │  │  ├─ 01-request-to-job-gateway.md   # ← Completed exemplar
-   │  │  ├─ 02-durable-agent-session.md
-   │  │  └─ … (03,04,05,06,07,55,58,59)
-   │  ├─ 02-composition/        # II. Composition & Delegation (08–12)
+   │  ├─ 01-execution/          # I. Execution (01–07, 55, 58, 59)
+   │  ├─ 02-composition/        # II. Composition (08–12)
    │  ├─ 03-io-contract/        # III. I/O & Contract (13–16)
    │  ├─ 04-tools-mcp/          # IV. Tools & MCP (17–22)
    │  ├─ 05-memory-context/     # V. Memory & Context (23–26)
-   │  ├─ 06-reliability/        # VI. Reliability & Verification (27–31,57)
-   │  ├─ 07-observability/      # VII. Observability & Audit (32,54,33–36)
-   │  ├─ 08-cost-scaling/       # VIII. Cost & Performance (37–40,56)
+   │  ├─ 06-reliability/        # VI. Reliability (27–31, 57)
+   │  ├─ 07-observability/      # VII. Observability (32–36, 54)
+   │  ├─ 08-cost-scaling/       # VIII. Cost & Scaling (37–40, 56)
    │  ├─ 09-security/           # IX. Security (41–44)
-   │  ├─ 10-deployment/         # X. Deployment & Abstraction (45–48)
+   │  ├─ 10-deployment/         # X. Deployment (45–48)
    │  ├─ 11-ux/                 # XI. UI/UX (49–51)
-   │  └─ 12-governance/         # XII. Governance (52,53)
-   ├─ decisions/
-   │  ├─ tuning-dials.md        # Dials (tuning degrees)
-   │  ├─ tradeoffs.md           # Tradeoffs (binary choices)
-   │  └─ parameterization.md    # Pattern parameterization
-   ├─ anti-patterns/             # Anti-patterns
-   ├─ reference-architectures/   # Reference architectures
-   ├─ pattern-index.md          # 59-pattern quick reference (generated by GEN:pattern-index)
-   ├─ agent-guide.md            # Coding agent usage guide
-   ├─ agent-proposal-template.md # Architecture proposal template
-   ├─ catalog.json              # Machine-readable manifest (generated by generate.py)
-   ├─ llms.txt                  # llmstxt.org format index (generated)
+   │  └─ 12-governance/         # XII. Governance (52–53)
+   ├─ decisions/                # Decision framework pages
+   ├─ anti-patterns/            # 11 anti-patterns
+   ├─ reference-architectures/  # 6 composite configurations
+   ├─ pattern-index.md          # Quick-reference table (auto-generated)
+   ├─ agent-guide.md            # Guide for coding agents
+   ├─ agent-proposal-template.md
+   ├─ catalog.json              # Machine-readable manifest (generated)
+   ├─ llms.txt                  # llmstxt.org index (generated)
    ├─ llms-core.txt             # Decision core, low-token (generated)
-   └─ llms-full.txt             # All pages concatenated (generated)
+   └─ llms-full.txt             # Full-text concatenation (generated)
 ```
 
-Filenames follow `NN-slug.md` (`NN` = zero-padded global pattern number, `slug` = lowercase-hyphenated English). Numbers may be non-contiguous (e.g., 55, 58, 59 in category I) because new patterns were integrated into existing categories after initial numbering. **Do not change numbers or slugs — `patterns.yml` is the source of truth.**
+Pattern filenames follow `NN-slug.md` (zero-padded number + hyphenated English slug). Numbers may skip (e.g., 55, 58, 59 in category I) because newer patterns were added to existing categories. **Numbers and slugs are immutable** — `patterns.yml` is the authority.
 
 ---
 
-## Setup and Local Preview
+## Setup
 
 ```bash
-python -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\activate
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Generate stubs for any missing pattern pages and category indexes (idempotent)
-python scripts/scaffold.py
-
-# Local preview (http://127.0.0.1:8000 / hot-reload)
-mkdocs serve
-
-# Production build (fails on broken links etc.)
-mkdocs build --strict
+python scripts/scaffold.py     # Create any missing stubs (safe to re-run)
+mkdocs serve                   # Preview at http://127.0.0.1:8000
+mkdocs build --strict          # Full build — catches broken links
 ```
 
 ---
 
-## Deployment (GitHub Pages)
+## Deploying to GitHub Pages
 
-1. Push the repository to GitHub (default branch `main`).
-2. Replace `<user>` in `mkdocs.yml`'s `site_url` / `repo_url` / `repo_name` with your own.
-3. Pushing to `main` triggers `.github/workflows/deploy.yml`, which runs `mkdocs gh-deploy` to create/update the `gh-pages` branch.
-4. In GitHub **Settings → Pages → Build and deployment**, set **Source = "Deploy from a branch"**, **Branch = `gh-pages` / `(root)`**.
-5. Within seconds, the site is live at `https://<user>.github.io/agent-architecture-patterns/`.
+1. Push to `main`.
+2. Make sure `site_url` / `repo_url` in `mkdocs.yml` point to your fork.
+3. The GitHub Actions workflow builds and deploys to the `gh-pages` branch automatically.
+4. In repo settings, set Pages source to **Deploy from branch → `gh-pages` / `(root)`**.
 
-> For manual deployment, run `mkdocs gh-deploy --force`. To use the GitHub Actions Pages source instead, switch to the `upload-pages-artifact` + `deploy-pages` approach.
-
----
-
-## Writing Workflow (Claude Code)
-
-1. Run `python scripts/scaffold.py` to prepare stubs.
-2. Open the target pattern `.md` in Claude Code and write following the rules in [`CLAUDE.md`](CLAUDE.md).
-3. Verify that `mkdocs build --strict` passes (no broken links or nav mismatches).
-4. One pattern = one commit (e.g., `docs(#12): write Blackboard pattern`).
-
-See [`CLAUDE.md`](CLAUDE.md) for the Definition of Done.
+> Manual deploy: `mkdocs gh-deploy --force`
 
 ---
 
-## Progress Checklist
+## Writing Workflow (with Claude Code)
 
-- [x] #1 Request-to-Job Gateway (exemplar, complete)
-- [x] #2–#7, #55, #58, #59 (I Execution)
-- [x] #8–#12 (II Composition)
-- [x] #13–#16 (III Contract)
-- [x] #17–#22 (IV Tools)
-- [x] #23–#26 (V Memory)
-- [x] #27–#31, #57 (VI Reliability)
-- [x] #32, #54, #33–#36 (VII Observability)
-- [x] #37–#40, #56 (VIII Cost)
-- [x] #41–#44 (IX Security)
-- [x] #45–#48 (X Deployment)
-- [x] #49–#51 (XI UX)
-- [x] #52–#53 (XII Governance)
-- [x] Foundations (characteristics, forces)
-- [x] Decision layer (tuning-dials, tradeoffs, parameterization)
-- [x] anti-patterns / reference-architectures / pattern-index
+1. `python scripts/scaffold.py` — ensure the target stub exists.
+2. Write the `.md` following [`CLAUDE.md`](CLAUDE.md) rules and the [exemplar](docs/patterns/01-execution/01-request-to-job-gateway.md).
+3. `mkdocs build --strict` — verify clean build.
+4. Commit: one pattern per commit (e.g., `docs(#12): write Blackboard pattern`).
+
+---
+
+## Progress
+
+All 59 patterns, foundations, decision layer, anti-patterns, reference architectures, and pattern index are complete.

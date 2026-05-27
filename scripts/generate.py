@@ -7,6 +7,9 @@
   - docs/llms-core.txt  … 意思決定コア（低トークン・エージェント可読形式）
   - docs/llms-full.txt  … 全ページ連結プレーンテキスト（エージェント可読形式）
   - 各パターン .md に GEN:meta ブロック注入（Phase 2）
+  - _agent/pattern-cards.json … パターン選定用の軽量構造化データ
+  - _agent/decision-core.md   … エージェント向け意思決定コア（by_force逆引き付き）
+  - 各パターン .md のフロントマターにエージェント向けフィールドを注入
 
 マーカー: <!-- BEGIN:GEN:xxx --> 〜 <!-- END:GEN:xxx --> 間のみ置換。
 人間が書いた箇所は不可侵。
@@ -34,6 +37,7 @@ DECISIONS_YML = ROOT / "decisions.yml"
 ANTI_PATTERNS_YML = ROOT / "anti-patterns.yml"
 
 SITE_URL = "https://shibuiwilliam.github.io/agent-reference-architectures"
+AGENT_DIR = ROOT / "_agent"
 
 
 # ── helpers ──────────────────────────────────────────────────────────
@@ -727,6 +731,257 @@ def generate_by_force(pdata: dict, ddata: dict) -> None:
     pass
 
 
+# ── _agent/pattern-cards.json ────────────────────────────────────────
+
+def generate_pattern_cards(pdata: dict, ddata: dict, apdata: dict | None) -> None:
+    """_agent/pattern-cards.json — パターン選定用の軽量構造化データ"""
+    version = pdata.get("version", "0.0.0")
+
+    patterns = []
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            entry = {
+                "id": p["num"],
+                "slug": p["slug"],
+                "title": p["title"],
+                "category": cat["id"],
+                "forces": p.get("forces", []),
+                "when_to_use": p.get("when_to_use", ""),
+                "when_not": p.get("when_not", []),
+                "dials": p.get("dials", []),
+                "tradeoffs": p.get("tradeoffs", []),
+                "related": p.get("related", []),
+                "detail_path": f"docs/patterns/{cat['id']}/{p['num']:02d}-{p['slug']}.md",
+            }
+            if "prevents_anti_patterns" in p:
+                entry["prevents_anti_patterns"] = p["prevents_anti_patterns"]
+            # selection_criteria is in catalog.json; omitted here for size
+            patterns.append(entry)
+
+    patterns.sort(key=lambda x: x["id"])
+
+    cards = {
+        "version": version,
+        "patterns": patterns,
+        "by_force": build_by_force_index(pdata, ddata, apdata),
+    }
+
+    content = json.dumps(cards, ensure_ascii=False, separators=(", ", ": ")) + "\n"
+    changed = write_if_changed(AGENT_DIR / "pattern-cards.json", content)
+    if changed:
+        print("  ✓ _agent/pattern-cards.json")
+
+
+# ── _agent/decision-core.md ─────────────────────────────────────────
+
+def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> None:
+    """_agent/decision-core.md — エージェント向け意思決定コア（by_force逆引き付き）"""
+    lines: list[str] = []
+    version = pdata.get("version", "0.0.0")
+
+    lines.append(f"# Decision Core — AI Agent Architecture Patterns v{version}")
+    lines.append("")
+    lines.append("> This file contains the decision-making data needed for architecture proposals.")
+    lines.append("> Read `_agent/README.md` first for the algorithm overview.")
+    lines.append("> After narrowing pattern candidates, get details from `_agent/pattern-cards.json` or individual `docs/patterns/**/*.md` files.")
+    lines.append("")
+
+    # Forces
+    lines.append("## Forces (F1–F9)")
+    lines.append("")
+    for f in ddata["forces"]:
+        lines.append(f"- **{f['id']} {f['name']}**: {f['question']}")
+        lines.append(f"  - high → {f['high_implies']}")
+        lines.append(f"  - low → {f['low_implies']}")
+    lines.append("")
+
+    # Dials summary
+    lines.append("## Dials (20)")
+    lines.append("")
+    lines.append("| Dial | Driver | Default |")
+    lines.append("|------|--------|---------|")
+    for d in ddata["dials"]:
+        driver = ", ".join(d["driver"])
+        lines.append(f"| {d['name']} | {driver} | {d['default']} |")
+    lines.append("")
+
+    # Tradeoffs summary
+    lines.append("## Tradeoffs (16)")
+    lines.append("")
+    lines.append("| A | B | Driver | Default |")
+    lines.append("|---|---|--------|---------|")
+    for t in ddata["tradeoffs"]:
+        driver = ", ".join(t["driver"])
+        lines.append(f"| {t['a']} | {t['b']} | {driver} | {t['default']} |")
+    lines.append("")
+
+    # Reference Architectures
+    lines.append("## Reference Architectures (6)")
+    lines.append("")
+    for ra in ddata["reference_architectures"]:
+        forces_str = ", ".join(f"{k}={v}" for k, v in ra["forces"].items())
+        layer_strs = ", ".join(f"#{l['pattern']}" for l in ra["layers"])
+        lines.append(f"- **{ra['name']}** ({forces_str}): {layer_strs}")
+    lines.append("")
+
+    # Rules (structured format)
+    lines.append("## Decision Rules")
+    lines.append("")
+    for r in ddata["rules"]:
+        lines.append(f"### Rule {r['id']}")
+        cond = " AND ".join(f"{k}={v}" for k, v in r["if"].items())
+        lines.append(f"- **IF**: {cond}")
+        if "required" in r:
+            req = ", ".join(f"#{p}" for p in r["required"])
+            lines.append(f"- **Required**: {req}")
+            rec = r.get("recommended", [])
+            if rec:
+                rec_str = ", ".join(f"#{p}" for p in rec)
+                lines.append(f"- **Recommended**: {rec_str}")
+            opt = r.get("optional", [])
+            if opt:
+                opt_str = ", ".join(f"#{p}" for p in opt)
+                lines.append(f"- **Optional**: {opt_str}")
+        else:
+            pats = ", ".join(f"#{p}" for p in r.get("then_patterns", []))
+            lines.append(f"- **Patterns**: {pats}")
+        lines.append(f"- **Rationale**: {r['rationale']}")
+        lines.append("")
+
+    # by_force index
+    by_force = build_by_force_index(pdata, ddata, apdata)
+    lines.append("## by_force Index")
+    lines.append("")
+    for fid in [f"F{i}" for i in range(1, 10)]:
+        fname = next((f["name"] for f in ddata["forces"] if f["id"] == fid), "")
+        data = by_force[fid]
+        lines.append(f"### {fid} {fname}")
+        pats = ", ".join(f"#{p}" for p in data["patterns"]) or "—"
+        lines.append(f"- **Patterns**: {pats}")
+        dials = ", ".join(data["dials"]) or "—"
+        lines.append(f"- **Dials**: {dials}")
+        toffs = ", ".join(data["tradeoffs"]) or "—"
+        lines.append(f"- **Tradeoffs**: {toffs}")
+        aps = ", ".join(data["anti_patterns"]) or "—"
+        lines.append(f"- **Anti-patterns**: {aps}")
+        lines.append("")
+
+    # Quick pattern reference
+    lines.append("## Pattern Quick Reference (59)")
+    lines.append("")
+    lines.append("| # | Pattern | Forces | Tagline |")
+    lines.append("|---|---------|--------|---------|")
+    flat = flatten_patterns(pdata)
+    for p in flat:
+        forces_str = ", ".join(p["forces"])
+        lines.append(f"| {p['id']} | {p['title']} | {forces_str} | {p['tagline']} |")
+    lines.append("")
+
+    content = "\n".join(lines) + "\n"
+    changed = write_if_changed(AGENT_DIR / "decision-core.md", content)
+    if changed:
+        print("  ✓ _agent/decision-core.md")
+
+
+# ── frontmatter injection ───────────────────────────────────────────
+
+def _build_frontmatter_yaml(title: str, tags: list[str], p: dict) -> str:
+    """パターンのフロントマターYAMLテキストを構築する。"""
+    lines = []
+    lines.append("---")
+
+    # title (preserve original quoting)
+    lines.append(f'title: "{title}"')
+
+    # tags
+    lines.append("tags:")
+    for tag in tags:
+        lines.append(f'  - "{tag}"')
+
+    # agent-readable section
+    lines.append("# ── agent-readable (generated by generate.py) ──")
+    lines.append(f"pattern_id: {p['num']}")
+
+    # forces
+    forces = p.get("forces", [])
+    lines.append(f"forces: [{', '.join(forces)}]")
+
+    # dials
+    dials = p.get("dials", [])
+    lines.append(f"dials: [{', '.join(dials)}]")
+
+    # tradeoffs
+    tradeoffs = p.get("tradeoffs", [])
+    lines.append(f"tradeoffs: [{', '.join(tradeoffs)}]")
+
+    # when_to_use
+    when_to_use = p.get("when_to_use", "")
+    lines.append(f'when_to_use: "{when_to_use}"')
+
+    # when_not
+    when_not = p.get("when_not", [])
+    if isinstance(when_not, list):
+        lines.append(f"when_not:")
+        for wn in when_not:
+            lines.append(f'  - "{wn}"')
+    else:
+        lines.append(f'when_not: ["{when_not}"]')
+
+    # related
+    related = p.get("related", [])
+    lines.append(f"related: [{', '.join(str(r) for r in related)}]")
+
+    # prevents_anti_patterns
+    paps = p.get("prevents_anti_patterns", [])
+    if paps:
+        lines.append(f"prevents_anti_patterns: [{', '.join(paps)}]")
+
+    lines.append("---")
+    return "\n".join(lines) + "\n"
+
+
+def update_pattern_frontmatter(pdata: dict) -> None:
+    """各パターン .md のYAMLフロントマターにエージェント向けフィールドを注入する。"""
+    count = 0
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            md_path = DOCS / "patterns" / cat["id"] / f"{p['num']:02d}-{p['slug']}.md"
+            if not md_path.exists():
+                continue
+
+            text = md_path.read_text(encoding="utf-8")
+
+            # Extract existing frontmatter
+            fm_match = re.match(r"^---\n(.*?\n)---\n", text, re.DOTALL)
+            if not fm_match:
+                continue
+
+            fm_text = fm_match.group(1)
+            body = text[fm_match.end():]
+
+            # Parse existing frontmatter to get title and tags
+            try:
+                fm_data = yaml.safe_load(fm_text)
+            except yaml.YAMLError:
+                continue
+
+            if not isinstance(fm_data, dict):
+                continue
+
+            title = fm_data.get("title", p["title"])
+            tags = fm_data.get("tags", [])
+
+            # Build new frontmatter
+            new_fm = _build_frontmatter_yaml(title, tags, p)
+            new_text = new_fm + body
+
+            if write_if_changed(md_path, new_text):
+                count += 1
+
+    if count:
+        print(f"  ✓ frontmatter updated: {count} files")
+
+
 # ── --lint: structural validation ────────────────────────────────────
 
 def lint_patterns(pdata: dict) -> int:
@@ -869,6 +1124,11 @@ def main() -> None:
     generate_meta_blocks(pdata)
     generate_pattern_index(pdata)
     generate_by_force(pdata, ddata)
+
+    # _agent/ directory outputs
+    generate_pattern_cards(pdata, ddata, apdata)
+    generate_decision_core(pdata, ddata, apdata)
+    update_pattern_frontmatter(pdata)
 
     print("generate.py: 完了")
 

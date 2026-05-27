@@ -1,26 +1,27 @@
 # AI Agent Production Architecture Patterns
 
-A catalog of architecture patterns for embedding AI agents into production systems.  
-Centered on **decision-making (forces, dials, and tradeoffs)**, it covers 12 categories and 59 patterns — design intent, when to use / when not to use, implementation technologies, and tuning guidance.
+"The demo worked great — then production happened."
 
-> **Core principle:** Wrap a probabilistic core in a deterministic shell — contracts, verification, budgets, permissions, observability. Calibrate the shell's dials by context (forces).
+This catalog collects **59 architecture patterns** for taking AI agents from prototype to production. It's organized around **decision-making** — not just _what_ to build, but _how to choose_ what to build, using forces (context), dials (tuning), and tradeoffs (binary design choices).
 
-## Site
+> **Core principle:** Wrap the probabilistic core in a deterministic shell — contracts, verification, budgets, permissions, observability — and tune the shell's settings based on your context.
+
+## Live Site
 
 <https://shibuiwilliam.github.io/agent-reference-architectures/>
 
-## Structure
+## What's Inside
 
-| Section | Contents |
-|---------|----------|
-| **Decisions (backbone)** | Forces (F1–F9) → Dials (20) → Tradeoffs (16) → Composition → Record |
-| **Patterns (vocabulary)** | 12 categories, 59 patterns |
-| **Composite** | Reference architectures, anti-patterns |
+| Layer | What it covers |
+|-------|---------------|
+| **Decisions** (the backbone) | 9 forces → 20 tuning dials → 16 tradeoffs → composition → decision record |
+| **Patterns** (the vocabulary) | 59 patterns across 12 categories |
+| **Composites** | 6 reference architectures + 11 anti-patterns |
 
-### Pattern Categories
+### The 12 Categories
 
-| # | Category | Patterns |
-|---|----------|----------|
+| # | Category | Count |
+|---|----------|-------|
 | I | Execution, Session & Orchestration | 10 |
 | II | Agent Composition & Delegation | 5 |
 | III | I/O & Contract | 4 |
@@ -36,8 +37,8 @@ Centered on **decision-making (forces, dials, and tradeoffs)**, it covers 12 cat
 
 ## Tech Stack
 
-| Role | Choice |
-|------|--------|
+| Role | Tool |
+|------|------|
 | Static site generator | [MkDocs](https://www.mkdocs.org/) |
 | Theme | [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) |
 | Diagrams | Mermaid |
@@ -45,22 +46,17 @@ Centered on **decision-making (forces, dials, and tradeoffs)**, it covers 12 cat
 | CI/CD | GitHub Actions |
 | Package manager | [uv](https://docs.astral.sh/uv/) |
 
-## Local Development
+## Getting Started
 
 ```bash
-# Install dependencies
-uv sync
-
-# Local preview (http://127.0.0.1:8000)
-uv run mkdocs serve
-
-# Production build (fails on broken links etc.)
-uv run mkdocs build --strict
+uv sync                        # Install dependencies
+uv run mkdocs serve            # Preview at http://127.0.0.1:8000
+uv run mkdocs build --strict   # Production build (catches broken links)
 ```
 
 ## Deployment
 
-Pushing to the `main` branch triggers GitHub Actions, which automatically deploys to GitHub Pages.
+Push to `main` and GitHub Actions handles the rest — it builds and deploys to GitHub Pages automatically.
 
 ## License
 

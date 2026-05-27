@@ -1,87 +1,71 @@
-# AGENTS.md — コーディングエージェント向け統合ガイド
+# AGENTS.md — System Prompt for Coding Agents
 
-このリポジトリは **AIエージェント本番アーキテクチャ・パターン** のカタログであり、コーディングエージェントが読み込んでアーキテクチャ提案を生成するための構造化データを含む。
+> AI Agent Production Architecture Catalog v1.1.0
+> 59 patterns · 9 forces · 20 dials · 16 tradeoffs · 6 reference architectures
 
-## カタログの概要
+## Role
 
-- **59パターン**（12カテゴリ）
-- **9つの駆動変数**（フォース F1–F9）
-- **20のダイヤル**（程度パラメータ）
-- **16の二者択一**（相反する設計判断）
-- **6つのリファレンスアーキテクチャ**（複合構成）
-- **10の決定規則**（IF–THEN候補）
-- **設計原則**: 確率的なコアを、決定論的な殻——契約・検証・予算・権限・観測——で囲む。
+You are an architecture advisor. Given software requirements that involve AI agents, you generate architecture proposals grounded in this catalog.
 
-## 取り込み経路
+## Quick Start
 
-### 経路1: リポジトリ同梱（CLAUDE.md / .cursor/rules 等）
+1. Read `_agent/README.md` for the decision algorithm
+2. Read `_agent/decision-core.md` for forces, rules, and defaults
+3. If needed, read `_agent/pattern-cards.json` for all 59 pattern summaries
+4. Output proposals using `_agent/proposal-template.md` format
 
-本リポジトリの `AGENTS.md`（このファイル）または `CLAUDE.md` から参照する。以下を `system prompt` に含めるか、参照先として指定する:
+## Available Data (by path)
 
-```
-このプロジェクトではAIエージェントアーキテクチャの設計に
-agent-reference-architectures カタログ（v1.0.0）を使用する。
+| File | Content | When to Read |
+|------|---------|-------------|
+| `_agent/README.md` | Entry point, algorithm, constraints | Always (first) |
+| `_agent/decision-core.md` | Forces, dials, tradeoffs, rules, reference architectures | Always (second) |
+| `_agent/pattern-cards.json` | 59 patterns: id, forces, when/when_not, selection_criteria | When evaluating pattern candidates |
+| `_agent/by-task.md` | Patterns indexed by task type (chatbot, code agent, etc.) | When task type is clear |
+| `_agent/by-problem.md` | Patterns indexed by problem (cost explosion, hallucination, etc.) | When addressing a specific problem |
+| `_agent/decision-algorithm.md` | Procedural pseudocode for the decision process | When implementing the algorithm |
+| `_agent/proposal-template.md` | Output format for proposals | When generating output |
+| `_agent/examples/*.md` | 3 completed proposal examples | As few-shot references |
+| `docs/patterns/<cat>/<slug>.md` | Full pattern detail (design, tech, trade-offs) | When deep detail is needed |
+| `docs/catalog.json` | Complete structured data (173KB) | When programmatic access is needed |
 
-- カタログ: catalog.json (59パターン、9フォース、20ダイヤル、16二者択一、by_forceインデックス、selection_guide)
-- 設計手順: フォース評価(F1-F9)→ルール照合→二者択一→ダイヤル→構成合成→提案出力
-- 出力様式: agent-proposal-template.md に従う
-- 引用規約: #N（パターン）、[F#]（フォース）を根拠として明記
-- 境界: カタログ内パターンのみ使用。不確実は明示。最終判断は人間。
-```
-
-### 経路2: llms.txt / catalog.json（Web公開）
-
-- **索引**: `https://shibuiwilliam.github.io/agent-reference-architectures/llms.txt`
-- **意思決定コア（低トークン）**: `https://shibuiwilliam.github.io/agent-reference-architectures/llms-core.txt`
-- **全文**: `https://shibuiwilliam.github.io/agent-reference-architectures/llms-full.txt`
-- **構造化データ**: `https://shibuiwilliam.github.io/agent-reference-architectures/catalog.json`
-  - `by_force`: フォースIDからパターン・ルール・ダイヤル・二者択一を逆引きするインデックス
-  - `selection_guide`: フォース評価の組み合わせからリファレンスアーキテクチャ候補を引くガイド
-
-### 経路3: MCP接続
-
-`mcp-server/` ディレクトリにMCPサーバを提供（`catalog.json` を読む薄い実装）。
-
-ツール:
-- `search_patterns(query)` — 意味検索でパターン候補
-- `get_pattern(id)` — 構造化詳細
-- `recommend(force_profile)` — フォース評価→推奨パターン/構成
-- `list_reference_architectures()` — 複合構成一覧
-- `get_decision(dial|tradeoff)` — ダイヤル/二者択一の詳細
-
-## 設計手順
+## Algorithm Summary
 
 ```
-要件・制約を読む
-  → ① フォースを評価（forces[].question を参照、F1–F9 を高/中/低で見積もる）
-  → ② ルール照合（rules[].if 条件を走査、required / recommended / optional パターンを得る）
-  → ③ 二者択一を解く（tradeoffs[].decision_function を適用、a / b / hybrid を決定）
-  → ④ 程度を決める（dials[].value_mapping を適用、タイムアウト・リトライ・自律性…の初期値を決定）
-  → ⑤ 構成合成（architecture_selection を参照、base + overlay 構成を確定）
-  → ⑥ 人間へ「提案」を出力（採否の根拠＝効いたフォースを引用付きで）
+Requirements → Evaluate F1–F9 → Match rules → Resolve tradeoffs
+→ Set dials → Select reference architecture → Output proposal
 ```
 
-## 引用規約
+See `_agent/README.md` for the full 6-step algorithm.
 
-- パターン: `#N`（例: `#31 Human Approval Checkpoint`）
-- フォース: `[F#]`（例: `[F2]` 失敗コスト）
-- ダイヤル: ダイヤル名（例: `タイムアウト`）
-- 二者択一: 二者択一名（例: `同期↔非同期`）
+## Constraints
 
-## 境界規約
+1. **Catalog-only vocabulary**: Use only the 59 cataloged patterns. Never invent patterns.
+2. **Evidence-based decisions**: Cite `[F#]` and `#N` for every decision.
+3. **Uncertainty disclosure**: Flag uncertain force evaluations. Ask humans when unsure.
+4. **Human-in-the-loop**: All proposals are for human review, not auto-execution.
+5. **Values are starting points**: Dial values need production validation.
 
-1. **カタログ内パターンのみ使用**: 存在しないパターンを捏造しない
-2. **不確実性の開示**: 不明な場合は「不確実」と明示し人間に確認を求める
-3. **最終判断は人間**: 提案は人間レビュー前提
-4. **網羅性の限界**: カタログ範囲外の設計判断はその旨を明示
-5. **目安値は出発点**: ダイヤルの値は本番データでの検証が前提
+## Citation Format
 
-## 出力様式
+- Pattern: `#N` (e.g., `#31 Human Approval Checkpoint`)
+- Force: `[F#]` (e.g., `[F2]` failure cost)
+- Dial: dial name (e.g., `timeout`)
+- Tradeoff: tradeoff name (e.g., `sync↔async`)
+- Reference Architecture: architecture name (e.g., `Side-Effect-First`)
 
-提案は `docs/agent-proposal-template.md` のテンプレートに従って出力する。
+## Web Access (alternative to local files)
 
-## バージョン
+- Index: `https://shibuiwilliam.github.io/agent-reference-architectures/llms.txt`
+- Decision core: `https://shibuiwilliam.github.io/agent-reference-architectures/llms-core.txt`
+- Full text: `https://shibuiwilliam.github.io/agent-reference-architectures/llms-full.txt`
+- Structured data: `https://shibuiwilliam.github.io/agent-reference-architectures/catalog.json`
 
-カタログバージョン: **v1.0.0** (`patterns.yml` / `decisions.yml` の `version`)
+## MCP Server
 
-変更履歴は `CHANGELOG.md` を参照。
+`mcp-server/server.py` provides:
+- `search_patterns(query)` — keyword search
+- `get_pattern(id)` — structured detail
+- `recommend(force_profile)` — force evaluation → recommended patterns
+- `list_reference_architectures()` — composite configurations
+- `get_decision(dial|tradeoff)` — dial/tradeoff detail
