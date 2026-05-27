@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
-"""generate.py — patterns.yml + decisions.yml から機械可読成果物を冪等生成する。
+"""generate.py — patterns.yml + decisions.yml + anti-patterns.yml から機械可読成果物を冪等生成する。
 
 生成物:
-  - docs/catalog.json   … 機械可読マニフェスト
+  - docs/catalog.json   … 機械可読マニフェスト（by_force, bidirectional_related, selection_guide, anti_patterns 含む）
   - docs/llms.txt       … llmstxt.org 形式の索引
-  - docs/llms-core.txt  … 意思決定コア（低トークン）
-  - docs/llms-full.txt  … 全ページ連結プレーンテキスト
+  - docs/llms-core.txt  … 意思決定コア（低トークン・エージェント可読形式）
+  - docs/llms-full.txt  … 全ページ連結プレーンテキスト（エージェント可読形式）
   - 各パターン .md に GEN:meta ブロック注入（Phase 2）
-  - docs/decisions/by-force.md の GEN ブロック再生成（Phase 2）
 
 マーカー: <!-- BEGIN:GEN:xxx --> 〜 <!-- END:GEN:xxx --> 間のみ置換。
 人間が書いた箇所は不可侵。
+
+オプション:
+  --validate  スキーマバリデーション（schemas/ が存在する場合）
+  --lint      パターンページの構造検証
 """
 
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 import yaml
@@ -26,6 +31,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 PATTERNS_YML = ROOT / "patterns.yml"
 DECISIONS_YML = ROOT / "decisions.yml"
+ANTI_PATTERNS_YML = ROOT / "anti-patterns.yml"
 
 SITE_URL = "https://shibuiwilliam.github.io/agent-reference-architectures"
 
@@ -65,6 +71,72 @@ def inject_gen_block(file_path: Path, tag: str, content: str) -> bool:
     return write_if_changed(file_path, new_text)
 
 
+# ── agent-readable markdown conversion ──────────────────────────────
+
+def convert_to_agent_readable(text: str) -> str:
+    """MkDocs Material 記法をエージェント可読なプレーンマークダウンに変換。
+    パターン .md ファイル自体は変更しない。llms-full.txt / llms-core.txt 生成時のみ使用。"""
+
+    # 1. admonition → blockquote
+    def replace_admonition(m):
+        kind = m.group(1)
+        title = m.group(2) or kind
+        body_raw = m.group(3)
+        # Remove leading 4-space indent from body lines
+        body_lines = []
+        for line in body_raw.split("\n"):
+            if line.startswith("    "):
+                body_lines.append(line[4:])
+            elif line.strip() == "":
+                body_lines.append("")
+            else:
+                break
+        body = " ".join(line for line in body_lines if line.strip()).strip()
+        return f"> **{title}**: {body}"
+
+    text = re.sub(
+        r'!!! (\w+)(?: "([^"]*)")?\n((?:    .+\n?|\n)*)',
+        replace_admonition,
+        text,
+    )
+
+    # 2. <details> → expand
+    text = re.sub(
+        r'<details[^>]*>\s*<summary>([^<]*)</summary>\s*(.*?)\s*</details>',
+        lambda m: f"**{m.group(1)}**\n{m.group(2)}",
+        text,
+        flags=re.DOTALL,
+    )
+
+    # 3. Mermaid → text note
+    text = re.sub(
+        r'```mermaid\n.*?```',
+        "[図省略: Mermaid図はサイト版を参照]",
+        text,
+        flags=re.DOTALL,
+    )
+
+    # 4. Relative links → text reference
+    text = re.sub(
+        r'\[([^\]]+)\]\([^)]*\.md[^)]*\)',
+        r'\1',
+        text,
+    )
+
+    # 5. GEN:meta block → remove (already in catalog.json)
+    text = re.sub(
+        r'<!-- BEGIN:GEN:meta -->.*?<!-- END:GEN:meta -->',
+        "",
+        text,
+        flags=re.DOTALL,
+    )
+
+    # Clean up multiple blank lines
+    text = re.sub(r'\n{3,}', '\n\n', text)
+
+    return text
+
+
 # ── flat pattern list ────────────────────────────────────────────────
 
 def flatten_patterns(pdata: dict) -> list[dict]:
@@ -72,7 +144,7 @@ def flatten_patterns(pdata: dict) -> list[dict]:
     patterns = []
     for cat in pdata["categories"]:
         for p in cat["patterns"]:
-            patterns.append({
+            entry = {
                 "id": p["num"],
                 "slug": p["slug"],
                 "category": cat["id"],
@@ -86,13 +158,92 @@ def flatten_patterns(pdata: dict) -> list[dict]:
                 "when_to_use": p.get("when_to_use", ""),
                 "when_not": p.get("when_not", []),
                 "element_tech": p.get("element_tech", []),
-            })
+            }
+            if "summary_plain" in p:
+                entry["summary_plain"] = p["summary_plain"]
+            if "selection_criteria" in p:
+                entry["selection_criteria"] = p["selection_criteria"]
+            if "prevents_anti_patterns" in p:
+                entry["prevents_anti_patterns"] = p["prevents_anti_patterns"]
+            patterns.append(entry)
     return sorted(patterns, key=lambda x: x["id"])
+
+
+# ── by_force index ──────────────────────────────────────────────────
+
+def build_by_force_index(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
+    """フォース別の逆引きインデックスを構築"""
+    index: dict[str, dict[str, list]] = {}
+    for fid in [f"F{i}" for i in range(1, 10)]:
+        index[fid] = {
+            "patterns": [],
+            "dials": [],
+            "tradeoffs": [],
+            "reference_architectures": [],
+            "rules": [],
+            "anti_patterns": [],
+        }
+
+    # Patterns
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            for f in p.get("forces", []):
+                if f in index and p["num"] not in index[f]["patterns"]:
+                    index[f]["patterns"].append(p["num"])
+
+    # Dials
+    for d in ddata["dials"]:
+        for f in d["driver"]:
+            if f in index and d["id"] not in index[f]["dials"]:
+                index[f]["dials"].append(d["id"])
+
+    # Tradeoffs
+    for t in ddata["tradeoffs"]:
+        for f in t["driver"]:
+            if f in index and t["id"] not in index[f]["tradeoffs"]:
+                index[f]["tradeoffs"].append(t["id"])
+
+    # Reference architectures
+    for ra in ddata["reference_architectures"]:
+        for f in ra["forces"]:
+            if f in index and ra["id"] not in index[f]["reference_architectures"]:
+                index[f]["reference_architectures"].append(ra["id"])
+
+    # Rules
+    for r in ddata["rules"]:
+        for f in r["if"]:
+            if f in index and r["id"] not in index[f]["rules"]:
+                index[f]["rules"].append(r["id"])
+
+    # Anti-patterns
+    if apdata:
+        for ap in apdata.get("anti_patterns", []):
+            for f in ap.get("related_forces", []):
+                if f in index and ap["id"] not in index[f]["anti_patterns"]:
+                    index[f]["anti_patterns"].append(ap["id"])
+
+    # Sort all lists
+    for fid in index:
+        index[fid]["patterns"].sort()
+
+    return index
+
+
+def build_bidirectional_related(pdata: dict) -> dict:
+    """全パターンの related を走査し双方向関連を計算"""
+    bidir: dict[int, set[int]] = defaultdict(set)
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            pid = p["num"]
+            for r in p.get("related", []):
+                bidir[pid].add(r)
+                bidir[r].add(pid)
+    return {str(k): sorted(v) for k, v in sorted(bidir.items())}
 
 
 # ── catalog.json ─────────────────────────────────────────────────────
 
-def build_catalog(pdata: dict, ddata: dict) -> dict:
+def build_catalog(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
     version = pdata.get("version", ddata.get("version", "0.0.0"))
     principle = pdata["site"]["principle"]
 
@@ -108,7 +259,7 @@ def build_catalog(pdata: dict, ddata: dict) -> dict:
 
     dials = []
     for d in ddata["dials"]:
-        dials.append({
+        entry = {
             "id": d["id"],
             "name": d["name"],
             "category": d["category"],
@@ -116,7 +267,10 @@ def build_catalog(pdata: dict, ddata: dict) -> dict:
             "driver": d["driver"],
             "default": d["default"],
             "patterns": d["patterns"],
-        })
+        }
+        if "value_mapping" in d:
+            entry["value_mapping"] = d["value_mapping"]
+        dials.append(entry)
 
     tradeoffs = []
     for t in ddata["tradeoffs"]:
@@ -132,6 +286,8 @@ def build_catalog(pdata: dict, ddata: dict) -> dict:
         }
         if "hybrid" in t:
             entry["hybrid"] = t["hybrid"]
+        if "decision_function" in t:
+            entry["decision_function"] = t["decision_function"]
         tradeoffs.append(entry)
 
     ref_archs = []
@@ -145,16 +301,25 @@ def build_catalog(pdata: dict, ddata: dict) -> dict:
 
     rules = []
     for r in ddata["rules"]:
-        rules.append({
+        entry = {
             "id": r["id"],
             "if": r["if"],
-            "then_patterns": r["then_patterns"],
             "rationale": r["rationale"],
-        })
+        }
+        # Support both old (then_patterns) and new (required/recommended/optional) format
+        if "required" in r:
+            entry["required"] = r["required"]
+            entry["recommended"] = r.get("recommended", [])
+            entry["optional"] = r.get("optional", [])
+            if "escalation" in r:
+                entry["escalation"] = r["escalation"]
+        elif "then_patterns" in r:
+            entry["then_patterns"] = r["then_patterns"]
+        rules.append(entry)
 
     patterns = flatten_patterns(pdata)
 
-    return {
+    catalog = {
         "version": version,
         "principle": principle,
         "forces": forces,
@@ -163,7 +328,46 @@ def build_catalog(pdata: dict, ddata: dict) -> dict:
         "reference_architectures": ref_archs,
         "rules": rules,
         "patterns": patterns,
+        "by_force": build_by_force_index(pdata, ddata, apdata),
+        "bidirectional_related": build_bidirectional_related(pdata),
+        "selection_guide": {
+            "step1_evaluate_forces": {
+                "input": "システム要件",
+                "output": "F1-F9 の高/中/低 評価",
+                "method": "各フォースの question に対して要件を照合",
+            },
+            "step2_match_rules": {
+                "input": "フォース評価",
+                "output": "required/recommended/optional パターン群",
+                "method": "rules[] の if 条件をフォース評価に照合し、合致するルールの required/recommended/optional を収集",
+            },
+            "step3_resolve_tradeoffs": {
+                "input": "フォース評価",
+                "output": "各二者択一の選択方向",
+                "method": "tradeoffs[] の decision_function にフォース評価を適用",
+            },
+            "step4_set_dials": {
+                "input": "フォース評価",
+                "output": "各ダイヤルの初期値",
+                "method": "dials[] の value_mapping にフォース評価を適用",
+            },
+            "step5_compose": {
+                "input": "パターン群 + 二者択一の方向",
+                "output": "層構成（リファレンスアーキテクチャ + 追加パターン）",
+                "method": "architecture_selection の複合条件を照合し、base + overlay を決定",
+            },
+        },
     }
+
+    # Architecture selection
+    if "architecture_selection" in ddata:
+        catalog["architecture_selection"] = ddata["architecture_selection"]
+
+    # Anti-patterns
+    if apdata:
+        catalog["anti_patterns"] = apdata.get("anti_patterns", [])
+
+    return catalog
 
 
 def generate_catalog_json(catalog: dict) -> None:
@@ -288,13 +492,24 @@ def generate_llms_core_txt(pdata: dict, ddata: dict) -> None:
         lines.append(f"- **{ra['name']}** ({forces_str}): {layer_strs}")
     lines.append("")
 
-    # Rules
+    # Rules (new format with required/recommended/optional)
     lines.append("## 決定規則（IF–THEN候補）")
     lines.append("")
     for r in ddata["rules"]:
         cond = " AND ".join(f"{k}={v}" for k, v in r["if"].items())
-        pats = ", ".join(f"#{p}" for p in r["then_patterns"])
-        lines.append(f"- IF {cond} → {pats}")
+        if "required" in r:
+            req = ", ".join(f"#{p}" for p in r["required"])
+            rec = ", ".join(f"#{p}" for p in r.get("recommended", []))
+            opt = ", ".join(f"#{p}" for p in r.get("optional", []))
+            lines.append(f"- IF {cond}")
+            lines.append(f"  必須: {req}")
+            if rec:
+                lines.append(f"  推奨: {rec}")
+            if opt:
+                lines.append(f"  任意: {opt}")
+        else:
+            pats = ", ".join(f"#{p}" for p in r.get("then_patterns", []))
+            lines.append(f"- IF {cond} → {pats}")
         lines.append(f"  理由: {r['rationale']}")
     lines.append("")
 
@@ -318,7 +533,7 @@ def generate_llms_core_txt(pdata: dict, ddata: dict) -> None:
 # ── llms-full.txt ────────────────────────────────────────────────────
 
 def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
-    """全ページ連結プレーンテキスト"""
+    """全ページ連結プレーンテキスト（エージェント可読形式）"""
     parts: list[str] = []
     version = pdata.get("version", "0.0.0")
 
@@ -346,6 +561,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
             text = f.read_text(encoding="utf-8")
             # Strip YAML frontmatter
             text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
+            text = convert_to_agent_readable(text)
             parts.append(text.strip())
             parts.append("")
             parts.append("---")
@@ -362,6 +578,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
             if md_path.exists():
                 text = md_path.read_text(encoding="utf-8")
                 text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
+                text = convert_to_agent_readable(text)
                 parts.append(text.strip())
                 parts.append("")
                 parts.append("---")
@@ -374,6 +591,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
     if ra_index.exists():
         text = ra_index.read_text(encoding="utf-8")
         text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
+        text = convert_to_agent_readable(text)
         parts.append(text.strip())
         parts.append("")
         parts.append("---")
@@ -384,6 +602,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
         for rf in ra_files:
             text = rf.read_text(encoding="utf-8")
             text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
+            text = convert_to_agent_readable(text)
             parts.append(text.strip())
             parts.append("")
             parts.append("---")
@@ -394,6 +613,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
         if extra.exists():
             text = extra.read_text(encoding="utf-8")
             text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
+            text = convert_to_agent_readable(text)
             parts.append(text.strip())
             parts.append("")
             parts.append("---")
@@ -507,15 +727,140 @@ def generate_by_force(pdata: dict, ddata: dict) -> None:
     pass
 
 
+# ── --lint: structural validation ────────────────────────────────────
+
+def lint_patterns(pdata: dict) -> int:
+    """全59パターンの .md ファイルの構造を検証。エラー数を返す。"""
+    errors = 0
+    required_sections = ["## 概要", "## 設計", "## 解決する課題", "## 向き / 不向き", "## 要素技術", "## 関連パターン"]
+
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            md_path = DOCS / "patterns" / cat["id"] / f"{p['num']:02d}-{p['slug']}.md"
+            if not md_path.exists():
+                print(f"  LINT ERROR: {md_path} does not exist")
+                errors += 1
+                continue
+
+            text = md_path.read_text(encoding="utf-8")
+            prefix = f"#{p['num']} {p['slug']}"
+
+            # 1. Required sections
+            for section in required_sections:
+                if section not in text:
+                    print(f"  LINT WARN: {prefix}: missing '{section}'")
+
+            # 2. GEN:meta marker
+            if "<!-- BEGIN:GEN:meta -->" not in text:
+                print(f"  LINT ERROR: {prefix}: missing GEN:meta marker")
+                errors += 1
+
+            # 3. Related pattern links validity
+            related_section = re.search(r'## 関連パターン\n(.*?)(?=\n## |\Z)', text, re.DOTALL)
+            if related_section:
+                links = re.findall(r'\]\(([^)]+\.md)', related_section.group(1))
+                for link in links:
+                    link_path = md_path.parent / link
+                    if not link_path.exists():
+                        print(f"  LINT ERROR: {prefix}: broken link '{link}'")
+                        errors += 1
+
+    return errors
+
+
+# ── --validate: schema validation ────────────────────────────────────
+
+def validate_schemas() -> int:
+    """JSON Schema でバリデーション（schemas/ が存在する場合のみ）"""
+    schemas_dir = ROOT / "schemas"
+    if not schemas_dir.exists():
+        print("  schemas/ not found, skipping validation")
+        return 0
+
+    try:
+        import jsonschema
+    except ImportError:
+        print("  jsonschema not installed, skipping validation")
+        return 0
+
+    errors = 0
+
+    schema_targets = [
+        ("patterns.schema.json", PATTERNS_YML, "patterns.yml"),
+        ("decisions.schema.json", DECISIONS_YML, "decisions.yml"),
+    ]
+
+    for schema_file, target_file, target_name in schema_targets:
+        schema_path = schemas_dir / schema_file
+        if not schema_path.exists():
+            continue
+        with open(schema_path) as f:
+            schema = json.load(f)
+        data = load_yaml(target_file)
+        try:
+            jsonschema.validate(data, schema)
+            print(f"  ✓ {target_name} validates against {schema_file}")
+        except jsonschema.ValidationError as e:
+            print(f"  VALIDATE ERROR: {target_name}: {e.message}")
+            errors += 1
+
+    # catalog.json schema
+    catalog_schema_path = schemas_dir / "catalog.schema.json"
+    if catalog_schema_path.exists():
+        with open(catalog_schema_path) as f:
+            schema = json.load(f)
+        catalog_path = DOCS / "catalog.json"
+        if catalog_path.exists():
+            with open(catalog_path) as f:
+                data = json.load(f)
+            try:
+                jsonschema.validate(data, schema)
+                print(f"  ✓ catalog.json validates against catalog.schema.json")
+            except jsonschema.ValidationError as e:
+                print(f"  VALIDATE ERROR: catalog.json: {e.message}")
+                errors += 1
+
+    return errors
+
+
 # ── main ─────────────────────────────────────────────────────────────
 
 def main() -> None:
+    do_lint = "--lint" in sys.argv
+    do_validate = "--validate" in sys.argv
+
+    if do_lint:
+        print("generate.py: パターンページの構造検証中...")
+        pdata = load_yaml(PATTERNS_YML)
+        errors = lint_patterns(pdata)
+        if errors:
+            print(f"generate.py: {errors} エラー検出")
+            sys.exit(1)
+        else:
+            print("generate.py: 構造検証 OK")
+        return
+
+    if do_validate:
+        print("generate.py: スキーマバリデーション中...")
+        errors = validate_schemas()
+        if errors:
+            print(f"generate.py: {errors} バリデーションエラー")
+            sys.exit(1)
+        else:
+            print("generate.py: バリデーション OK")
+        return
+
     print("generate.py: 正本から成果物を生成中...")
 
     pdata = load_yaml(PATTERNS_YML)
     ddata = load_yaml(DECISIONS_YML)
 
-    catalog = build_catalog(pdata, ddata)
+    # Load anti-patterns if available
+    apdata = None
+    if ANTI_PATTERNS_YML.exists():
+        apdata = load_yaml(ANTI_PATTERNS_YML)
+
+    catalog = build_catalog(pdata, ddata, apdata)
 
     generate_catalog_json(catalog)
     generate_llms_txt(pdata, ddata)
