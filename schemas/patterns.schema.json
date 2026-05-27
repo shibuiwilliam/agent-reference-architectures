@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shibuiwilliam.github.io/agent-reference-architectures/schemas/patterns.schema.json",
+  "title": "AI Agent Architecture Patterns",
+  "type": "object",
+  "required": ["version", "site", "forces", "categories"],
+  "properties": {
+    "version": { "type": "string" },
+    "site": {
+      "type": "object",
+      "required": ["title", "principle"],
+      "properties": {
+        "title": { "type": "string" },
+        "principle": { "type": "string" }
+      }
+    },
+    "forces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "note"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^F[1-9]$" },
+          "name": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "roman", "title", "summary", "patterns"],
+        "properties": {
+          "id": { "type": "string" },
+          "roman": { "type": "string" },
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
+          "patterns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["num", "slug", "title", "tagline", "forces"],
+              "properties": {
+                "num": { "type": "integer" },
+                "slug": { "type": "string" },
+                "title": { "type": "string" },
+                "tagline": { "type": "string" },
+                "forces": { "type": "array", "items": { "type": "string" } },
+                "related": { "type": "array", "items": { "type": "integer" } },
+                "dials": { "type": "array", "items": { "type": "string" } },
+                "tradeoffs": { "type": "array", "items": { "type": "string" } },
+                "when_to_use": { "type": "string" },
+                "when_not": { "type": "array", "items": { "type": "string" } },
+                "element_tech": { "type": "array", "items": { "type": "string" } },
+                "summary_plain": { "type": "string" },
+                "selection_criteria": { "type": "object" },
+                "prevents_anti_patterns": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

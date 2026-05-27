@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shibuiwilliam.github.io/agent-reference-architectures/schemas/decisions.schema.json",
+  "title": "AI Agent Architecture Decisions",
+  "type": "object",
+  "required": ["version", "forces", "dials", "tradeoffs", "reference_architectures", "rules"],
+  "properties": {
+    "version": { "type": "string" },
+    "forces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "question", "high_implies", "low_implies"]
+      }
+    },
+    "dials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "category", "poles", "driver", "default", "patterns", "detail"]
+      }
+    },
+    "tradeoffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "category", "a", "b", "driver", "default", "patterns", "detail"]
+      }
+    },
+    "reference_architectures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "forces", "layers", "detail"]
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "if", "rationale"]
+      }
+    },
+    "architecture_selection": {
+      "type": "array"
+    }
+  }
+}

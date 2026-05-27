@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shibuiwilliam.github.io/agent-reference-architectures/schemas/catalog.schema.json",
+  "title": "AI Agent Architecture Catalog",
+  "type": "object",
+  "required": ["version", "principle", "forces", "dials", "tradeoffs", "reference_architectures", "rules", "patterns", "by_force", "bidirectional_related", "selection_guide"],
+  "properties": {
+    "version": { "type": "string" },
+    "principle": { "type": "string" },
+    "forces": { "type": "array" },
+    "dials": { "type": "array" },
+    "tradeoffs": { "type": "array" },
+    "reference_architectures": { "type": "array" },
+    "rules": { "type": "array" },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "slug", "category", "title", "tagline", "forces"]
+      }
+    },
+    "by_force": {
+      "type": "object",
+      "patternProperties": {
+        "^F[1-9]$": {
+          "type": "object",
+          "required": ["patterns", "dials", "tradeoffs", "reference_architectures", "rules", "anti_patterns"]
+        }
+      }
+    },
+    "bidirectional_related": {
+      "type": "object"
+    },
+    "selection_guide": {
+      "type": "object",
+      "required": ["step1_evaluate_forces", "step2_match_rules", "step3_resolve_tradeoffs", "step4_set_dials", "step5_compose"]
+    },
+    "anti_patterns": { "type": "array" },
+    "architecture_selection": { "type": "array" }
+  }
+}
