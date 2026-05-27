@@ -1,8 +1,64 @@
 # decisions.yml — 意思決定層の正本（single source of truth）
-# forces / dials / tradeoffs / reference_architectures / rules / architecture_selection を定義する。
+# characteristics / forces / dials / tradeoffs / reference_architectures / rules / architecture_selection を定義する。
 # scripts/generate.py がこのファイル + patterns.yml から成果物を生成する。
 
-version: "1.1.0"
+version: "1.2.0"
+
+characteristics:
+  - id: C1
+    name: 非決定論的な出力
+    description: 同じ入力を与えても毎回異なる出力が返る
+    group: 出力の不確実性
+    forces: [F2, F8]
+    detail: foundations/characteristics/c1-non-determinism.md
+  - id: C2
+    name: 長時間・可変長の実行
+    description: 処理時間が予測不能でHTTPタイムアウトやリソース占有を招く
+    group: 実行の予測不能性
+    forces: [F4, F1]
+    detail: foundations/characteristics/c2-variable-duration.md
+  - id: C3
+    name: 外部世界への副作用
+    description: 不可逆な操作を意図せず実行する可能性がある
+    group: 実行の予測不能性
+    forces: [F1, F2]
+    detail: foundations/characteristics/c3-side-effects.md
+  - id: C4
+    name: ハルシネーション
+    description: 事実と異なる情報を自信を持って生成する
+    group: 出力の不確実性
+    forces: [F2, F3]
+    detail: foundations/characteristics/c4-hallucination.md
+  - id: C5
+    name: コンテキスト窓の有限性
+    description: 長い会話や大量の文書を一度に扱えない
+    group: 実行の予測不能性
+    forces: [F7]
+    detail: foundations/characteristics/c5-context-window.md
+  - id: C6
+    name: 外部LLMへの依存
+    description: レイテンシ・可用性・価格が自社で制御できない
+    group: 外部依存とコスト
+    forces: [F9]
+    detail: foundations/characteristics/c6-external-llm-dependency.md
+  - id: C7
+    name: 攻撃面としての自然言語
+    description: プロンプトインジェクション等の新しい攻撃ベクトル
+    group: 外部依存とコスト
+    forces: [F5]
+    detail: foundations/characteristics/c7-attack-surface.md
+  - id: C8
+    name: トークン比例コスト
+    description: 使い方次第でコストが桁違いに変動する
+    group: 外部依存とコスト
+    forces: [F7]
+    detail: foundations/characteristics/c8-token-cost.md
+  - id: C9
+    name: モデル更新による挙動変更
+    description: コード変更なしにモデル更新で挙動が変わる
+    group: 出力の不確実性
+    forces: [F8, F9]
+    detail: foundations/characteristics/c9-model-update-drift.md
 
 forces:
   - id: F1

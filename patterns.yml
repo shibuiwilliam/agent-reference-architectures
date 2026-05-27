@@ -3,7 +3,7 @@
 # scripts/generate.py がこのファイル + decisions.yml から機械可読成果物を生成します。
 # 新パターンの追加・改名・並び替えは必ずここで行い、mkdocs.yml の nav も合わせて更新すること。
 
-version: "1.1.0"
+version: "1.2.0"
 
 site:
   title: "AIエージェント本番アーキテクチャ・パターン"

@@ -1,4 +1,4 @@
-# Decision Core — AI Agent Architecture Patterns v1.1.0
+# Decision Core — AI Agent Architecture Patterns v1.2.0
 
 > This file contains the decision-making data needed for architecture proposals.
 > Read `_agent/README.md` first for the algorithm overview.

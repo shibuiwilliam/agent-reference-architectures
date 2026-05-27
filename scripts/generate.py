@@ -251,6 +251,16 @@ def build_catalog(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
     version = pdata.get("version", ddata.get("version", "0.0.0"))
     principle = pdata["site"]["principle"]
 
+    characteristics = []
+    for c in ddata.get("characteristics", []):
+        characteristics.append({
+            "id": c["id"],
+            "name": c["name"],
+            "description": c["description"],
+            "group": c["group"],
+            "forces": c["forces"],
+        })
+
     forces = []
     for f in ddata["forces"]:
         forces.append({
@@ -326,6 +336,7 @@ def build_catalog(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
     catalog = {
         "version": version,
         "principle": principle,
+        "characteristics": characteristics,
         "forces": forces,
         "dials": dials,
         "tradeoffs": tradeoffs,
