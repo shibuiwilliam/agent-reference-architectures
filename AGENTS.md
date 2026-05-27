@@ -22,8 +22,8 @@
 このプロジェクトではAIエージェントアーキテクチャの設計に
 agent-reference-architectures カタログ（v1.0.0）を使用する。
 
-- カタログ: catalog.json (59パターン、9フォース、20ダイヤル、16二者択一)
-- 設計手順: フォース評価(F1-F9)→二者択一→ダイヤル→パターン選定→提案出力
+- カタログ: catalog.json (59パターン、9フォース、20ダイヤル、16二者択一、by_forceインデックス、selection_guide)
+- 設計手順: フォース評価(F1-F9)→ルール照合→二者択一→ダイヤル→構成合成→提案出力
 - 出力様式: agent-proposal-template.md に従う
 - 引用規約: #N（パターン）、[F#]（フォース）を根拠として明記
 - 境界: カタログ内パターンのみ使用。不確実は明示。最終判断は人間。
@@ -35,6 +35,8 @@ agent-reference-architectures カタログ（v1.0.0）を使用する。
 - **意思決定コア（低トークン）**: `https://shibuiwilliam.github.io/agent-reference-architectures/llms-core.txt`
 - **全文**: `https://shibuiwilliam.github.io/agent-reference-architectures/llms-full.txt`
 - **構造化データ**: `https://shibuiwilliam.github.io/agent-reference-architectures/catalog.json`
+  - `by_force`: フォースIDからパターン・ルール・ダイヤル・二者択一を逆引きするインデックス
+  - `selection_guide`: フォース評価の組み合わせからリファレンスアーキテクチャ候補を引くガイド
 
 ### 経路3: MCP接続
 
@@ -51,11 +53,12 @@ agent-reference-architectures カタログ（v1.0.0）を使用する。
 
 ```
 要件・制約を読む
-  → ① フォースを評価（F1–F9 を高/中/低で見積もる）
-  → ② 二者択一を解く（同期/非同期、シングル/マルチ…）
-  → ③ 程度を決める（タイムアウト・リトライ・自律性…のダイヤル値）
-  → ④ パターンを選び複合構成に組む（リファレンスアーキ＋語彙59）
-  → ⑤ 人間へ「提案」を出力（採否の根拠＝効いたフォースを引用付きで）
+  → ① フォースを評価（forces[].question を参照、F1–F9 を高/中/低で見積もる）
+  → ② ルール照合（rules[].if 条件を走査、required / recommended / optional パターンを得る）
+  → ③ 二者択一を解く（tradeoffs[].decision_function を適用、a / b / hybrid を決定）
+  → ④ 程度を決める（dials[].value_mapping を適用、タイムアウト・リトライ・自律性…の初期値を決定）
+  → ⑤ 構成合成（architecture_selection を参照、base + overlay 構成を確定）
+  → ⑥ 人間へ「提案」を出力（採否の根拠＝効いたフォースを引用付きで）
 ```
 
 ## 引用規約
