@@ -1,67 +1,67 @@
-# AIエージェント本番アーキテクチャ・パターン
+# AI Agent Production Architecture Patterns
 
-AIエージェントを本番システムへ組み込むためのアーキテクチャパターン集。  
-**意思決定（フォース・程度・相反）を中心**に、12カテゴリ・59パターンの設計意図・向き不向き・要素技術・調整の勘所を解説する。
+A catalog of architecture patterns for embedding AI agents into production systems.  
+Centered on **decision-making (forces, dials, and tradeoffs)**, it covers 12 categories and 59 patterns — design intent, when to use / when not to use, implementation technologies, and tuning guidance.
 
-> **基本原理:** 確率的なコアを、決定論的な殻——契約・検証・予算・権限・観測——で囲む。殻の目盛りは文脈（フォース）で決める。
+> **Core principle:** Wrap a probabilistic core in a deterministic shell — contracts, verification, budgets, permissions, observability. Calibrate the shell's dials by context (forces).
 
-## サイト
+## Site
 
 <https://shibuiwilliam.github.io/agent-reference-architectures/>
 
-## 構成
+## Structure
 
-| 区分 | 内容 |
-|------|------|
-| **意思決定（背骨）** | フォース（F1–F9）→ 程度（ダイヤル20本）→ 相反（二者択一16本）→ 構成合成 → 記録 |
-| **パターン（語彙）** | 12カテゴリ・59パターン |
-| **複合構成** | リファレンスアーキテクチャ、アンチパターン |
+| Section | Contents |
+|---------|----------|
+| **Decisions (backbone)** | Forces (F1–F9) → Dials (20) → Tradeoffs (16) → Composition → Record |
+| **Patterns (vocabulary)** | 12 categories, 59 patterns |
+| **Composite** | Reference architectures, anti-patterns |
 
-### パターンカテゴリ
+### Pattern Categories
 
-| # | カテゴリ | パターン数 |
-|---|---------|-----------|
-| I | 実行・セッション・オーケストレーション | 10 |
-| II | エージェント構成・分担 | 5 |
-| III | 入出力・契約化 | 4 |
-| IV | ツール・MCP・外部システム接続 | 6 |
-| V | メモリ・コンテキスト管理 | 4 |
-| VI | 信頼性・検証・ガードレール・自律 | 6 |
-| VII | 観測性・監査・評価 | 6 |
-| VIII | コスト・性能・スケーリング | 5 |
-| IX | セキュリティ・マルチテナント | 4 |
-| X | デプロイ・ベンダー抽象化・移行 | 4 |
-| XI | UI/UX・人間協調 | 3 |
-| XII | 組織・ガバナンス・ライフサイクル | 2 |
+| # | Category | Patterns |
+|---|----------|----------|
+| I | Execution, Session & Orchestration | 10 |
+| II | Agent Composition & Delegation | 5 |
+| III | I/O & Contract | 4 |
+| IV | Tools, MCP & External System Integration | 6 |
+| V | Memory & Context Management | 4 |
+| VI | Reliability, Verification, Guardrails & Autonomy | 6 |
+| VII | Observability, Audit & Evaluation | 6 |
+| VIII | Cost, Performance & Scaling | 5 |
+| IX | Security & Multi-Tenancy | 4 |
+| X | Deployment, Vendor Abstraction & Migration | 4 |
+| XI | UI/UX & Human Collaboration | 3 |
+| XII | Organization, Governance & Lifecycle | 2 |
 
-## 技術スタック
+## Tech Stack
 
-| 役割 | 採用 |
-|------|------|
-| 静的サイトジェネレータ | [MkDocs](https://www.mkdocs.org/) |
-| テーマ | [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) |
-| 図 | Mermaid |
-| ホスティング | GitHub Pages |
+| Role | Choice |
+|------|--------|
+| Static site generator | [MkDocs](https://www.mkdocs.org/) |
+| Theme | [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) |
+| Diagrams | Mermaid |
+| Hosting | GitHub Pages |
 | CI/CD | GitHub Actions |
-| パッケージ管理 | [uv](https://docs.astral.sh/uv/) |
+| Package manager | [uv](https://docs.astral.sh/uv/) |
 
-## ローカル開発
+## Local Development
 
 ```bash
-# 依存インストール
+# Install dependencies
 uv sync
 
-# ローカルプレビュー（http://127.0.0.1:8000）
+# Local preview (http://127.0.0.1:8000)
 uv run mkdocs serve
 
-# 本番と同条件でビルド（リンク切れ等があれば失敗）
+# Production build (fails on broken links etc.)
 uv run mkdocs build --strict
 ```
 
-## デプロイ
+## Deployment
 
-`main` ブランチへの push で GitHub Actions が自動実行され、GitHub Pages にデプロイされる。
+Pushing to the `main` branch triggers GitHub Actions, which automatically deploys to GitHub Pages.
 
-## ライセンス
+## License
 
 MIT
