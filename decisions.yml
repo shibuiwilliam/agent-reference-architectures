@@ -1,8 +1,8 @@
 # decisions.yml — 意思決定層の正本（single source of truth）
-# forces / dials / tradeoffs / reference_architectures / rules を定義する。
+# forces / dials / tradeoffs / reference_architectures / rules / architecture_selection を定義する。
 # scripts/generate.py がこのファイル + patterns.yml から成果物を生成する。
 
-version: "1.0.0"
+version: "1.1.0"
 
 forces:
   - id: F1
@@ -61,6 +61,19 @@ dials:
     default: "同期 5–10秒、非同期 5–30分"
     patterns: [1, 5, 58]
     detail: dials/timeout.md
+    value_mapping:
+      - condition: { F4: low }
+        range: [5, 10]
+        unit: seconds
+        note: "同期API。ストリーミング開始までの時間。CDN/LBタイムアウトの範囲内"
+      - condition: { F4: medium }
+        range: [30, 120]
+        unit: seconds
+        note: "LLM API呼び出し単体。モデル・プロンプト長による"
+      - condition: { F4: high }
+        range: [300, 1800]
+        unit: seconds
+        note: "非同期ジョブ。タスク複雑度に応じて5〜30分"
   - id: retry-count
     name: リトライ回数
     category: 実行制御
@@ -69,6 +82,19 @@ dials:
     default: "2–3回（指数バックオフ）"
     patterns: [40]
     detail: dials/retry-count.md
+    value_mapping:
+      - condition: { F9: high }
+        range: [1, 2]
+        unit: count
+        note: "プロバイダ安定。最小限のリトライで十分"
+      - condition: { F9: medium }
+        range: [2, 3]
+        unit: count
+        note: "基本リトライ回数。指数バックオフ＋ジッター付き"
+      - condition: { F9: low }
+        range: [2, 3]
+        unit: count
+        note: "上限は同じだがサーキットブレーカーと組み合わせる。冪等でない操作はリトライしない"
   - id: self-correction-loops
     name: 自己修正ループ回数
     category: 実行制御
@@ -77,6 +103,19 @@ dials:
     default: "1–3回"
     patterns: [8, 29]
     detail: dials/self-correction-loops.md
+    value_mapping:
+      - condition: { F7: high, F3: low }
+        range: [1, 2]
+        unit: count
+        note: "コスト感度高・価値低。最小限の修正"
+      - condition: { F7: medium, F3: medium }
+        range: [1, 3]
+        unit: count
+        note: "一般的な用途。2回連続同一エラーなら早期打ち切り"
+      - condition: { F7: low, F3: high }
+        range: [3, 5]
+        unit: count
+        note: "高価値・低頻度。ループごとにプロンプトを変化させる"
   - id: checkpoint-frequency
     name: チェックポイント頻度
     category: 実行制御
@@ -85,6 +124,19 @@ dials:
     default: "ステップ毎またはN分毎"
     patterns: [2, 4]
     detail: dials/checkpoint-frequency.md
+    value_mapping:
+      - condition: { F1: low }
+        value: "every_side_effect"
+        unit: event
+        note: "不可逆操作。副作用ステップの直前は必ずチェックポイント"
+      - condition: { F1: medium }
+        range: [3, 5]
+        unit: steps
+        note: "副作用の少ないステップは3〜5ステップごと、または5分ごと"
+      - condition: { F1: high }
+        range: [5, 10]
+        unit: steps
+        note: "可逆操作。状態サイズが小さければ毎ステップでも実用的"
   - id: budget-cap
     name: 予算上限
     category: 実行制御
@@ -93,6 +145,19 @@ dials:
     default: "リクエスト価値の10–30%"
     patterns: [5, 55]
     detail: dials/budget-cap.md
+    value_mapping:
+      - condition: { F3: low, F7: high }
+        value: "数千トークン（数円相当）"
+        unit: tokens
+        note: "低価値・高頻度リクエスト"
+      - condition: { F3: medium }
+        value: "リクエスト価値の10–30%"
+        unit: percent
+        note: "リクエストが生む価値の比率でコスト上限を設定"
+      - condition: { F3: high, F7: low }
+        value: "数万〜十万トークン（数百円相当）"
+        unit: tokens
+        note: "高価値・低頻度。マルチエージェントでは親が子に予算を分配"
   # ── 自律性・安全制御 ──
   - id: autonomy-level
     name: 自律性レベル
@@ -102,6 +167,19 @@ dials:
     default: "新規は低→実績で昇格"
     patterns: [31, 57]
     detail: dials/autonomy-level.md
+    value_mapping:
+      - condition: { F2: high, F1: low }
+        value: "suggest_only"
+        unit: level
+        note: "不可逆・高リスク。提案のみから開始"
+      - condition: { F2: medium }
+        value: "approve_then_execute"
+        unit: level
+        note: "承認後実行。100回成功で次段階へ昇格"
+      - condition: { F2: low, F1: high }
+        value: "full_autonomous"
+        unit: level
+        note: "可逆・低リスク。段階的に完全自律まで昇格可"
   - id: hitl-frequency
     name: HITL頻度
     category: 自律性・安全制御
@@ -110,6 +188,19 @@ dials:
     default: "高リスク操作のみ"
     patterns: [31]
     detail: dials/hitl-frequency.md
+    value_mapping:
+      - condition: { F2: high }
+        value: 100
+        unit: percent
+        note: "不可逆かつ高コスト操作。常時HITL"
+      - condition: { F2: medium }
+        range: [10, 20]
+        unit: percent
+        note: "サンプリングベースのHITL。確信度が閾値を下回る場合は動的挿入"
+      - condition: { F2: low }
+        value: 0
+        unit: percent
+        note: "可逆操作。HITL不要、事後監査で対応"
   - id: guardrail-strictness
     name: ガードレール厳しさ
     category: 自律性・安全制御
@@ -118,6 +209,19 @@ dials:
     default: "閾値 0.7–0.9"
     patterns: [29, 30]
     detail: dials/guardrail-strictness.md
+    value_mapping:
+      - condition: { F5: low, F2: high }
+        range: [0.85, 0.9]
+        unit: threshold
+        note: "高リスクドメイン（医療・金融）。偽陰性最小化を優先"
+      - condition: { F5: medium, F2: medium }
+        range: [0.7, 0.85]
+        unit: threshold
+        note: "標準的な構成。ドメインごとにチューニング"
+      - condition: { F5: high, F2: low }
+        range: [0.7, 0.8]
+        unit: threshold
+        note: "クリエイティブ用途。偽陽性最小化を優先"
   # ── モデル・生成制御 ──
   - id: model-tier-routing
     name: モデル階層
@@ -127,6 +231,19 @@ dials:
     default: "信頼度 0.8 以上で小モデル"
     patterns: [37]
     detail: dials/model-tier-routing.md
+    value_mapping:
+      - condition: { F7: high, F3: low }
+        range: [0.7, 0.8]
+        unit: classifier_confidence
+        note: "コスト圧力強。閾値を下げて小モデルへの振り分けを増やす"
+      - condition: { F3: high }
+        value: "large_model_default"
+        unit: routing
+        note: "高価値リクエスト。安全側（大モデル）に倒す"
+      - condition: { F7: medium, F3: medium }
+        value: 0.8
+        unit: classifier_confidence
+        note: "標準。信頼度0.8以上を小モデルへ。分類不能はデフォルト大モデル"
   - id: best-of-n
     name: Best-of-N
     category: モデル・生成制御
@@ -135,6 +252,19 @@ dials:
     default: "1（低リスク）、3–5（高リスク）"
     patterns: [10]
     detail: dials/best-of-n.md
+    value_mapping:
+      - condition: { F2: low, F3: low }
+        value: 1
+        unit: count
+        note: "低リスク・定型タスク"
+      - condition: { F2: medium, F3: medium }
+        value: 3
+        unit: count
+        note: "中リスク（コード生成・要約）"
+      - condition: { F2: high, F3: high }
+        range: [3, 5]
+        unit: count
+        note: "高リスク（法務・医療）。N>5は費用対効果が急落"
   - id: temperature
     name: 温度
     category: モデル・生成制御
@@ -143,6 +273,19 @@ dials:
     default: "0.0–0.3（定型）、0.5–0.8（探索）"
     patterns: []
     detail: dials/temperature.md
+    value_mapping:
+      - condition: { F6: low }
+        range: [0.0, 0.3]
+        unit: dimensionless
+        note: "分類・抽出・構造化出力・コード生成"
+      - condition: { F6: medium }
+        range: [0.3, 0.5]
+        unit: dimensionless
+        note: "要約・翻訳・エージェントの計画ステップ"
+      - condition: { F6: high }
+        range: [0.5, 0.8]
+        unit: dimensionless
+        note: "創作・ブレインストーミング"
   # ── メモリ・コンテキスト制御 ──
   - id: cache-similarity
     name: キャッシュ類似度閾値
@@ -152,6 +295,19 @@ dials:
     default: "コサイン類似度 0.92–0.97"
     patterns: [38]
     detail: dials/cache-similarity.md
+    value_mapping:
+      - condition: { F7: high }
+        range: [0.92, 0.95]
+        unit: cosine_similarity
+        note: "コスト重視。事実検索系（FAQ・ドキュメント）は0.95前後"
+      - condition: { F7: medium }
+        range: [0.95, 0.97]
+        unit: cosine_similarity
+        note: "バランス型。TTLとの組み合わせで鮮度を担保"
+      - condition: { F7: low }
+        range: [0.98, 1.0]
+        unit: cosine_similarity
+        note: "品質重視。創作・パーソナライズ系はキャッシュ無効化も検討"
   - id: retrieval-top-k
     name: 検索 top-k
     category: メモリ・コンテキスト制御
@@ -160,6 +316,19 @@ dials:
     default: "5–20、全体の50%以下"
     patterns: [24]
     detail: dials/retrieval-top-k.md
+    value_mapping:
+      - condition: { F4: low, F7: high }
+        range: [3, 7]
+        unit: chunks
+        note: "高速・低コスト。大きいチャンクサイズならkを小さめに"
+      - condition: { F4: medium, F7: medium }
+        range: [5, 10]
+        unit: chunks
+        note: "一般的なQ&A。リランカー併用時は初期50–100→最終5–10に絞る"
+      - condition: { F4: high, F7: low }
+        range: [10, 20]
+        unit: chunks
+        note: "複雑な分析・比較。品質優先"
   - id: memory-ttl
     name: メモリ TTL
     category: メモリ・コンテキスト制御
@@ -168,6 +337,19 @@ dials:
     default: "セッション 1時間、長期 30–90日"
     patterns: [26]
     detail: dials/memory-ttl.md
+    value_mapping:
+      - condition: { F8: low }
+        range: [1, 24]
+        unit: hours
+        note: "セッションメモリ。対話終了後に破棄"
+      - condition: { F8: medium }
+        range: [30, 90]
+        unit: days
+        note: "ユーザープリファレンス。定期的な再確認を推奨"
+      - condition: { F8: high }
+        range: [365, 2555]
+        unit: days
+        note: "規制対象データ。法規制の要求期間を上限とする（金融5–7年、医療6–10年）"
   - id: memory-write-eagerness
     name: メモリ書き込み積極度
     category: メモリ・コンテキスト制御
@@ -176,6 +358,19 @@ dials:
     default: "信頼度閾値で自動"
     patterns: [25]
     detail: dials/memory-write-eagerness.md
+    value_mapping:
+      - condition: { F8: low }
+        value: "auto_write"
+        unit: level
+        note: "高信頼度情報（明示的指示、確認済み事実）は自動書き込み"
+      - condition: { F8: medium }
+        value: "threshold_based"
+        unit: level
+        note: "中信頼度（推論結果、暗黙の好み）は信頼度閾値で判定"
+      - condition: { F8: high }
+        value: "human_approval"
+        unit: level
+        note: "低信頼度は書き込まない。中信頼度は人間承認制"
   - id: summarization-timing
     name: 要約タイミング
     category: メモリ・コンテキスト制御
@@ -184,6 +379,19 @@ dials:
     default: "トークン使用量が窓の70%到達時"
     patterns: [23]
     detail: dials/summarization-timing.md
+    value_mapping:
+      - condition: { F4: low }
+        value: "between_user_inputs"
+        unit: event
+        note: "ユーザー入力の合間に非同期で要約し体感レイテンシを抑える"
+      - condition: { F4: medium }
+        value: 70
+        unit: percent_context_window
+        note: "トークン使用量が窓の70%到達時に要約実行"
+      - condition: { F4: high }
+        value: "layered_compression"
+        unit: strategy
+        note: "段階的圧縮。最新N件は原文、前は要約、さらに前は要約の要約"
   - id: exposed-tool-count
     name: 露出ツール数
     category: メモリ・コンテキスト制御
@@ -192,6 +400,19 @@ dials:
     default: "5–15個/セッション"
     patterns: [18]
     detail: dials/exposed-tool-count.md
+    value_mapping:
+      - condition: { F6: low }
+        range: [3, 5]
+        unit: count
+        note: "定型タスク。必要最小限に絞る"
+      - condition: { F6: medium }
+        range: [5, 15]
+        unit: count
+        note: "一般的な範囲。カテゴリで分類"
+      - condition: { F6: high }
+        range: [10, 15]
+        unit: count
+        note: "汎用アシスタント。15個超は2段階選択（カテゴリ→ツール）"
   # ── 観測・記録制御 ──
   - id: trace-sampling-rate
     name: トレースサンプリング率
@@ -201,6 +422,19 @@ dials:
     default: "開発 100%、本番 1–10%"
     patterns: [32, 54]
     detail: dials/trace-sampling-rate.md
+    value_mapping:
+      - condition: { F8: high }
+        value: 100
+        unit: percent
+        note: "高リスク操作・エラー発生時は常に100%。監査要件"
+      - condition: { F8: medium, F7: medium }
+        range: [10, 50]
+        unit: percent
+        note: "本番（低トラフィック）。エラー時は100%"
+      - condition: { F8: low, F7: high }
+        range: [1, 10]
+        unit: percent
+        note: "本番（高トラフィック）。コスト優先"
   - id: prompt-storage
     name: プロンプト保存先・粒度
     category: 観測・記録制御
@@ -209,6 +443,19 @@ dials:
     default: "Git管理、バージョンタグ付き"
     patterns: [33]
     detail: dials/prompt-storage.md
+    value_mapping:
+      - condition: { F8: low }
+        value: "git_single_file"
+        unit: strategy
+        note: "Gitリポジトリ管理。1エージェント=1ファイル"
+      - condition: { F8: medium }
+        value: "git_semantic_versioning"
+        unit: strategy
+        note: "セマンティックバージョニング（prompt-vMAJOR.MINOR.PATCH）"
+      - condition: { F8: high }
+        value: "dedicated_registry"
+        unit: strategy
+        note: "専用プロンプトレジストリ。Few-shot例は別ファイルで独立管理"
   - id: log-retention
     name: ログ保持期間
     category: 観測・記録制御
@@ -217,6 +464,19 @@ dials:
     default: "Hot 7–30日、Cold 1–7年"
     patterns: [54]
     detail: dials/log-retention.md
+    value_mapping:
+      - condition: { F8: low, F7: high }
+        range: [7, 30]
+        unit: days
+        note: "Hot層のみ。高速検索可能"
+      - condition: { F8: medium }
+        range: [30, 90]
+        unit: days
+        note: "Warm層。数時間で取得可能"
+      - condition: { F8: high }
+        range: [365, 2555]
+        unit: days
+        note: "Cold層。金融5–7年、医療6–10年。監査ログは最長保持"
 
 tradeoffs:
   # ── 実行モデル ──
@@ -230,6 +490,18 @@ tradeoffs:
     hybrid: 58
     patterns: [1, 58]
     detail: tradeoffs-catalog/sync-vs-async.md
+    decision_function:
+      - if: { F4: low }
+        then: a
+        note: "5秒以内に完了する処理 → 同期"
+      - if: { F4: high }
+        then: b
+        note: "待機許容・処理時間不定 → 非同期（ジョブID+202）"
+      - if: { F4: medium }
+        then: hybrid
+        hybrid_pattern: 58
+        note: "同期試行→閾値超過で非同期昇格（Sync Facade）"
+      - default: a
   - id: single-vs-multi-agent
     name: シングル↔マルチエージェント
     category: 実行モデル
@@ -239,6 +511,18 @@ tradeoffs:
     default: "シングルで十分ならシングル"
     patterns: [9, 10]
     detail: tradeoffs-catalog/single-vs-multi-agent.md
+    decision_function:
+      - if: { F6: low }
+        then: a
+        note: "単一プロンプトで十分な品質 → シングル"
+      - if: { F6: high, F7: low }
+        then: b
+        note: "複数ドメイン・コンテキスト溢れ → マルチ"
+      - if: { F6: high, F7: high }
+        then: hybrid
+        hybrid_pattern: 59
+        note: "コスト圧力あり → サブタスクごとに動的選択"
+      - default: a
   - id: orchestration-vs-choreography
     name: 中央集権↔コレオグラフィ
     category: 実行モデル
@@ -248,6 +532,14 @@ tradeoffs:
     default: "中央集権"
     patterns: [3, 12]
     detail: tradeoffs-catalog/orchestration-vs-choreography.md
+    decision_function:
+      - if: { F8: high }
+        then: a
+        note: "監査・規制 → 中央集権で全フロー可視化"
+      - if: { F6: high, F8: low }
+        then: b
+        note: "参加者頻繁変更 → イベント駆動のコレオグラフィ"
+      - default: a
   - id: workflow-vs-agent
     name: ワークフロー↔エージェント
     category: 実行モデル
@@ -257,6 +549,18 @@ tradeoffs:
     default: "定型はワークフロー"
     patterns: [3, 59]
     detail: tradeoffs-catalog/workflow-vs-agent.md
+    decision_function:
+      - if: { F6: low }
+        then: a
+        note: "手順が事前定義可能 → ワークフロー"
+      - if: { F6: high, F2: low }
+        then: b
+        note: "探索的・失敗コスト低 → エージェント自律"
+      - if: { F6: high, F2: high }
+        then: hybrid
+        hybrid_pattern: 3
+        note: "探索的だが高リスク → 決定論骨格＋判断ノードのみエージェント"
+      - default: a
   - id: plan-vs-react
     name: Plan↔ReAct
     category: 実行モデル
@@ -266,6 +570,18 @@ tradeoffs:
     default: "副作用大なら Plan"
     patterns: [8, 50]
     detail: tradeoffs-catalog/plan-vs-react.md
+    decision_function:
+      - if: { F2: high }
+        then: a
+        note: "副作用あり・不可逆 → Plan先行（+#50 Editable Plan）"
+      - if: { F2: low, F6: high }
+        then: b
+        note: "読み取り専用・探索的 → ReAct"
+      - if: { F2: high, F6: high }
+        then: hybrid
+        hybrid_pattern: 8
+        note: "全体Plan→各ステップReActの二段構成"
+      - default: a
   # ── 制御・知識ソース ──
   - id: prompt-vs-code
     name: プロンプト制御↔コード制御
@@ -276,6 +592,18 @@ tradeoffs:
     default: "コード制御"
     patterns: [11, 30]
     detail: tradeoffs-catalog/prompt-vs-code.md
+    decision_function:
+      - if: { F8: high }
+        then: b
+        note: "監査・テスト必要 → コード制御"
+      - if: { F8: low, F6: high }
+        then: a
+        note: "曖昧な基準・頻繁変更 → プロンプト制御"
+      - if: { F8: medium }
+        then: hybrid
+        hybrid_pattern: 30
+        note: "フロー/検証はコード、判断/生成はプロンプト"
+      - default: b
   - id: rag-vs-finetuning
     name: RAG↔Fine-Tuning
     category: 制御・知識ソース
@@ -285,6 +613,17 @@ tradeoffs:
     default: "RAG"
     patterns: [24, 27]
     detail: tradeoffs-catalog/rag-vs-finetuning.md
+    decision_function:
+      - if: { knowledge_update_freq: high }
+        then: a
+        note: "知識の更新頻度が高い → RAG（インデックス再構築のみ）"
+      - if: { knowledge_update_freq: low, F7: high }
+        then: b
+        note: "安定した知識・大量クエリ → Fine-Tuning（推論コスト低）"
+      - if: { F4: low }
+        then: b
+        note: "厳格なレイテンシ → Fine-Tuning（検索ステップ不要）"
+      - default: a
   - id: single-vs-multi-provider
     name: 単一↔マルチプロバイダ
     category: 制御・知識ソース
@@ -294,6 +633,18 @@ tradeoffs:
     default: "単一で始める"
     patterns: [45, 46, 40]
     detail: tradeoffs-catalog/single-vs-multi-provider.md
+    decision_function:
+      - if: { F9: low }
+        then: b
+        note: "高可用性SLA → マルチプロバイダ"
+      - if: { F9: high }
+        then: a
+        note: "プロバイダ安定・ロックイン許容 → 単一"
+      - if: { F9: medium }
+        then: hybrid
+        hybrid_pattern: 40
+        note: "単一プライマリ＋フォールバック構成"
+      - default: a
   - id: llm-vs-tool
     name: LLM推論↔ツール委譲
     category: 制御・知識ソース
@@ -303,6 +654,18 @@ tradeoffs:
     default: "算術・検索はツール"
     patterns: [17, 15]
     detail: tradeoffs-catalog/llm-vs-tool.md
+    decision_function:
+      - if: { F2: high }
+        then: b
+        note: "正確性必須（算術・検索・構造化データ）→ ツール委譲"
+      - if: { F2: low }
+        then: a
+        note: "曖昧な判断・推論・自然言語生成 → LLM推論"
+      - if: { F2: medium }
+        then: hybrid
+        hybrid_pattern: 15
+        note: "LLMが判断→ツールが実行（反転構造化出力）"
+      - default: b
   # ── 検証・信頼性 ──
   - id: inline-vs-post-verification
     name: インライン検証↔事後検証
@@ -313,6 +676,17 @@ tradeoffs:
     default: "高リスクはインライン"
     patterns: [28, 29]
     detail: tradeoffs-catalog/inline-vs-post-verification.md
+    decision_function:
+      - if: { F2: high }
+        then: a
+        note: "不可逆な影響 → インラインでブロック"
+      - if: { F2: low, F4: low }
+        then: b
+        note: "低リスク・即応性要求 → 事後検証"
+      - if: { F2: medium }
+        then: hybrid
+        note: "軽量ルールはインライン（#29）、重い意味検証は事後（#28）"
+      - default: a
   - id: same-vs-different-model
     name: 同一モデル検証↔別モデル検証
     category: 検証・信頼性
@@ -322,6 +696,17 @@ tradeoffs:
     default: "同一、高リスクなら別"
     patterns: [10, 28]
     detail: tradeoffs-catalog/same-vs-different-model.md
+    decision_function:
+      - if: { F2: low }
+        then: a
+        note: "低リスク → 同一モデルのプロンプト分離で十分"
+      - if: { F2: high }
+        then: b
+        note: "系統的バイアスの回避 → 別アーキテクチャのモデル"
+      - if: { F2: medium, F7: high }
+        then: hybrid
+        note: "初期は同一モデル→高リスク出力のみ別モデル"
+      - default: a
   - id: fail-fast-vs-degradation
     name: Fail-fast↔縮退運転
     category: 検証・信頼性
@@ -331,6 +716,17 @@ tradeoffs:
     default: "低価値は fail-fast"
     patterns: [40]
     detail: tradeoffs-catalog/fail-fast-vs-degradation.md
+    decision_function:
+      - if: { F3: low }
+        then: a
+        note: "低価値リクエスト → 即時エラー"
+      - if: { F3: high, F9: low }
+        then: b
+        note: "高価値・プロバイダ不安定 → 段階縮退"
+      - if: { F3: high, F9: high }
+        then: hybrid
+        note: "Fail-fast＋静的フォールバック（縮退階段未構築時）"
+      - default: a
   # ── インフラ・データ ──
   - id: push-vs-pull
     name: プッシュ↔プル
@@ -341,6 +737,17 @@ tradeoffs:
     default: "プッシュ"
     patterns: [1, 7]
     detail: tradeoffs-catalog/push-vs-pull.md
+    decision_function:
+      - if: { F4: low }
+        then: a
+        note: "リアルタイム進捗要求 → SSE/WebSocket"
+      - if: { F4: high }
+        then: b
+        note: "永続接続不可 → ポーリング"
+      - if: { F4: medium }
+        then: hybrid
+        note: "プッシュ主チャネル＋ポーリングフォールバック"
+      - default: a
   - id: in-context-vs-external
     name: 文脈内状態↔外部状態
     category: インフラ・データ
@@ -350,6 +757,18 @@ tradeoffs:
     default: "短期は文脈内、永続は外部"
     patterns: [23, 2]
     detail: tradeoffs-catalog/in-context-vs-external.md
+    decision_function:
+      - if: { F8: high }
+        then: b
+        note: "監査証跡必要 → 外部永続化必須"
+      - if: { F8: low, F4: low }
+        then: a
+        note: "短期セッション・即応性 → 文脈内"
+      - if: { F8: medium }
+        then: hybrid
+        hybrid_pattern: 23
+        note: "作業メモリは文脈内、短期はセッションDB、長期は永続ストア（三層）"
+      - default: a
   - id: build-vs-buy
     name: ビルド↔バイ
     category: インフラ・データ
@@ -359,6 +778,17 @@ tradeoffs:
     default: "差別化はビルド"
     patterns: [45]
     detail: tradeoffs-catalog/build-vs-buy.md
+    decision_function:
+      - if: { competitive_differentiator: true }
+        then: a
+        note: "競争優位の源泉 → ビルド"
+      - if: { competitive_differentiator: false, F7: high }
+        then: b
+        note: "コモディティ機能・短期コスト圧力 → バイ"
+      - if: { competitive_differentiator: false, F8: high }
+        then: hybrid
+        note: "コア=ビルド、周辺（認証・監視・ランタイム）=バイ"
+      - default: hybrid
   - id: structured-vs-freeform
     name: 構造化出力↔自由形式出力
     category: インフラ・データ
@@ -368,6 +798,17 @@ tradeoffs:
     default: "下流連携は構造化"
     patterns: [14]
     detail: tradeoffs-catalog/structured-vs-freeform.md
+    decision_function:
+      - if: { downstream_consumer: system }
+        then: a
+        note: "下流がシステム → 構造化（パース安全・型安全）"
+      - if: { downstream_consumer: human, F6: high }
+        then: b
+        note: "人間向け・出力形状不定 → 自由形式"
+      - if: { F8: high }
+        then: a
+        note: "監査でフィールド単位の追跡が必要 → 構造化"
+      - default: a
 
 reference_architectures:
   - id: mvp
@@ -436,44 +877,108 @@ reference_architectures:
       - { role: 観測, pattern: 54 }
     detail: reference-architectures/06-continuous-improvement.md
 
+architecture_selection:
+  - if: { F2: high, F1: low }
+    base: side-effect
+    overlay: []
+    note: "副作用重視が基本"
+  - if: { F2: high, F7: high }
+    base: side-effect
+    overlay: [cost]
+    note: "安全層を維持しつつコスト最適化を重ねる"
+  - if: { F5: low, F2: high }
+    base: untrusted-input
+    overlay: [side-effect]
+    note: "入力防御の上に副作用ガードを重ねる"
+  - if: { F5: low, F7: high }
+    base: cost
+    overlay: [untrusted-input]
+    note: "コスト効率を維持しつつセキュリティ層を追加"
+  - if: { F7: high }
+    base: cost
+    overlay: []
+    note: "コスト重視"
+  - if: { F8: high }
+    base: continuous-improvement
+    overlay: []
+    note: "継続改善"
+  - if: { F2: high, F8: high }
+    base: factuality
+    overlay: [continuous-improvement]
+    note: "事実性＋継続改善"
+  - default:
+      base: mvp
+      overlay: []
+      note: "迷ったら最小構成から始める"
+
 rules:
   - id: rule-high-f2-low-f1
     if: { F2: high, F1: low }
-    then_patterns: [31, 19, 4, 3, 15]
-    rationale: "不可逆かつ高リスク → 人間承認・Dry-Run・Saga補償を必須候補に。ワークフロー骨格で順序を保証し、LLMは判断のみ"
+    required: [31, 19, 4]
+    recommended: [3, 15]
+    optional: [28, 10]
+    rationale: "不可逆かつ高リスク → #31(承認), #19(Dry-Run), #4(Saga) は必須。#3(骨格) と #15(判断分離) は推奨。#28(検証), #10(合議) は F3 高の場合に追加"
+    escalation: "F3 も高い場合は optional を recommended に昇格"
   - id: rule-high-f2-high-f8
     if: { F2: high, F8: high }
-    then_patterns: [28, 30, 32, 33, 10]
-    rationale: "高リスク＋監査義務 → 独立検証・ポリシーコード化・全件トレース・バージョン固定。合議で品質を担保"
+    required: [28, 30, 32]
+    recommended: [33, 10]
+    optional: [52, 54]
+    rationale: "高リスク＋監査義務 → #28(独立検証), #30(ポリシーコード化), #32(全件トレース) は必須。#33(バージョン固定), #10(合議) は推奨"
+    escalation: "F9 低の場合は #40(フォールバック) を recommended に追加"
   - id: rule-low-f5
     if: { F5: low }
-    then_patterns: [13, 42, 44, 18, 43, 29]
-    rationale: "信頼できない入力 → 境界防御・権限分離・被害半径制限の多層防御"
+    required: [13, 42, 44]
+    recommended: [18, 43, 29]
+    optional: [20, 41]
+    rationale: "信頼できない入力 → #13(境界), #42(データ検査), #44(権限分離) は必須。#18(最小権限), #43(被害限定), #29(ガードレール) は推奨"
+    escalation: "マルチテナントの場合は #41 を recommended に昇格"
   - id: rule-high-f7
     if: { F7: high }
-    then_patterns: [37, 38, 39, 56, 5, 40]
-    rationale: "コスト制約 → ルーティング・キャッシュ・努力配分で効率化。予算上限で暴走防止"
+    required: [37, 5]
+    recommended: [38, 39, 56]
+    optional: [40, 55]
+    rationale: "コスト制約 → #37(ルーティング), #5(予算上限) は必須。#38(キャッシュ), #39(プロンプトキャッシュ), #56(努力配分) は推奨"
+    escalation: "F9 低の場合は #40 を required に昇格"
   - id: rule-high-f8
     if: { F8: high }
-    then_patterns: [32, 33, 34, 30, 54, 52]
-    rationale: "監査・規制 → 全件トレース・バージョン固定・評価CI/CD・ポリシーコード化。憲法で行動原則を体系化"
+    required: [32, 33]
+    recommended: [34, 30, 54]
+    optional: [52, 53]
+    rationale: "監査・規制 → #32(トレース), #33(バージョン固定) は必須。#34(評価CI/CD), #30(ポリシーコード化), #54(二層観測) は推奨"
+    escalation: "F2 も高い場合は #30 を required に昇格"
   - id: rule-low-f9
     if: { F9: low }
-    then_patterns: [40, 45, 46]
-    rationale: "プロバイダ不安定 → フォールバック・ランタイム抽象化・互換レイヤーで可用性確保"
+    required: [40]
+    recommended: [45, 46]
+    optional: [36]
+    rationale: "プロバイダ不安定 → #40(フォールバック) は必須。#45(ランタイム抽象化), #46(互換レイヤー) は推奨"
+    escalation: "F3 高の場合は #45, #46 を required に昇格"
   - id: rule-high-f6
     if: { F6: high }
-    then_patterns: [59, 12, 9]
-    rationale: "探索的タスク → エージェント自律・マルチ構成・黒板で柔軟な協調"
+    required: [59]
+    recommended: [12, 9]
+    optional: [47]
+    rationale: "探索的タスク → #59(選定メタ) は必須。#12(黒板), #9(統括・専門) は推奨"
+    escalation: "マルチエージェント導入時は #47 を recommended に昇格"
   - id: rule-low-f6
     if: { F6: low }
-    then_patterns: [3, 11]
-    rationale: "定型タスク → ワークフロー骨格・決定論コアで予測可能性を確保"
+    required: [3]
+    recommended: [11]
+    optional: [14]
+    rationale: "定型タスク → #3(ワークフロー骨格) は必須。#11(決定論コア) は推奨"
+    escalation: "F8 高の場合は #11 を required に昇格"
   - id: rule-high-f3
     if: { F3: high }
-    then_patterns: [10, 8, 28, 37]
-    rationale: "高価値リクエスト → 合議・計画-検証分離・独立検証でコストをかけた品質担保"
+    required: [10]
+    recommended: [8, 28]
+    optional: [37]
+    rationale: "高価値リクエスト → #10(合議) は必須。#8(計画-検証分離), #28(独立検証) は推奨"
+    escalation: "F7 も高い場合は #37 を recommended に昇格"
   - id: rule-low-f4
     if: { F4: low }
-    then_patterns: [58, 7, 38, 39]
-    rationale: "即応性要求 → 同期ファサード・ストリーミング・キャッシュで低レイテンシ化"
+    required: [58]
+    recommended: [7, 38]
+    optional: [39]
+    rationale: "即応性要求 → #58(同期ファサード) は必須。#7(ストリーミング), #38(キャッシュ) は推奨"
+    escalation: "F7 も高い場合は #39 を recommended に昇格"
