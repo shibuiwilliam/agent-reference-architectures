@@ -3,7 +3,7 @@
 # scripts/generate.py がこのファイル + decisions.yml から機械可読成果物を生成します。
 # 新パターンの追加・改名・並び替えは必ずここで行い、mkdocs.yml の nav も合わせて更新すること。
 
-version: "1.0.0"
+version: "1.1.0"
 
 site:
   title: "AIエージェント本番アーキテクチャ・パターン"
@@ -37,6 +37,16 @@ categories:
         when_to_use: "マルチステップの調査・コンテンツ生成・分析など、数秒〜数分かかるタスク"
         when_not: ["F4=低（数秒以内に同期で完了できるタスク）"]
         element_tech: [FastAPI, "Next.js API Routes", SQS, "Cloud Pub/Sub", Kafka, "Cloud Tasks", Celery, Redis, PostgreSQL, SSE, WebSocket]
+        summary_plain: "ユーザーリクエストを即座にジョブIDで応答し、LLM処理をバックグラウンドで実行する。HTTPタイムアウトによる切断を防ぎ、Web層とエージェント層を独立にスケールさせる。"
+        selection_criteria:
+          primary_trigger: "F4=high（数秒〜数分かかるタスク）"
+          skip_if: ["F4=low（数秒以内に同期で完了）", "オートコンプリートや単純分類"]
+          combine_with:
+            always: [2, 7]
+            if_mixed_workload: [58]
+          alternatives:
+            - { pattern: 58, when: "同期・非同期が混在するハイブリッドワークロード" }
+        prevents_anti_patterns: [ap-01, ap-07]
       - num: 2
         slug: durable-agent-session
         title: "Durable Agent Session｜耐久エージェントセッション"
@@ -48,6 +58,17 @@ categories:
         when_to_use: "マルチステップの研究・コード生成・データパイプライン、ローリングデプロイ環境"
         when_not: ["単発LLM呼び出し", "シリアライズコストが利益を上回るリアルタイム対話"]
         element_tech: [Redis, PostgreSQL, DynamoDB, Temporal, "Azure Durable Functions", "JSON/Protobuf"]
+        summary_plain: "エージェントの状態を外部ストアにチェックポイント保存し、プロセス障害やローリングデプロイ後も最後の保存地点から再開できるようにする。"
+        selection_criteria:
+          primary_trigger: "F1=low（マルチステップの長時間タスクで中断・再開が必要）"
+          skip_if: ["単発LLM呼び出し", "シリアライズコストが利益を上回るリアルタイム対話"]
+          combine_with:
+            always: [1]
+            if_compensation_needed: [4]
+            if_audit_required: [32]
+          alternatives:
+            - { pattern: "Temporal/Durable Functions", when: "ワークフローエンジンが耐久実行をネイティブ提供" }
+        prevents_anti_patterns: []
       - num: 3
         slug: workflow-backbone-agent-node
         title: "Workflow Backbone + Agent Node｜決定論骨格＋ノード"
@@ -59,6 +80,16 @@ categories:
         when_to_use: "固定手順にAI判断を組み込む場面、規制業種で再現性が必要"
         when_not: ["F6=高（探索的タスク）", "手順が動的に変化する場合"]
         element_tech: [Temporal, Airflow, "Step Functions", Prefect, Hatchet, LangGraph, "OpenAI Agents SDK"]
+        summary_plain: "決定論的なワークフローエンジンを骨格とし、判断が必要なノードだけをLLMエージェントに委譲する。再現性と監査性を確保しつつAI判断を組み込む。"
+        selection_criteria:
+          primary_trigger: "F6=low AND F8=high（固定手順＋規制要件）"
+          skip_if: ["F6=high（探索的タスク）", "手順が動的に変化する場合"]
+          combine_with:
+            always: [14]
+            if_budget_needed: [5]
+          alternatives:
+            - { pattern: 59, when: "サブタスクごとにワークフロー/エージェントを選定する必要がある" }
+        prevents_anti_patterns: [ap-08]
       - num: 4
         slug: agent-saga
         title: "Agent Saga｜補償トランザクション"
@@ -70,6 +101,15 @@ categories:
         when_to_use: "複数外部システムへの書き込み連鎖（カレンダー→チケット→メール）"
         when_not: ["読み取り専用", "単一サービスのDBトランザクションで完結", "物理的に不可逆な操作"]
         element_tech: [Temporal, "Step Functions", "冪等キー"]
+        summary_plain: "複数外部システムへの書き込み連鎖で途中失敗した場合に、補償アクションを逆順に実行して一貫性を回復する分散Sagaパターンのエージェント版。"
+        selection_criteria:
+          primary_trigger: "F1=low AND F2=high（複数外部システムへの書き込み連鎖）"
+          skip_if: ["読み取り専用", "単一サービスのDBトランザクションで完結", "物理的に不可逆な操作"]
+          combine_with:
+            always: [2, 19]
+            if_approval_needed: [31]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 5
         slug: time-budgeted-agent-loop
         title: "Time-Budgeted Agent Loop｜予算付きループ"
@@ -81,6 +121,15 @@ categories:
         when_to_use: "SaaSでのコスト制限、マルチテナントの公平性確保"
         when_not: ["バッチで必要な分だけ使う方針（ただしコスト上限は常に推奨）"]
         element_tech: ["フレームワーク callback/middleware", "LLM usage API", "ツール呼び出しカウンタ"]
+        summary_plain: "エージェントループに時間・ステップ数・トークン数・金額の予算を注入し、予算超過時にベスト・ソー・ファーの返却やエスカレーションで暴走を防ぐ。"
+        selection_criteria:
+          primary_trigger: "F7=high（コスト制約下でのエージェントループ）"
+          skip_if: ["バッチで必要な分だけ使う方針（ただしコスト上限は常に推奨）"]
+          combine_with:
+            always: [55]
+            if_cost_routing: [37]
+          alternatives: []
+        prevents_anti_patterns: [ap-01, ap-09]
       - num: 6
         slug: interruptible-agent
         title: "Interruptible Agent｜中断可能エージェント"
@@ -92,6 +141,16 @@ categories:
         when_to_use: "長時間稼働のインタラクティブエージェント、人間が途中で方針変更する場面"
         when_not: ["サブ秒完了タスク", "フラグチェックのオーバーヘッドが許容できない超低レイテンシパス"]
         element_tech: ["Redis Pub/Sub", "DB flag", WebSocket, "graceful shutdown"]
+        summary_plain: "実行中のエージェントに外部からの中断シグナルを安全に受け取るチェックポイントを挿入し、状態を保存した上で一時停止・再開を可能にする。"
+        selection_criteria:
+          primary_trigger: "F4=high（長時間稼働のインタラクティブエージェント）"
+          skip_if: ["サブ秒完了タスク", "フラグチェックのオーバーヘッドが許容できない超低レイテンシパス"]
+          combine_with:
+            always: [2]
+            if_budget: [5]
+            if_approval: [31]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 7
         slug: streaming-progress
         title: "Streaming Progress｜進捗ストリーミング"
@@ -103,6 +162,16 @@ categories:
         when_to_use: "5秒以上のタスク、ユーザーのインタラクティブ監視、規制トレースログ"
         when_not: ["サブ秒処理", "バッチのサイレントモード"]
         element_tech: [SSE, WebSocket, "gRPC streaming", "Redis Streams", Kafka, "JSON Lines"]
+        summary_plain: "5秒以上かかるタスクの各ステップを構造化された進捗イベントとしてSSE/WebSocket経由でリアルタイム配信し、ユーザーの体感待ち時間を短縮する。"
+        selection_criteria:
+          primary_trigger: "F4=high（5秒以上のタスクで体感レイテンシ管理が必要）"
+          skip_if: ["サブ秒処理", "バッチのサイレントモード"]
+          combine_with:
+            always: [1]
+            if_interrupt: [6]
+          alternatives:
+            - { pattern: "ポーリング", when: "永続接続が不可の環境" }
+        prevents_anti_patterns: [ap-07]
       - num: 55
         slug: deadline-budget-cascade
         title: "Deadline & Budget Cascade｜期限・予算のカスケード"
@@ -114,6 +183,16 @@ categories:
         when_to_use: "マルチエージェント構成、再帰的ツール呼び出し、SaaSの厳格なコスト制限"
         when_not: ["単一エージェントの1ショット", "オーバーヘッドが利益を超える軽量タスク"]
         element_tech: ["gRPC metadata", "HTTP header context", "コンテキストオブジェクト"]
+        summary_plain: "マルチエージェントの呼び出しツリーで親の残り期限と予算を子に明示的に伝播し、子が孫に再分配することで全体の予算超過を防ぐ。"
+        selection_criteria:
+          primary_trigger: "F7=high AND マルチエージェント構成"
+          skip_if: ["単一エージェントの1ショット", "伝播オーバーヘッドが利益を超える軽量タスク"]
+          combine_with:
+            always: [5]
+            if_supervisor: [9]
+          alternatives:
+            - { pattern: 5, when: "単一レベルのエージェントで予算管理が十分" }
+        prevents_anti_patterns: [ap-01]
       - num: 58
         slug: sync-facade-over-async-core
         title: "Sync Facade over Async Core｜同期ファサード"
@@ -125,6 +204,16 @@ categories:
         when_to_use: "軽い挨拶と重い調査が同じエンドポイントに混在するハイブリッドワークロード"
         when_not: ["一様に高速または低速", "全非同期専用クライアント設計"]
         element_tech: ["FastAPI asyncio.wait_for", "Next.js AbortController"]
+        summary_plain: "全リクエストを同期で開始し閾値時間内に完了すれば即返却、超過すれば自動的に非同期ジョブに昇格して202＋ジョブIDを返す。"
+        selection_criteria:
+          primary_trigger: "F4=mixed（同じエンドポイントに高速・低速リクエストが混在）"
+          skip_if: ["一様に高速または低速", "全非同期専用クライアント設計"]
+          combine_with:
+            always: [1, 2]
+            if_progress: [7]
+          alternatives:
+            - { pattern: 1, when: "全リクエストが低速で常時非同期が適切" }
+        prevents_anti_patterns: [ap-07]
       - num: 59
         slug: workflow-agent-spectrum-selector
         title: "Workflow–Agent Spectrum Selector｜選定メタ"
@@ -136,6 +225,16 @@ categories:
         when_to_use: "複数サブタスクのシステム設計、定型と探索が混在するタスク"
         when_not: ["単一タスクの自明なケース", "全て明確に定型または探索"]
         element_tech: ["スコアリングマトリクス", "動的分類器"]
+        summary_plain: "サブタスクごとに変動性（F6）と失敗コスト（F2）を評価し、決定論的ワークフロー/ガード付きエージェント/完全自律エージェントを選定するメタパターン。"
+        selection_criteria:
+          primary_trigger: "F6=mixed AND F2=varied（定型と探索が混在するシステム設計時）"
+          skip_if: ["単一タスクの自明なケース", "全て明確に定型または探索"]
+          combine_with:
+            always: [3]
+            if_gradual: [57]
+          alternatives:
+            - { pattern: 3, when: "大半が定型でエージェントノードが少数" }
+        prevents_anti_patterns: [ap-08]
 
   - id: "02-composition"
     roman: "II"
@@ -153,6 +252,17 @@ categories:
         when_to_use: "コード生成→テスト→修正、レポートのファクトチェック、検証基準が明確なマルチステップ調査"
         when_not: ["単純Q&A", "計算オーバーヘッドがタスクを上回る", "F4=低（リアルタイム）"]
         element_tech: ["LangGraph", "CrewAI", "LLM/ルール検証"]
+        summary_plain: "計画・実行・検証を別ロールに分離し、Reviewerが検証基準に基づいて検査しフィードバックループで品質を担保する。"
+        selection_criteria:
+          primary_trigger: "F2=high AND F3=high（マルチステップ＋検証基準が明確）"
+          skip_if: ["単純Q&A", "計算オーバーヘッドがタスクを上回る", "F4=low"]
+          combine_with:
+            always: [5]
+            if_ensemble: [10]
+            if_human_review: [50]
+          alternatives:
+            - { pattern: 28, when: "検証のみ必要で計画分離は不要" }
+        prevents_anti_patterns: []
       - num: 9
         slug: supervisor-specialist-agents
         title: "Supervisor & Specialist Agents｜統括と専門"
@@ -164,6 +274,16 @@ categories:
         when_to_use: "多様なタスク種別（FAQ/技術/請求）、マルチモーダル、ドメイン専門性が分離可能"
         when_not: ["タスク種別が少ない", "専門化の利益が薄い", "専門家間の密結合"]
         element_tech: ["LangGraph conditional routing", "OpenAI Swarm", "カスタムルーティング"]
+        summary_plain: "統括エージェントがインテント解釈とルーティングを担当し、ドメイン特化の専門エージェント群に最適化されたプロンプト・ツール・モデルで処理を委譲する。"
+        selection_criteria:
+          primary_trigger: "F6=high AND 多様なタスク種別"
+          skip_if: ["タスク種別が少ない", "専門化の利益が薄い"]
+          combine_with:
+            if_registry: [47]
+            if_budget: [55]
+          alternatives:
+            - { pattern: 12, when: "中央集権ルーティングがボトルネックになる場合" }
+        prevents_anti_patterns: []
       - num: 10
         slug: agent-ensemble-debate
         title: "Agent Ensemble & Debate｜アンサンブル・討論"
@@ -175,6 +295,15 @@ categories:
         when_to_use: "高リスク判断（医療・金融）、正確性検証、不一致検出が高価値"
         when_not: ["大量低コストリクエスト（N倍コスト）", "主観的クリエイティブ", "F4=厳格（同期）"]
         element_tech: ["並列 asyncio/thread pool", "モデルミックス", "投票/スコアリング"]
+        summary_plain: "同一タスクを複数エージェント（異なるモデル・温度・プロンプト）で並列実行し、投票・スコアリング・討論で結果を集約して頑健性を高める。"
+        selection_criteria:
+          primary_trigger: "F2=high AND F3=high（不一致検出が高価値）"
+          skip_if: ["大量低コストリクエスト（N倍コスト）", "主観的クリエイティブ", "F4=low"]
+          combine_with:
+            if_planning: [8]
+          alternatives:
+            - { pattern: 28, when: "コスト制約で単一検証器が十分" }
+        prevents_anti_patterns: []
       - num: 11
         slug: deterministic-core-probabilistic-edge
         title: "Deterministic Core, Probabilistic Edge｜決定論コア"
@@ -186,6 +315,16 @@ categories:
         when_to_use: "金融・保険・医療プロトコル、正確な金額・ロジックが必須"
         when_not: ["探索的リサーチ", "クリエイティブ生成", "ルールが曖昧でコード化困難"]
         element_tech: ["Drools/OPA", "ルールエンジン", "ステートマシン", "テンプレート+LLM"]
+        summary_plain: "金額計算・保険査定・規制判定などビジネスクリティカルなロジックを決定論的コードで実装し、LLMは自然言語の解釈と応答生成のみに限定する。"
+        selection_criteria:
+          primary_trigger: "F2=high AND F8=high（正確性と監査が必須）"
+          skip_if: ["探索的リサーチ", "クリエイティブ生成", "ルールが曖昧でコード化困難"]
+          combine_with:
+            always: [14]
+            if_workflow: [3]
+            if_policy: [30]
+          alternatives: []
+        prevents_anti_patterns: [ap-08, ap-11]
       - num: 12
         slug: blackboard
         title: "Blackboard｜共有黒板"
@@ -197,6 +336,17 @@ categories:
         when_to_use: "複雑なマルチエージェント分析、動的なエージェント参加、探索的問題解決"
         when_not: ["固定順序ワークフロー（#3を使用）", "高競合の並行書き込み"]
         element_tech: ["Redis", "PostgreSQL JSONB", "Firebase", "Pub/Sub"]
+        summary_plain: "共有データストア（黒板）を介してエージェントが非同期に読み書きし、Controllerが状態変化を監視して次のエージェントを起動する疎結合協調。"
+        selection_criteria:
+          primary_trigger: "F6=high（実行順序が事前決定できない動的協調）"
+          skip_if: ["固定順序ワークフロー", "高競合の並行書き込み"]
+          combine_with:
+            if_memory: [23]
+            if_registry: [47]
+          alternatives:
+            - { pattern: 3, when: "実行順序が既知で決定論的骨格が適切" }
+            - { pattern: 9, when: "中央ルーティングで十分な場合" }
+        prevents_anti_patterns: []
 
   - id: "03-io-contract"
     roman: "III"
@@ -214,6 +364,16 @@ categories:
         when_to_use: "明確なアクション分類（注文・チケット・検索）、有限のインテント種別"
         when_not: ["自由形式の創作", "インテント列挙が曖昧"]
         element_tech: ["LLM function calling", "Claude tool_use", "Rasa", "Dialogflow", "Amazon Lex", "JSON Schema", "Pydantic"]
+        summary_plain: "自由形式のユーザー入力を構造化インテント（アクション・パラメータ・信頼度スコア）に変換し、下流の決定論的処理に安全に接続する境界アダプタ。"
+        selection_criteria:
+          primary_trigger: "F5=low（非構造化入力を構造化意図に変換が必要）"
+          skip_if: ["自由形式の創作", "インテント列挙が曖昧"]
+          combine_with:
+            always: [14]
+            if_ambiguous: [16]
+            if_guardrail: [29]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 14
         slug: structured-output-contract
         title: "Structured Output Contract｜構造化出力契約"
@@ -225,6 +385,16 @@ categories:
         when_to_use: "APIレスポンス生成、フォーム入力、データ抽出、ワークフロールーティング"
         when_not: ["自由テキスト（レポート・メール）", "フォーマットが表現力を潰す場合"]
         element_tech: ["OpenAI response_format", "Anthropic tool_use", "Pydantic", "Zod", "JSON Schema", "Instructor"]
+        summary_plain: "LLMの出力をJSON Schemaで契約化し、structured output機能でスキーマ準拠を強制した上でバリデーションを実行してから下流に渡す。"
+        selection_criteria:
+          primary_trigger: "F8=high（下流システムがパースする構造化出力が必要）"
+          skip_if: ["自由テキスト（レポート・メール）", "フォーマットが表現力を潰す場合"]
+          combine_with:
+            always: [13]
+            if_inverted: [15]
+            if_policy: [30]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 15
         slug: inverted-structured-output
         title: "Inverted Structured Output｜反転構造化出力"
@@ -236,6 +406,16 @@ categories:
         when_to_use: "承認・分類・ルーティング判断、判断のみ（実行はコード）"
         when_not: ["LLMが最終成果物を生成する場合（コード・テキスト）", "選択肢が無限"]
         element_tech: ["Function calling", "Enum actions", "決定論的 executor"]
+        summary_plain: "LLMに最終操作ではなく中間判断（アクション・パラメータ・理由）を構造化出力させ、実際の実行は決定論的コードが行う。判断と実行の分離で安全性を確保。"
+        selection_criteria:
+          primary_trigger: "F2=high（LLMが判断し決定論コードが実行すべき）"
+          skip_if: ["LLMが最終成果物を直接生成する場合", "選択肢が無限"]
+          combine_with:
+            always: [14]
+            if_workflow: [3]
+            if_dryrun: [19]
+          alternatives: []
+        prevents_anti_patterns: [ap-11]
       - num: 16
         slug: ambiguity-negotiation
         title: "Ambiguity Negotiation｜曖昧性交渉"
@@ -247,6 +427,17 @@ categories:
         when_to_use: "可逆な操作、複数解釈可能な入力（ファイル削除）、スロット不足の入力"
         when_not: ["リアルタイム即時応答", "事前構造化されたフォーム入力"]
         element_tech: ["Confidence/logprobs", "スロット充填率", "インタラクティブUI"]
+        summary_plain: "入力の曖昧さを信頼度スコアやスロット充填率で検出し、操作が不可逆な場合は実行前にユーザーに確認・選択肢を提示して意図を確定させる。"
+        selection_criteria:
+          primary_trigger: "F1=low AND F2=high（曖昧入力＋不可逆操作）"
+          skip_if: ["リアルタイム即時応答", "事前構造化されたフォーム入力"]
+          combine_with:
+            if_boundary: [13]
+            if_approval: [31]
+            if_escalation: [51]
+          alternatives:
+            - { pattern: "推測実行＋取り消し", when: "F1=high（操作が可逆）" }
+        prevents_anti_patterns: []
 
   - id: "04-tools-mcp"
     roman: "IV"
@@ -264,6 +455,16 @@ categories:
         when_to_use: "複数ツール/MCPシステム、マルチテナント、認可・監査の一元化が必要"
         when_not: ["1–2ツール", "認証不要", "超低レイテンシ不許容"]
         element_tech: ["MCP Gateway/Proxy", "Kong", "Envoy", "AWS API Gateway", "OPA/Cedar", "OpenTelemetry"]
+        summary_plain: "全ツール・MCPサーバ呼び出しを単一ゲートウェイに集約し、認証・認可・レート制限・入力サニタイズ・監査ログを統一的に適用する。"
+        selection_criteria:
+          primary_trigger: "F5=mixed AND F8=high（複数ツール/MCPサーバの認可・監査一元化）"
+          skip_if: ["1–2ツールで認証不要", "ゲートウェイレイテンシが許容不可"]
+          combine_with:
+            always: [18]
+            if_mcp: [21]
+            if_trace: [32]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 18
         slug: least-privilege-tool-binding
         title: "Least-Privilege Tool Binding｜最小権限バインディング"
@@ -275,6 +476,16 @@ categories:
         when_to_use: "10以上のツール、マルチテナント、ユーザー毎に異なる権限"
         when_not: ["2–3ツールで全ユーザー同一権限", "探索的ディスカバリが必要"]
         element_tech: ["MCP tools/list フィルタリング", "RBAC/ABAC", "OPA/Cedar"]
+        summary_plain: "セッション開始時にタスク種別・ユーザーロール・リスクレベルに基づいてエージェントに見えるツールセットを動的に制限し、不要なツールへのアクセスを構造的に排除する。"
+        selection_criteria:
+          primary_trigger: "F5=low AND F2=high（10以上のツールまたはマルチテナント）"
+          skip_if: ["2–3ツールで全ユーザー同一権限", "探索的ディスカバリが必要"]
+          combine_with:
+            always: [17]
+            if_damage_limit: [43]
+            if_dual_llm: [44]
+          alternatives: []
+        prevents_anti_patterns: [ap-10]
       - num: 19
         slug: dry-run-first-tool-execution
         title: "Dry-Run First Tool Execution｜ドライラン優先実行"
@@ -286,6 +497,16 @@ categories:
         when_to_use: "データ変更（削除・API書き込み）、インフラ変更（Terraform的操作）"
         when_not: ["読み取り専用", "失敗コスト低", "リアルタイム速度重視"]
         element_tech: ["--dry-run フラグ", "DB transaction→result→rollback", "API dryRun パラメータ", "diff-view UI"]
+        summary_plain: "副作用を伴うツール呼び出しをドライラン（影響範囲の計算・差分表示のみ）と実行の2フェーズに分け、承認後にのみ実際の変更を適用する。"
+        selection_criteria:
+          primary_trigger: "F1=low AND F2=high（不可逆な副作用操作）"
+          skip_if: ["読み取り専用", "失敗コスト低", "リアルタイム速度重視"]
+          combine_with:
+            always: [31]
+            if_saga: [4]
+          alternatives:
+            - { pattern: "即時実行＋Saga補償", when: "ツールが安価なロールバックをサポート" }
+        prevents_anti_patterns: []
       - num: 20
         slug: sandboxed-tool-runtime
         title: "Sandboxed Tool Runtime｜サンドボックス実行"
@@ -297,6 +518,16 @@ categories:
         when_to_use: "コード実行エージェント、データ分析、ユーザー提供コード、CI/CD"
         when_not: ["直接FS/ネットアクセスが必須", "デプロイ/sysadmin ネイティブ"]
         element_tech: ["Docker gVisor", "Firecracker", "WASM", "AWS Lambda", "Cloud Run", "Modal", "cgroups/seccomp"]
+        summary_plain: "エージェントが生成・実行するコードやコマンドを、ファイルシステム・ネットワーク・リソースが制限された隔離環境（コンテナ・VM・WASM）で実行し、ホストへの影響を防ぐ。"
+        selection_criteria:
+          primary_trigger: "F5=low（エージェントがコード/コマンドを生成・実行）"
+          skip_if: ["直接FS/ネットアクセスが必須（デプロイ/sysadmin）"]
+          combine_with:
+            always: [18]
+            if_mcp: [21]
+          alternatives:
+            - { pattern: 18, when: "完全サンドボックスが重すぎる場合のツール制限" }
+        prevents_anti_patterns: [ap-10]
       - num: 21
         slug: mcp-adapter-isolation
         title: "MCP Adapter Isolation｜MCPアダプタ分離"
@@ -308,6 +539,15 @@ categories:
         when_to_use: "信頼度が異なるアダプタの混在（内部DB＋外部API）、PCI-DSS規制データ"
         when_not: ["単一アダプタ", "全て同一信頼レベル", "分離コストが利益を超える"]
         element_tech: ["Kubernetes Pod/Sidecar", "Docker Compose", "stdio/SSE MCP transport", "Vault", "AWS Secrets Manager"]
+        summary_plain: "信頼レベルが異なるMCPアダプタ（内部DB vs 外部API）を別プロセス/コンテナに分離し、個別のネットワークポリシーとシークレットスコープを適用する。"
+        selection_criteria:
+          primary_trigger: "F5=mixed AND F8=high（信頼度の異なるMCPサーバの混在）"
+          skip_if: ["単一アダプタ", "全て同一信頼レベル"]
+          combine_with:
+            always: [17]
+            if_sandbox: [20]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 22
         slug: anti-corruption-layer
         title: "Anti-Corruption Layer｜アンチコラプション層"
@@ -319,6 +559,15 @@ categories:
         when_to_use: "レガシーシステム統合、外部APIモデルの正規化"
         when_not: ["外部モデルが内部と一致", "変換オーバーヘッドが無視できる"]
         element_tech: ["Adapter/Facade パターン", "MCP as ACL", "Protocol Buffers", "GraphQL スキーマ変換"]
+        summary_plain: "レガシーシステムの非標準な命名・形式・概念がエージェントのプロンプトに浸透するのを防ぐ翻訳層を設置し、クリーンな内部ドメイン語彙を維持する。"
+        selection_criteria:
+          primary_trigger: "F8=high（ドメインモデルが異なる外部システムとの統合）"
+          skip_if: ["外部モデルが内部と一致", "変換オーバーヘッドが無視できる"]
+          combine_with:
+            if_strangler: [48]
+            if_gateway: [17]
+          alternatives: []
+        prevents_anti_patterns: []
 
   - id: "05-memory-context"
     roman: "V"
@@ -336,6 +585,15 @@ categories:
         when_to_use: "長時間ユーザー対話、マルチエージェント協調、パーソナライズが必要"
         when_not: ["ステートレスな単発Q&A", "階層のオーバーヘッドが利益を超える"]
         element_tech: ["Redis TTL", "PostgreSQL+pgvector", "Pinecone", "Weaviate", "LLM要約"]
+        summary_plain: "エージェントの記憶を短期（現セッション）・長期（永続的事実）・共有（マルチエージェント）の3層に分け、各層に書き込みポリシー・スコープ・寿命を設定する。"
+        selection_criteria:
+          primary_trigger: "F8=high（長時間対話・マルチエージェント協調・パーソナライズ）"
+          skip_if: ["ステートレスな単発Q&A", "階層のオーバーヘッドが利益を超える"]
+          combine_with:
+            always: [24, 25, 26]
+            if_blackboard: [12]
+          alternatives: []
+        prevents_anti_patterns: [ap-05]
       - num: 24
         slug: context-pack-assembly
         title: "Context Pack / Assembly｜コンテキスト組立・RAG"
@@ -347,6 +605,17 @@ categories:
         when_to_use: "社内ナレッジ、サポート、法務・医療の最新情報依存"
         when_not: ["モデルの汎用知識で十分", "極端なリアルタイムストリーム要求"]
         element_tech: ["Pinecone", "pgvector", "Cohere Rerank", "HyDE", "RecursiveCharacterTextSplitter"]
+        summary_plain: "ベクトルDB・SQL・API等の複数ソースから関連情報を検索・リランクし、トークン予算内に収まるよう組み立ててプロンプトに注入するRAGパイプライン。"
+        selection_criteria:
+          primary_trigger: "F4=medium AND F7=medium（モデルの汎用知識では不十分で外部知識が必要）"
+          skip_if: ["モデルの汎用知識で十分", "極端なリアルタイムストリーム要求"]
+          combine_with:
+            always: [23]
+            if_evidence: [27]
+            if_cache: [39]
+          alternatives:
+            - { pattern: "Fine-Tuning", when: "知識が安定し大量クエリでFTコストが正当化される" }
+        prevents_anti_patterns: [ap-05]
       - num: 25
         slug: memory-write-gate
         title: "Memory Write Gate｜メモリ書き込みゲート"
@@ -358,6 +627,16 @@ categories:
         when_to_use: "顧客対話履歴、医療・法務記録、マルチセッションのパーソナライズ"
         when_not: ["使い捨てタスク", "ステートレス", "ゲートのオーバーヘッドが不適"]
         element_tech: ["Presidio", "DLP", "NER", "ルール/LLM分類", "メタデータ付きKVS/VectorDB"]
+        summary_plain: "短期メモリから長期メモリへの書き込みパスに分類・検証ゲートを設置し、関連性・カテゴリ・機密性の基準を通過した情報のみを永続化する。"
+        selection_criteria:
+          primary_trigger: "F8=high（長期メモリの品質・プライバシー管理が必要）"
+          skip_if: ["使い捨てタスク", "ステートレス設計"]
+          combine_with:
+            always: [23, 26]
+            if_approval: [31]
+            if_data_boundary: [42]
+          alternatives: []
+        prevents_anti_patterns: [ap-05]
       - num: 26
         slug: forgetting-and-expiration
         title: "Forgetting and Expiration｜忘却・失効"
@@ -369,6 +648,15 @@ categories:
         when_to_use: "顧客データの継続性、ニュース・市場情報の鮮度、GDPR/データ保持コンプライアンス"
         when_not: ["法的アーカイブ（失効ではなく保持が必要）", "不変のマスタデータ"]
         element_tech: ["Redis TTL", "DynamoDB TTL", "PostgreSQL パーティションプルーニング", "cron/Cloud Scheduler"]
+        summary_plain: "全メモリエントリにTTL・鮮度スコア・上書きフラグを付与し、期限切れや陳腐化した情報を自動排除することでメモリの品質とGDPR準拠を維持する。"
+        selection_criteria:
+          primary_trigger: "F8=high（メモリの鮮度・データ保持規制への準拠）"
+          skip_if: ["法的アーカイブ（保持が必要）", "不変のマスタデータ"]
+          combine_with:
+            always: [23, 25]
+            if_audit: [32]
+          alternatives: []
+        prevents_anti_patterns: []
 
   - id: "06-reliability"
     roman: "VI"
@@ -386,6 +674,16 @@ categories:
         when_to_use: "法務・医療・金融Q&A、社内ナレッジ検索、監査証跡が必要なサポート"
         when_not: ["クリエイティブ・ブレインストーミング（正解ソースなし）", "根拠ソースが存在しない"]
         element_tech: ["RAGパイプライン", "Web検索API", "社内ドキュメントAPI", "信頼度評価", "引用メタデータ"]
+        summary_plain: "回答生成を2フェーズに分離し、まず十分な根拠証拠を検索・確認してから応答を生成する。証拠不足の場合は明示的に「不明」を返す。"
+        selection_criteria:
+          primary_trigger: "F8=high（法務・医療・金融Q&Aで根拠なき回答が責任問題）"
+          skip_if: ["クリエイティブ・ブレインストーミング", "根拠ソースが存在しない"]
+          combine_with:
+            always: [24]
+            if_verify: [28]
+            if_contract: [14]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 28
         slug: verifier-agent-critic
         title: "Verifier Agent / Critic｜検証エージェント"
@@ -397,6 +695,18 @@ categories:
         when_to_use: "コード生成（テスト検証）、金融レポート、法務文書、公開コンテンツ"
         when_not: ["リアルタイムチャット", "失敗コスト低のブレインストーミング"]
         element_tech: ["別LLM/ルールチェッカ", "ユニットテスト実行", "URL検証", "max-retry+timeout"]
+        summary_plain: "生成されたドラフトを独立したCriticエージェント（別プロンプト・別モデル・ルールチェッカ）に送り、事実性・フォーマット・ポリシー違反を検査する。"
+        selection_criteria:
+          primary_trigger: "F2=high（出荷前に独立検証が必要な高リスク出力）"
+          skip_if: ["リアルタイムチャット", "失敗コスト低のブレインストーミング"]
+          combine_with:
+            if_planning: [8]
+            if_evidence: [27]
+            if_guardrail: [29]
+            if_budget: [5]
+          alternatives:
+            - { pattern: 29, when: "インライン形式・ポリシーチェックで十分" }
+        prevents_anti_patterns: []
       - num: 29
         slug: guardrail-sidecar-self-correction
         title: "Guardrail Sidecar + Self-Correction｜ガードレール"
@@ -408,6 +718,17 @@ categories:
         when_to_use: "公開チャットボット、外部API入力、コンプライアンス要件、自動修正が許容"
         when_not: ["内部信頼入力のみ", "リアルタイムゼロレイテンシ要求", "オフラインバッチ"]
         element_tech: ["Guardrails AI", "NeMo Guardrails", "LLM-Guard", "PII検出", "有害分類器"]
+        summary_plain: "エージェントの入出力を独立したサイドカーが横取りし、インジェクション検出・トピック制限・PII・有害分類を検査。軽微な違反は自己修正、重大な違反はブロック。"
+        selection_criteria:
+          primary_trigger: "F5=low（公開チャットボット・外部入力処理）"
+          skip_if: ["内部信頼入力のみ", "リアルタイムゼロレイテンシ要求"]
+          combine_with:
+            always: [30]
+            if_verifier: [28]
+            if_dual_llm: [44]
+          alternatives:
+            - { pattern: 30, when: "制約が決定論的ルールで表現可能" }
+        prevents_anti_patterns: [ap-02]
       - num: 30
         slug: policy-as-code-guardrail
         title: "Policy-as-Code Guardrail｜ポリシー・アズ・コード"
@@ -419,6 +740,17 @@ categories:
         when_to_use: "金融・医療・法務の高失敗コスト操作、監査証跡が必要、決定論的ルールが可能"
         when_not: ["曖昧なルール（トーン判断）", "形式が曖昧なドメイン"]
         element_tech: ["OPA/Rego", "Google CEL", "AWS Cedar", "Python関数", "Git管理", "ポリシーテストスイート"]
+        summary_plain: "削除上限・PII出力禁止などの強制制約をOPA/Rego・CEL・Python関数で決定論的に定義し、Git管理・テスト可能・監査可能なポリシーエンジンとしてエージェントの最終ゲートに配置する。"
+        selection_criteria:
+          primary_trigger: "F2=high AND F8=high（制約が決定論的・テスト可能・監査可能であるべき）"
+          skip_if: ["主観的制約（トーン・スタイル判断）", "ルールが曖昧でコード化困難"]
+          combine_with:
+            always: [29]
+            if_privilege: [18]
+            if_constitution: [52]
+          alternatives:
+            - { pattern: 29, when: "制約が意味的・主観的でLLMベース検査が必要" }
+        prevents_anti_patterns: [ap-02]
       - num: 31
         slug: human-approval-checkpoint
         title: "Human Approval Checkpoint｜人間承認チェックポイント"
@@ -430,6 +762,18 @@ categories:
         when_to_use: "金融、インフラ変更、顧客メール送信、契約確認"
         when_not: ["リアルタイムチャット", "人間不在（#30の自動化に切替）", "読み取り専用"]
         element_tech: ["Durable Session", "Slack/Teams/email通知", "承認UIダッシュボード", "RBAC", "タイムアウトロジック"]
+        summary_plain: "不可逆な高コスト操作の直前でエージェントを一時停止し、人間レビュアーにアクション概要と影響範囲を通知して明示的承認を得てから実行を再開する。"
+        selection_criteria:
+          primary_trigger: "F2=high AND F1=low（不可逆・高コスト操作）"
+          skip_if: ["リアルタイムチャット", "人間不在（→ #30で自動化）", "読み取り専用"]
+          combine_with:
+            always: [19]
+            if_gradual: [57]
+            if_interrupt: [6]
+          alternatives:
+            - { pattern: 30, when: "人間承認が不可能（バッチ処理等）" }
+            - { pattern: 57, when: "段階的に承認頻度を減らしたい" }
+        prevents_anti_patterns: []
       - num: 57
         slug: autonomy-ladder
         title: "Autonomy Ladder｜自律性のはしご"
@@ -441,6 +785,17 @@ categories:
         when_to_use: "エージェント権限の段階的ロールアウト、タスク種別ごとにリスクレベルが異なる"
         when_not: ["固定要件（常にL1またはL3）", "統計に十分なタスク量がない"]
         element_tech: ["Feature Flag (LaunchDarkly/Unleash)", "成功/失敗カウンタ", "信頼区間スコアリング"]
+        summary_plain: "エージェントの自律性をL0（提案のみ）→L1（承認後実行）→L2（自動実行＋通知）→L3（完全自律）の段階で定義し、成功実績に基づいて昇格・降格する。"
+        selection_criteria:
+          primary_trigger: "F1=mixed AND F2=mixed（段階的な自律性ロールアウト）"
+          skip_if: ["固定要件（常にL1またはL3）", "統計に十分なタスク量がない"]
+          combine_with:
+            always: [31]
+            if_budget: [5]
+            if_escalation: [51]
+          alternatives:
+            - { pattern: 31, when: "リスクが常に高く自律性を上げる必要がない" }
+        prevents_anti_patterns: [ap-02]
 
   - id: "07-observability"
     roman: "VII"
@@ -458,6 +813,16 @@ categories:
         when_to_use: "マルチステップエージェント、規制監査、モデル/ツール組合せの複雑なシステム"
         when_not: ["単一呼び出しステートレスAPI", "標準アプリログで十分"]
         element_tech: ["OpenTelemetry", "Langfuse", "LangSmith", "Arize Phoenix", "ClickHouse", "BigQuery", "S3+Parquet"]
+        summary_plain: "エージェントの全ステップ（思考・ツール呼び出し・応答）を追記専用ログとして記録し、障害分析・監査・品質改善のための再生・追跡を可能にする。"
+        selection_criteria:
+          primary_trigger: "F8=high（マルチステップエージェントの監査・障害分析）"
+          skip_if: ["単発ステートレスAPI", "通常アプリログで十分"]
+          combine_with:
+            always: [54]
+            if_pinning: [33]
+            if_replay: [35]
+          alternatives: []
+        prevents_anti_patterns: [ap-04, ap-06]
       - num: 54
         slug: tiered-observability
         title: "Tiered (Hot/Cold) Observability｜二層観測"
@@ -469,6 +834,15 @@ categories:
         when_to_use: "高トラフィックエージェントシステム、規制上の長期保持、コスト最適化優先"
         when_not: ["低トラフィックで単一層で十分", "超高速コールドアクセスが必要"]
         element_tech: ["ClickHouse", "Elasticsearch", "Prometheus", "S3+Parquet", "BigQuery", "Glacier", "ライフサイクルポリシー"]
+        summary_plain: "直近トレースをHot層（高速DB）でリアルタイム分析・アラートに活用し、古いデータはCold層（オブジェクトストレージ）へ自動移行してコストと即時性を両立する。"
+        selection_criteria:
+          primary_trigger: "F8=high AND F7=high（観測コストと長期保持の両立）"
+          skip_if: ["低トラフィックで単一層で十分", "Cold層への超高速アクセスが必要"]
+          combine_with:
+            always: [32]
+            if_replay: [35]
+          alternatives: []
+        prevents_anti_patterns: [ap-04]
       - num: 33
         slug: version-pinning
         title: "Prompt/Model/Tool Version Pinning｜バージョン固定"
@@ -480,6 +854,16 @@ categories:
         when_to_use: "本番エージェント、マルチモデル比較、モデル自動アップグレードリスク"
         when_not: ["実験的プロトタイプで常に最新が好ましい"]
         element_tech: ["Git tag+hash", "Langfuse Registry", "Humanloop", "モデルスナップショットID", "Docker image tag"]
+        summary_plain: "プロンプトテンプレート・LLMモデル・ツールのバージョンを明示的に固定し、知らないうちに変更が入って出力が変動することを防ぎ、再現性の土台を作る。"
+        selection_criteria:
+          primary_trigger: "F8=high（本番エージェントの再現性・回帰検知）"
+          skip_if: ["探索的プロトタイプで常に最新が好ましい段階"]
+          combine_with:
+            always: [34]
+            if_trace: [32]
+            if_replay: [35]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 34
         slug: evaluation-ci-cd
         title: "Evaluation CI/CD｜評価CI/CD"
@@ -491,6 +875,16 @@ categories:
         when_to_use: "週次以上のプロンプト/モデル更新、品質SLA、複数人編集"
         when_not: ["初期プロトタイプ（時期尚早なコスト）", "単独操作者の手動チューニング"]
         element_tech: ["promptfoo", "Braintrust", "Langfuse Eval", "GitHub Actions", "LLM-as-Judge"]
+        summary_plain: "プロンプト・モデル・ツールの変更ごとに自動評価パイプラインを実行し、品質スコアが閾値を下回ればマージをブロックして回帰をデプロイ前に防ぐ。"
+        selection_criteria:
+          primary_trigger: "F8=high（週次以上のプロンプト/モデル更新・品質SLA）"
+          skip_if: ["初期プロトタイプ（評価データセット作成コストが不適）", "単独操作者の手動チューニング"]
+          combine_with:
+            always: [33]
+            if_replay: [35]
+            if_canary: [36]
+          alternatives: []
+        prevents_anti_patterns: [ap-04]
       - num: 35
         slug: production-replay
         title: "Production Replay｜本番リプレイ"
@@ -502,6 +896,16 @@ categories:
         when_to_use: "大規模モデル/プロンプト更新、プロバイダ切替、評価データセットの陳腐化"
         when_not: ["機密PIIの高マスクコスト", "トレース履歴なし"]
         element_tech: ["BigQuery/ClickHouse抽出", "promptfoo/Braintrust replay", "LLM-as-Judge", "Presidio/DLP マスキング"]
+        summary_plain: "#32で蓄積した本番トレースを新バージョンに再投入し、旧版との出力差分をLLM-as-Judgeや類似度メトリクスで定量比較する。"
+        selection_criteria:
+          primary_trigger: "F8=high OR F9=low（モデル・プロンプトの大規模更新前評価）"
+          skip_if: ["PII・機密が含まれマスキングコストが高い", "トレース記録が存在しない"]
+          combine_with:
+            always: [32]
+            if_eval: [34]
+            if_pinning: [33]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 36
         slug: shadow-canary-deployment
         title: "Shadow / Canary Deployment｜シャドー／カナリア"
@@ -513,6 +917,17 @@ categories:
         when_to_use: "十分な本番ボリューム、厳格なSLA、モデルアップグレード/プロンプト大幅改修"
         when_not: ["低リクエスト量", "副作用の読み取り専用モックが複雑", "全タスク均一"]
         element_tech: ["Envoy/Istio/ALB weighted routing", "LaunchDarkly", "Datadog/Prometheus", "Argo Rollouts", "Flagger"]
+        summary_plain: "新バージョンを本番トラフィックの一部にだけ段階的に投入し、品質・レイテンシ・コストのメトリクスを監視して劣化検知時に自動ロールバックする。"
+        selection_criteria:
+          primary_trigger: "F9=low OR F8=high（本番ボリューム十分・SLA厳格・モデルアップグレード時）"
+          skip_if: ["リクエスト数が少なく統計的有意差が出ない", "副作用のシャドー実行が困難"]
+          combine_with:
+            if_eval: [34]
+            if_replay: [35]
+            if_pinning: [33]
+          alternatives:
+            - { pattern: 35, when: "本番トラフィック不足で過去ログによる評価が代替" }
+        prevents_anti_patterns: []
 
   - id: "08-cost-scaling"
     roman: "VIII"
@@ -530,6 +945,16 @@ categories:
         when_to_use: "難易度分布が広い（70%簡単、30%複雑）、月間コスト上限あり"
         when_not: ["均一な難易度分布", "誤ルーティングの許容度が低い"]
         element_tech: ["Martian", "Unify", "OpenRouter", "小型LLM/fasttext分類器", "LiteLLM", "Helicone"]
+        summary_plain: "リクエストの難易度と価値を軽量分類器で推定し、単純クエリは軽量モデル、複雑・高価値クエリは大型モデルへ動的ルーティングして品質とコストを同時に最適化する。"
+        selection_criteria:
+          primary_trigger: "F7=high AND 難易度分布に幅がある"
+          skip_if: ["全リクエストが同等の複雑さ", "分類器精度が低く誤ルーティング頻発"]
+          combine_with:
+            if_effort: [56]
+            if_fallback: [40]
+            if_cache: [38]
+          alternatives: []
+        prevents_anti_patterns: [ap-03, ap-09]
       - num: 38
         slug: semantic-result-cache
         title: "Semantic Result Cache｜セマンティック結果キャッシュ"
@@ -541,6 +966,15 @@ categories:
         when_to_use: "繰り返しFAQ的クエリ、カスタマーサポート、ドキュメント検索"
         when_not: ["コンテキスト依存（ユーザー状態、リアルタイム）", "鮮度重視（株価・ニュース）"]
         element_tech: ["OpenAI/Cohere Embedding", "Redis VSS", "Pinecone", "pgvector", "GPTCache", "LangChain SemanticCache"]
+        summary_plain: "クエリをEmbeddingに変換しベクトル類似度で過去の応答を検索し、十分に近いクエリにはLLMを呼ばず再利用することでレイテンシとコストを削減する。"
+        selection_criteria:
+          primary_trigger: "F4=low OR F7=high（FAQ的な繰り返しクエリが多い）"
+          skip_if: ["コンテキスト依存（ユーザー状態・リアルタイム）", "鮮度重視（株価・ニュース）"]
+          combine_with:
+            if_prompt_cache: [39]
+            if_routing: [37]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 39
         slug: prompt-cache-optimized-context
         title: "Prompt Cache Optimized Context｜プロンプトキャッシュ"
@@ -552,6 +986,15 @@ categories:
         when_to_use: "長いシステムプロンプト/few-shot例、同カテゴリのバッチリクエスト、大量RAGコンテキスト"
         when_not: ["リクエスト毎に構造が大きく異なる", "プロバイダがキャッシュ非対応", "prefix短すぎ"]
         element_tech: ["Anthropic Prompt Caching", "OpenAI Automatic", "Google Context Caching"]
+        summary_plain: "システムプロンプト・Few-shot例などの共通prefixをプロンプト先頭に安定配置し、LLMプロバイダのプロンプトキャッシュのヒット率を最大化して入力トークンコストとTTFTを削減する。"
+        selection_criteria:
+          primary_trigger: "F7=high（長いシステムプロンプト・同カテゴリのバッチリクエスト）"
+          skip_if: ["リクエスト毎にプロンプト構造が大きく変わる", "プロバイダがキャッシュ非対応"]
+          combine_with:
+            if_cache: [38]
+            if_context: [24]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 40
         slug: fallback-graceful-degradation
         title: "Fallback & Graceful Degradation｜フォールバック縮退"
@@ -563,6 +1006,17 @@ categories:
         when_to_use: "厳格なSLA、マルチプロバイダ利用可能、24/7運用（サポート・ワークフロー自動化）"
         when_not: ["単一プロバイダ固定", "専門モデルのみ成功可能（特化モデル依存）"]
         element_tech: ["LiteLLM Fallback", "Portkey Gateway", "resilience4j/Polly", "サーキットブレーカー"]
+        summary_plain: "LLMプロバイダの障害・レート制限時に代替モデル→機能縮退→キャッシュ応答→エラーメッセージの段階的な縮退でサービスを継続する。"
+        selection_criteria:
+          primary_trigger: "F9=low（可用性SLA厳格・24/7運用）"
+          skip_if: ["特定モデルに強く依存し代替不可", "フォールバック先で副作用の一貫性が保てない"]
+          combine_with:
+            if_routing: [37]
+            if_cache: [38]
+            if_canary: [36]
+          alternatives:
+            - { pattern: "Fail-fast＋人間エスカレーション", when: "品質閾値を設けフォールバック不可時" }
+        prevents_anti_patterns: [ap-09]
       - num: 56
         slug: adaptive-effort
         title: "Adaptive Effort｜適応的努力配分"
@@ -574,6 +1028,17 @@ categories:
         when_to_use: "難易度が変動するワークロード、thinking-budget API利用可能、コスト制約下の品質柔軟性"
         when_not: ["均一な複雑さ", "常に最大努力が必要（医療診断）", "コスト>>品質"]
         element_tech: ["軽量難易度分類器", "Anthropic thinking budget", "OpenAI reasoning effort", "動的 max_tokens"]
+        summary_plain: "リクエストの難易度・重要度を軽量推定器で評価し、簡単なクエリには少ない推論ステップで即答、複雑なクエリにはCoT深化・複数パス検証で投入計算量を動的調整する。"
+        selection_criteria:
+          primary_trigger: "F7=high AND F2=mixed（難易度のばらつきが大きいワークロード）"
+          skip_if: ["全リクエストが同等の複雑さ", "常に最大努力が必要（医療診断）"]
+          combine_with:
+            if_routing: [37]
+            if_budget: [5]
+            if_verify: [28]
+          alternatives:
+            - { pattern: 37, when: "モデル選択レベルの最適化で十分" }
+        prevents_anti_patterns: [ap-03]
 
   - id: "09-security"
     roman: "IX"
@@ -591,6 +1056,16 @@ categories:
         when_to_use: "マルチテナントSaaS、規制業種（金融・医療）、数百規模のテナント"
         when_not: ["シングルテナント社内ツール", "数千テナントでコスト禁止的"]
         element_tech: ["Kubernetes Namespace", "Firecracker", "gVisor", "Row-Level Security", "OPA/Cedar"]
+        summary_plain: "テナントIDに基づきコンテキスト・メモリ・ツールバインディング・ログをテナント単位で物理的/論理的に隔離し、データ漏洩と相互干渉を構造的に防ぐ。"
+        selection_criteria:
+          primary_trigger: "F5=low AND F8=high（マルチテナントSaaS・規制業種）"
+          skip_if: ["シングルテナント社内ツール", "テナント数が極めて多くコスト的に非現実的"]
+          combine_with:
+            always: [42]
+            if_damage_limit: [43]
+            if_privilege: [18]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 42
         slug: data-boundary-firewall
         title: "Data Boundary Firewall｜データ境界ファイアウォール"
@@ -602,6 +1077,16 @@ categories:
         when_to_use: "PII/健康/金融データを扱うエージェント、外部LLM API、GDPR/規制対象"
         when_not: ["公開データのみ", "マスキングがビジネスロジックを破壊"]
         element_tech: ["Presidio", "DLP", "spaCy NER", "PIIマスキング", "OPA/Rego", "監査イベントログ"]
+        summary_plain: "エージェントへの入力前と出力後にファイアウォール層を設置し、PII検出・機密分類・マスキングを実行して意図しない情報漏洩を防ぐ。"
+        selection_criteria:
+          primary_trigger: "F5=low AND F8=high（PII・医療・財務データを扱うエージェント）"
+          skip_if: ["公開データのみ", "マスキングが業務ロジックを破壊"]
+          combine_with:
+            always: [41]
+            if_guardrail: [29]
+            if_gateway: [17]
+          alternatives: []
+        prevents_anti_patterns: [ap-10]
       - num: 43
         slug: confused-deputy-damage-limitation
         title: "Confused-Deputy Damage Limitation｜被害限定"
@@ -613,6 +1098,17 @@ categories:
         when_to_use: "外部データ処理（メール・Web・ユーザー入力）、高インパクトツールアクセス"
         when_not: ["読み取り専用で副作用なし", "信頼境界が明確（全て内部）"]
         element_tech: ["最小権限", "レートリミッタ/金額上限", "承認キュー", "コンテナ隔離/RLS"]
+        summary_plain: "エージェントが騙される前提で、最小権限・操作上限・不可逆操作の遅延・影響範囲分離を組み合わせ、インジェクション被害の半径を構造的に最小化する。"
+        selection_criteria:
+          primary_trigger: "F5=low（外部データ処理エージェント全般）"
+          skip_if: ["読み取り専用で副作用なし"]
+          combine_with:
+            always: [44]
+            if_tenant: [41]
+            if_privilege: [18]
+            if_saga: [4]
+          alternatives: []
+        prevents_anti_patterns: [ap-10]
       - num: 44
         slug: dual-llm-privilege-separation
         title: "Dual-LLM Privilege Separation｜デュアルLLM権限分離"
@@ -624,6 +1120,17 @@ categories:
         when_to_use: "信頼できない入力→ツールチェーン、高リスク副作用（決済・削除・通知）"
         when_not: ["信頼入力のクローズド環境", "2LLMデュアルパスのレイテンシ/コスト不許容"]
         element_tech: ["隔離LLM（小型/サンドボックス）", "スキーマバリデーション", "特権LLM（ツール実行）"]
+        summary_plain: "信頼できない入力を処理する隔離LLM（ツール権限なし）と副作用を実行する特権LLMを別プロセス・別権限で分離し、構造化スキーマ経由でのみ情報を渡す。"
+        selection_criteria:
+          primary_trigger: "F5=low AND F2=high（信頼できない入力→ツール実行パイプライン）"
+          skip_if: ["信頼入力のクローズド環境", "2LLMのレイテンシ/コスト増が許容不可"]
+          combine_with:
+            always: [43]
+            if_inverted: [15]
+            if_sandbox: [20]
+          alternatives:
+            - { pattern: "単一LLM", when: "入力が信頼できる環境で副作用の失敗コストが低い" }
+        prevents_anti_patterns: [ap-10]
 
   - id: "10-deployment"
     roman: "X"
@@ -641,6 +1148,16 @@ categories:
         when_to_use: "複数年の本番運用、マルチフレームワーク評価、将来のベンダーリスク"
         when_not: ["PoC/短期", "フレームワーク固有機能への重依存", "スピード優先プロトタイプ"]
         element_tech: ["Python Protocol/ABC", "TypeScript interface", "DI (dependency-injector/tsyringe)", "LangChain/LangGraph/OpenAI SDK/Semantic Kernel"]
+        summary_plain: "エージェントの実行基盤（ループ制御・ツール呼び出し・状態管理）を抽象インタフェースで囲い、特定フレームワークへのロックインを防ぎ実装を差し替え可能にする。"
+        selection_criteria:
+          primary_trigger: "F9=low OR F8=high（複数年の本番運用・フレームワーク評価中）"
+          skip_if: ["PoC/短期", "フレームワーク固有機能への重依存"]
+          combine_with:
+            always: [46]
+            if_registry: [47]
+            if_strangler: [48]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 46
         slug: model-behavior-compatibility-layer
         title: "Model Behavior Compatibility Layer｜互換レイヤー"
@@ -652,6 +1169,16 @@ categories:
         when_to_use: "マルチモデル運用/比較、プロバイダフォールバック、コスト動的ルーティング"
         when_not: ["単一ベンダーロックイン許容", "ベンダー固有API最大活用"]
         element_tech: ["LiteLLM", "OpenRouter", "AI SDK (Vercel)", "アダプタラッパー", "ゴールデンテスト回帰"]
+        summary_plain: "呼び出し側とモデルの間にリクエスト/レスポンス正規化・function callingスキーマ変換・トークンカウント統一を行う互換レイヤーを挿入し、設定変更だけでモデルを切り替え可能にする。"
+        selection_criteria:
+          primary_trigger: "F9=low（複数モデル併用・フォールバック・コスト動的ルーティング）"
+          skip_if: ["単一プロバイダにコミット済みで切替予定なし", "プロバイダ固有API最大活用"]
+          combine_with:
+            always: [45]
+            if_fallback: [40]
+            if_routing: [37]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 47
         slug: agent-capability-registry
         title: "Agent Capability Registry｜能力レジストリ"
@@ -663,6 +1190,16 @@ categories:
         when_to_use: "10以上のエージェント運用、監査/コンプライアンス要件、エージェントコスト/SLA可視化"
         when_not: ["1–3エージェントで設定ファイル十分", "ディスカバリ不要"]
         element_tech: ["PostgreSQL/DynamoDB", "etcd/Consul", "gRPC/REST", "管理ダッシュボード"]
+        summary_plain: "各エージェントの能力記述・利用可能ツール・権限スコープ・コスト実績・ヘルスを構造化レジストリに登録し、ディスカバリ・ルーティング・監査に利用する。"
+        selection_criteria:
+          primary_trigger: "F8=high（10以上のエージェント運用・監査要件）"
+          skip_if: ["1–3エージェントで設定ファイル十分"]
+          combine_with:
+            if_abstraction: [45]
+            if_supervisor: [9]
+            if_routing: [37]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 48
         slug: strangler-fig
         title: "Strangler Fig｜段階的置換"
@@ -674,6 +1211,16 @@ categories:
         when_to_use: "既存システムのエージェント置換（段階的リスク管理）、ルールベース→AI段階移行"
         when_not: ["グリーンフィールド新規", "全か無かの結合", "カテゴリ分割不可能"]
         element_tech: ["Feature Flag (LaunchDarkly/Unleash)", "Production Replay比較", "Eval CI/CD", "フォールバック"]
+        summary_plain: "既存システムの前段にルーティング層を置き条件に合うトラフィックだけをエージェントに流し、成功確認後に段階的に対象を広げてビッグバンリリースを回避する。"
+        selection_criteria:
+          primary_trigger: "F2=high AND F8=high（既存システムからエージェントへの段階的移行）"
+          skip_if: ["新規サービス（段階移行の対象なし）", "全リクエストが強結合で部分切替困難"]
+          combine_with:
+            if_canary: [36]
+            if_abstraction: [45]
+            if_fallback: [40]
+          alternatives: []
+        prevents_anti_patterns: []
 
   - id: "11-ux"
     roman: "XI"
@@ -691,6 +1238,16 @@ categories:
         when_to_use: "マルチステップ5分以上のタスク（調査・コード・分析）、途中承認が必要なワークフロー"
         when_not: ["単発Q&A", "秒で完了するタスク", "チャットのみで十分"]
         element_tech: ["React/Next.js", "SSE/WebSocket", "計画/進捗/成果物/承認パネル"]
+        summary_plain: "チャットに加えて計画ビュー・進捗タイムライン・成果物パネル・承認ボタンを統合した操作画面で、長時間タスクの透明性と介入ポイントを提供する。"
+        selection_criteria:
+          primary_trigger: "F4=high（5分以上の長時間マルチステップタスク）"
+          skip_if: ["単発Q&A", "秒で完了するタスク"]
+          combine_with:
+            always: [50, 7]
+            if_approval: [31]
+            if_escalation: [51]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 50
         slug: editable-plan
         title: "Editable Plan｜編集可能プラン"
@@ -702,6 +1259,17 @@ categories:
         when_to_use: "マルチステップ、手順が変動、再実行コストが高い"
         when_not: ["1–2ステップの自動化", "リアルタイムゼロレビュー要求", "完全自律バッチ"]
         element_tech: ["JSON/YAMLプラン構造", "ドラッグ&ドロップ", "インライン編集", "再計画提案ループ"]
+        summary_plain: "エージェントが生成した実行計画を実行前にユーザーに提示し、ステップの追加・削除・並べ替え・パラメータ修正を受け付けてから動作させる。"
+        selection_criteria:
+          primary_trigger: "F6=high（マルチステップで手順が結果に大きく影響）"
+          skip_if: ["1–2ステップの自明なタスク", "リアルタイム性が求められ人間の編集待ちが不可"]
+          combine_with:
+            always: [49]
+            if_planning: [8]
+            if_escalation: [51]
+          alternatives:
+            - { pattern: "ReAct（計画なし即実行）", when: "1–2ステップでリアルタイム性重視" }
+        prevents_anti_patterns: []
       - num: 51
         slug: agent-to-human-escalation
         title: "Agent-to-Human Escalation｜人間へのエスカレーション"
@@ -713,6 +1281,16 @@ categories:
         when_to_use: "サポート/法務/医療ドメイン、不確実→エスカレーションが推測より良い、専門家判断が必要"
         when_not: ["オフラインバッチで人間不在", "信頼度が常に高い（低複雑度）"]
         element_tech: ["信頼度スコア/self-assess", "Slack/Teams/email通知", "構造化コンテキスト引継ぎ", "SLA応答モニター"]
+        summary_plain: "確信度閾値・権限不足・ポリシー違反・再試行上限などの条件でタスクの文脈・進捗・判断根拠を構造化して人間に引き継ぎ、自律と安全を両立する。"
+        selection_criteria:
+          primary_trigger: "F2=high AND F4=medium（誤判断の影響が大きく人間の最終判断が必要）"
+          skip_if: ["完全自律バッチ処理で人間介入不可", "エスカレーション先が不在"]
+          combine_with:
+            if_approval: [31]
+            if_workbench: [49]
+            if_ladder: [57]
+          alternatives: []
+        prevents_anti_patterns: []
 
   - id: "12-governance"
     roman: "XII"
@@ -730,6 +1308,16 @@ categories:
         when_to_use: "マルチエージェント組織、規制業種、監査証跡が必要、行動一貫性が重要"
         when_not: ["シングルエージェント実験", "原則がまだ形成途中（まず学習段階）"]
         element_tech: ["YAML/JSON原則階層", "Git管理", "Jinja2テンプレートエンジン", "ポリシーエンジン"]
+        summary_plain: "倫理規定・データ取扱方針・エスカレーション条件・禁止操作を組織・ドメイン・エージェントの3階層で構造化定義し、全エージェントに自動注入する。"
+        selection_criteria:
+          primary_trigger: "F8=high AND F2=high（複数エージェント運用・規制産業）"
+          skip_if: ["シングルエージェント実験段階"]
+          combine_with:
+            always: [30]
+            if_change: [53]
+            if_pinning: [33]
+          alternatives: []
+        prevents_anti_patterns: []
       - num: 53
         slug: agent-change-management
         title: "Agent Change Management｜エージェント変更管理"
@@ -741,3 +1329,14 @@ categories:
         when_to_use: "本番エージェント運用、複数人開発、規制上の変更ログが必要"
         when_not: ["高速イテレーションプロトタイプ", "単独開発者のPoC"]
         element_tech: ["Git（プロンプト/ポリシー/設定）", "Eval CI/CD回帰", "Shadow/Canary段階投入", "PR承認フロー"]
+        summary_plain: "プロンプト・モデル・ツール・ポリシーの全変更をGit管理し、評価スイート実行・カナリアデプロイ・PR承認フローを経て本番適用することで見えない変更による障害を防ぐ。"
+        selection_criteria:
+          primary_trigger: "F8=high OR F9=low（本番運用エージェント・規制産業・複数人開発）"
+          skip_if: ["実験フェーズで素早くイテレーション", "単独開発者のPoC"]
+          combine_with:
+            always: [34]
+            if_canary: [36]
+            if_constitution: [52]
+            if_pinning: [33]
+          alternatives: []
+        prevents_anti_patterns: []
