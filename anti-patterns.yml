@@ -1,0 +1,191 @@
+# anti-patterns.yml — アンチパターンの正本（single source of truth）
+# scripts/generate.py がこのファイルから catalog.json にアンチパターンデータを含める。
+
+version: "1.0.0"
+
+anti_patterns:
+  - id: ap-01
+    slug: infinite-timeout
+    name: "無限・過大タイムアウト"
+    symptoms:
+      - "P99レイテンシがタイムアウト設定値に張り付く"
+      - "月間LLMコストが予算を大幅に超過"
+      - "同時実行セッション数が想定の数倍に膨張"
+      - "自己修正ループが収束せず同じ処理を延々繰り返す"
+      - "コネクションプール枯渇でシステム全体のスループット低下"
+    root_causes:
+      - "最悪ケースを想定したタイムアウト設計がされていない"
+      - "念のため長めの安全マージンがそのまま本番設定になる"
+      - "マルチエージェント構成で親の予算が子に伝播しない"
+    prevented_by: [1, 5, 55, 58]
+    related_dials: [timeout, budget-cap, self-correction-loops]
+    related_forces: [F4, F7, F3]
+    detail: anti-patterns/01-infinite-timeout.md
+
+  - id: ap-02
+    slug: excessive-guardrails
+    name: "過剰ガードレール"
+    symptoms:
+      - "正当なリクエストの偽陽性率が10%超"
+      - "ユーザーが言い換えて何度も再送する"
+      - "ガードレール例外リストが肥大化し保守困難"
+      - "エージェントが使えないという問い合わせ増加"
+    root_causes:
+      - "入力信頼度と失敗コストのバランスを考慮せず一律最大に設定"
+      - "偽陽性のコスト（ユーザー離脱）が定量化されていない"
+      - "ガードレール誤検知率の計測・改善の仕組みがない"
+    prevented_by: [29, 30, 57]
+    related_dials: [guardrail-strictness, autonomy-level]
+    related_forces: [F5, F2]
+    detail: anti-patterns/02-excessive-guardrails.md
+
+  - id: ap-03
+    slug: strongest-model-only
+    name: "最強モデル一択"
+    symptoms:
+      - "LLMコストがリクエスト数に比例して線形増大"
+      - "簡単な質問にも数秒のレイテンシ"
+      - "コスト削減のためリクエスト数制限を導入せざるを得ない"
+      - "モデル切り替え基準が不在"
+    root_causes:
+      - "タスク難易度の分布を考慮せず全リクエストを同一価値として扱う"
+      - "動的モデル選択の仕組みの構築コストを避ける"
+    prevented_by: [37, 56, 40]
+    related_dials: [model-tier-routing, budget-cap]
+    related_forces: [F7, F3]
+    detail: anti-patterns/03-strongest-model-only.md
+
+  - id: ap-04
+    slug: full-observability
+    name: "観測基盤フル投入"
+    symptoms:
+      - "観測コストがLLM利用コストの50%超"
+      - "ログストレージ肥大化で検索性能低下"
+      - "観測パイプライン自体がSPOFになる"
+      - "アラート疲れで重要アラートが埋もれる"
+    root_causes:
+      - "何が起きるか分からないから全部記録するという不安駆動の設計"
+      - "LLMベース評価器の1件あたりコストを過小評価"
+      - "段階的サンプリング率設計のノウハウ不足"
+    prevented_by: [54, 32, 34]
+    related_dials: [trace-sampling-rate, log-retention, prompt-storage]
+    related_forces: [F8, F7]
+    detail: anti-patterns/04-full-observability.md
+
+  - id: ap-05
+    slug: context-stuffing
+    name: "コンテキスト詰め込みすぎ"
+    symptoms:
+      - "1リクエストの入力トークン数が想定の3倍以上"
+      - "RAG検索結果に無関係情報が混在し回答が的外れ"
+      - "コンテキスト窓上限に頻繁到達し重要情報が切り捨て"
+      - "Lost in the Middleによる回答品質低下"
+    root_causes:
+      - "多く入れればモデルが取捨選択してくれるという期待"
+      - "LLMは中間部分を見落としやすいことへの無理解"
+      - "top-kやチャンクサイズをF4/F7と結びつけて検討していない"
+    prevented_by: [24, 23, 25]
+    related_dials: [retrieval-top-k, summarization-timing, memory-write-eagerness]
+    related_forces: [F7, F4]
+    detail: anti-patterns/05-context-stuffing.md
+
+  - id: ap-06
+    slug: no-rationale
+    name: "目盛りの根拠を残さない"
+    symptoms:
+      - "パラメータ値の根拠を説明できる人がいない"
+      - "障害時にどのパラメータを変更すべきか判断が遅れる"
+      - "パラメータ変更がその場しのぎで副作用を生む"
+      - "ADRにパラメータ根拠が記載されていない"
+    root_causes:
+      - "なぜその値かの記録を怠る"
+      - "駆動変数とパラメータの対応関係が明示されていない"
+      - "コードレビューで設定値の妥当性が見過ごされやすい"
+    prevented_by: [32]
+    related_dials: [timeout, retry-count, guardrail-strictness, retrieval-top-k, budget-cap]
+    related_forces: [F4, F7, F9, F5, F2]
+    detail: anti-patterns/06-no-rationale.md
+
+  - id: ap-07
+    slug: all-sync-or-async
+    name: "何でも同期 / 何でも非同期"
+    symptoms:
+      - "全同期で長時間リクエストがタイムアウトし二重処理発生"
+      - "全同期でワーカースレッドが占有され短いリクエストも待たされる"
+      - "全非同期で即答可能なリクエストに不要なレイテンシ追加"
+      - "P50とP99の差が大きい"
+    root_causes:
+      - "処理モデルを設計時に一律決定しリクエスト特性に応じた判断を行わない"
+      - "ハイブリッド構成の実装複雑さを避ける誘惑"
+    prevented_by: [58, 1, 7]
+    related_dials: [timeout]
+    related_forces: [F4, F1]
+    detail: anti-patterns/07-all-sync-or-async.md
+
+  - id: ap-08
+    slug: universal-multi-agent
+    name: "万能マルチエージェント"
+    symptoms:
+      - "エージェント間通信レイテンシが処理時間の30%以上"
+      - "エージェント間コンテキスト受け渡しで情報欠落・変質"
+      - "障害時に原因エージェントの特定に時間がかかる"
+      - "エージェント数に比例してLLMコスト増大"
+    root_causes:
+      - "マルチエージェントの利点だけを見てコストを過小評価"
+      - "タスク変動性が低い定型タスクでも適用"
+      - "エージェント間通信はAPIコールより高コスト（トークン消費）であることを無視"
+    prevented_by: [59, 3, 11]
+    related_dials: [model-tier-routing, exposed-tool-count]
+    related_forces: [F6, F7]
+    detail: anti-patterns/08-universal-multi-agent.md
+
+  - id: ap-09
+    slug: retry-storm
+    name: "リトライストーム"
+    symptoms:
+      - "LLMプロバイダ一時障害時にリクエスト量が通常の10倍以上に急増"
+      - "障害解消後もシステム回復に時間がかかる"
+      - "複数レイヤーのリトライ重なりで指数的に増幅（3層×3回=27回）"
+      - "正常なリクエストまで巻き添え遅延"
+    root_causes:
+      - "レイヤーごとに独立してリトライ実装し全体戦略が不在"
+      - "サーキットブレーカーが導入されていない"
+      - "とにかくリトライすれば回復するという前提"
+    prevented_by: [40, 5, 37]
+    related_dials: [retry-count, timeout]
+    related_forces: [F9, F3]
+    detail: anti-patterns/09-retry-storm.md
+
+  - id: ap-10
+    slug: prompt-as-security
+    name: "プロンプトをセキュリティ境界にする"
+    symptoms:
+      - "プロンプトインジェクションで権限制御を突破できる"
+      - "外部データ中のインジェクション文字列が実行される"
+      - "セキュリティ監査でアクセス制御はプロンプトで実装と記載"
+      - "同じ質問の表現変更で異なる権限レベルの情報が返る"
+    root_causes:
+      - "LLM出力は確率的でプロンプト指示に100%従う保証はないのにセキュリティ境界として扱う"
+      - "セキュリティはLLM外側のコードと権限で担保すべきだが内側に委ねる"
+      - "プロンプトインジェクションは原理的に完全防止が困難"
+    prevented_by: [44, 18, 20, 42]
+    related_dials: [autonomy-level, guardrail-strictness, exposed-tool-count]
+    related_forces: [F5, F2]
+    detail: anti-patterns/10-prompt-as-security.md
+
+  - id: ap-11
+    slug: llm-as-calculator
+    name: "LLMに算術や厳密検索をやらせる"
+    symptoms:
+      - "数値計算結果が不正確（特に桁数が多い・複数ステップ）"
+      - "日付・時刻計算の誤り（うるう年・タイムゾーン）"
+      - "同じ質問に異なる計算結果が返る（再現性なし）"
+      - "ツール呼び出しなしにLLM推論のみで計算・検索が行われている"
+    root_causes:
+      - "LLMは言語モデルであり算術は得意分野ではない"
+      - "LLMの役割は何を計算するかを判断することであり実行ではない"
+      - "計算が必要な場面でLLMが自力回答するのを防ぐ仕組みがない"
+    prevented_by: [15, 17, 11]
+    related_dials: [exposed-tool-count, temperature]
+    related_forces: [F2, F6]
+    detail: anti-patterns/11-llm-as-calculator.md
