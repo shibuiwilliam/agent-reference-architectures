@@ -9,6 +9,7 @@
 ## まず守る原則
 
 - **`patterns.yml` + `decisions.yml` が正本。** パターン・フォース・ダイヤル・二者択一・リファレンスアーキテクチャ・決定規則はここに従う。**勝手に追加・改名・採番しない。** 変更が要るときは正本YAMLを更新し、`python scripts/generate.py` で成果物を再生成、`mkdocs.yml` の `nav` も手で合わせ、その旨をコミットメッセージに書く。
+- **`anti-patterns.yml` も正本。** アンチパターンの症状・原因・対策パターンはここに従う。
 - **機械可読成果物は生成物。** `catalog.json`、`llms.txt`、`llms-core.txt`、`llms-full.txt`、各パターンの `GEN:meta` ブロック、`pattern-index.md` の表は `generate.py` が正本YAMLから生成する。**直接編集しない。**
 - **手本は `docs/patterns/01-execution/01-request-to-job-gateway.md`。** 迷ったらこの構成・粒度・トーンに合わせる。
 - **テンプレートは `templates/pattern.md`。** 新規ページはこれを基に書く（`scaffold.py` が適用済み）。
@@ -30,6 +31,8 @@
 | エージェント統合 | `AGENTS.md`（リポジトリ直下） |
 | MCP サーバ | `mcp-server/server.py` |
 | 意思決定層データ | `decisions.yml`（正本） |
+| アンチパターン定義 | `anti-patterns.yml`（リポジトリ直下） |
+| スキーマ定義 | `schemas/*.schema.json` |
 
 `templates/`・`scripts/`・`patterns.yml`・`decisions.yml`・`site/`（ビルド成果物）は**サイト本文ではない**。`site/` は触らない・コミットしない。生成物（`catalog.json`等）はコミットするが直接編集しない。
 
@@ -77,6 +80,7 @@
 ```bash
 python scripts/generate.py   # 正本から成果物を再生成
 mkdocs build --strict         # リンク切れ・nav不整合をチェック
+python scripts/generate.py --lint    # パターンページの構造検証
 ```
 
 両方が**エラーゼロで通ること**が完成条件。`--strict` はリンク切れ・nav 不整合・未参照ファイルを失敗にする。
@@ -92,6 +96,7 @@ mkdocs build --strict         # リンク切れ・nav不整合をチェック
 - [ ] 該当するなら `調整`/`選定` に `[F#]` と決定層へのリンクがある
 - [ ] フロントマターの `tags` にカテゴリ名と該当 `F#` がある
 - [ ] `patterns.yml` に `related`, `when_to_use`, `when_not`, `element_tech`, `dials`, `tradeoffs` が記入されている
+- [ ] `patterns.yml` に `selection_criteria`、`summary_plain`、`prevents_anti_patterns` が記入されている
 - [ ] `<!-- BEGIN:GEN:meta --><!-- END:GEN:meta -->` マーカーがある（`generate.py` がメタブロックを注入）
 - [ ] `python scripts/generate.py && mkdocs build --strict` がエラーなく通る
 - [ ] `mkdocs.yml` の `nav` に当該ページが登録されている（scaffold 生成分は手で nav に追記）

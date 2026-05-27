@@ -31,10 +31,12 @@ agent-architecture-patterns/
 ├─ requirements.txt            # mkdocs-material, pymdown-extensions
 ├─ patterns.yml                # ★59パターンの正本（scaffold + generate が参照）
 ├─ decisions.yml               # ★意思決定層の正本（forces/dials/tradeoffs/rules）
+├─ anti-patterns.yml           # ★11アンチパターンの正本
 ├─ PROJECT.md                  # このファイル
 ├─ CLAUDE.md                   # Claude Code 向け執筆指示
 ├─ AGENTS.md                   # コーディングエージェント向け統合ガイド
 ├─ CHANGELOG.md                # カタログ変更履歴
+├─ schemas/                    # JSON Schema（patterns/decisions/catalog）
 ├─ .github/workflows/deploy.yml# Pages へ自動デプロイ（generate.py 実行付き）
 ├─ scripts/
 │  ├─ scaffold.py              # patterns.yml からスタブ生成（冪等）
