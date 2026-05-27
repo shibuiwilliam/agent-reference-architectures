@@ -742,6 +742,48 @@ def generate_by_force(pdata: dict, ddata: dict) -> None:
     pass
 
 
+def generate_rules_page(pdata: dict, ddata: dict) -> None:
+    """docs/decisions/rules.md の GEN:rules ブロックを再生成"""
+    rules_path = DOCS / "decisions" / "rules.md"
+    if not rules_path.exists():
+        return
+
+    # Build pattern title lookup
+    ptitles: dict[int, str] = {}
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            title_parts = p["title"].split("｜")
+            ptitles[p["num"]] = title_parts[0].strip()
+
+    lines: list[str] = []
+    for r in ddata["rules"]:
+        cond = " AND ".join(f"`{k}`={v}" for k, v in r["if"].items())
+        lines.append(f"### {r['id']}")
+        lines.append("")
+        lines.append(f"**条件**: {cond}")
+        lines.append("")
+
+        def fmt_pats(pids: list[int]) -> str:
+            return ", ".join(f"#{p} {ptitles.get(p, '')}" for p in pids)
+
+        lines.append(f"- **必須**: {fmt_pats(r['required'])}")
+        rec = r.get("recommended", [])
+        if rec:
+            lines.append(f"- **推奨**: {fmt_pats(rec)}")
+        opt = r.get("optional", [])
+        if opt:
+            lines.append(f"- **任意**: {fmt_pats(opt)}")
+        lines.append(f"- **根拠**: {r['rationale']}")
+        if "escalation" in r:
+            lines.append(f"- **昇格条件**: {r['escalation']}")
+        lines.append("")
+
+    content = "\n".join(lines)
+    changed = inject_gen_block(rules_path, "rules", content)
+    if changed:
+        print("  ✓ decisions/rules.md")
+
+
 # ── _agent/pattern-cards.json ────────────────────────────────────────
 
 def generate_pattern_cards(pdata: dict, ddata: dict, apdata: dict | None) -> None:
@@ -1135,6 +1177,7 @@ def main() -> None:
     generate_meta_blocks(pdata)
     generate_pattern_index(pdata)
     generate_by_force(pdata, ddata)
+    generate_rules_page(pdata, ddata)
 
     # _agent/ directory outputs
     generate_pattern_cards(pdata, ddata, apdata)

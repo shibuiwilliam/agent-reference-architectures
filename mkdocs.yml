@@ -138,6 +138,7 @@ plugins:
                     - In-Context ↔ External State: decisions/tradeoffs-catalog/in-context-vs-external.md
                     - Build ↔ Buy: decisions/tradeoffs-catalog/build-vs-buy.md
                     - Structured ↔ Freeform Output: decisions/tradeoffs-catalog/structured-vs-freeform.md
+                - Decision Rules (IF–THEN): decisions/rules.md
                 - Dial × Tradeoff Interactions: decisions/interactions.md
                 - Reverse Lookup by Force: decisions/by-force.md
                 - Architecture Decision Record (ADR): decisions/adr-template.md
@@ -345,6 +346,7 @@ nav:
           - 文脈内 ↔ 外部状態: decisions/tradeoffs-catalog/in-context-vs-external.md
           - ビルド ↔ バイ: decisions/tradeoffs-catalog/build-vs-buy.md
           - 構造化 ↔ 自由形式出力: decisions/tradeoffs-catalog/structured-vs-freeform.md
+      - 決定規則（IF–THEN）: decisions/rules.md
       - ダイヤル×二者択一の相互作用: decisions/interactions.md
       - フォース別逆引き: decisions/by-force.md
       - 意思決定記録（ADR）: decisions/adr-template.md
