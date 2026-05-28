@@ -53,7 +53,7 @@ See `_agent/README.md` for the full 6-step algorithm.
 
 ### C. MCP 接続（Native Integration）
 
-`mcp-server/server.py` provides:
+`mcp/server.py` provides:
 - `search_patterns(query)` — keyword search
 - `get_pattern(id)` — structured detail
 - `recommend(force_profile)` — force evaluation → recommended patterns

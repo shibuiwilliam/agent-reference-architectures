@@ -51,8 +51,6 @@ agent-architecture-patterns/
 │  ├─ server.py                # MCP server (reads catalog.json)
 │  ├─ smoke_test.py            # Smoke test for MCP server
 │  └─ README.md                # Setup and usage
-├─ mcp-server/
-│  └─ server.py                # MCP server (legacy location)
 ├─ templates/
 │  └─ pattern.md               # Writing template (not part of the build)
 └─ docs/                       # ★ Build target — everything the site serves

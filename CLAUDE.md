@@ -31,7 +31,7 @@ For the big picture — structure, directory layout, deployment — see `PROJECT
 | Regenerate artifacts | `python scripts/generate.py` |
 | Agent guide / template | `docs/agent-guide.md`, `docs/agent-proposal-template.md` |
 | Agent integration | `AGENTS.md` (repo root) |
-| MCP server | `mcp/server.py` (primary) or `mcp-server/server.py` (legacy) |
+| MCP server | `mcp/server.py` |
 | Bidirectional link audit | `python scripts/check_links.py` |
 | JP/EN coverage check | `python scripts/check_lang_parity.py` |
 | Decision data | `decisions.yml` |
