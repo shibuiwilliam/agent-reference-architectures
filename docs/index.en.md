@@ -35,18 +35,3 @@ If you are not sure where to begin, start by answering these five questions.
 2. Look up the vocabulary (patterns) you need from the **[Pattern Quick Reference](pattern-index.md)**
 3. See **[Worked Examples](decisions/worked-examples.md)** for concrete walkthroughs
 
-### Role of Each Page
-
-| Section | Page | Role |
-|---------|------|------|
-| **Decision-Making** | [Decision-Making Flow](decisions/decision-flow.md) | The backbone of the site: a 6-step end-to-end workflow |
-| | [Driving Variables (Forces)](foundations/forces.md) | Definitions of F1--F9 that serve as inputs to decision-making |
-| | [Degrees (Dials)](decisions/tuning-dials.md) | 20 dials that determine "to what degree" a pattern is applied |
-| | [Tradeoffs (Binary Choices)](decisions/tradeoffs.md) | 16 binary choices for "A or B" decisions |
-| | [Reverse Lookup by Force](decisions/by-force.md) | Look up related decisions and patterns from a force |
-| | [Worked Examples](decisions/worked-examples.md) | End-to-end demonstrations with 3 systems |
-| **Patterns** | [Pattern Quick Reference](pattern-index.md) | List of all 59 patterns (vocabulary) |
-| **Composite Architectures** | [Reference Architectures](reference-architectures/index.md) | Examples of layered pattern compositions |
-| | [Anti-Patterns](anti-patterns/index.md) | Design decisions to avoid |
-| **Agent Integration** | [Coding Agent Guide](agent-guide.md) | Procedures and conventions for coding agents to read this catalog and make evidence-based design proposals |
-| | [Architecture Proposal Template](agent-proposal-template.md) | Standard format for agent-generated proposals |

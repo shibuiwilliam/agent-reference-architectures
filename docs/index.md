@@ -59,26 +59,3 @@ AIエージェントは、プロトタイプならすぐ動く。しかし本番
 
 → 守ってほしいこと: カタログ内パターンのみ使用 / 不確実なら明示 / 最終判断は人間
 
-### 各ページの役割
-
-| 区分 | ページ | 役割 | 主な読者 |
-|------|--------|------|---------|
-| **意思決定** | [意思決定の進め方](decisions/decision-flow.md) | 6ステップの通しワークフロー | 共通 |
-| | [駆動変数（フォース）](foundations/forces.md) | F1–F9 の定義 | 共通 |
-| | [程度（ダイヤル）](decisions/tuning-dials.md) | 20のダイヤル | 共通 |
-| | [相反（二者択一）](decisions/tradeoffs.md) | 16の二者択一 | 共通 |
-| | [フォース別逆引き](decisions/by-force.md) | フォースから引く辞書 | 共通 |
-| | [通し例](decisions/worked-examples.md) | 一気通貫の実演 | 共通（few-shot） |
-| **パターン** | [パターン早見表](pattern-index.md) | 59パターン一覧 | 人間 |
-| **複合構成** | [リファレンスアーキテクチャ](reference-architectures/index.md) | 構成例 | 共通 |
-| | [アンチパターン](anti-patterns/index.md) | やってはいけない設計 | 共通 |
-| **機械可読** | `catalog.json` | 構造化マニフェスト | エージェント |
-| | `llms-core.txt` | 意思決定コア | エージェント |
-| | `llms-full.txt` | 全ページ連結 | エージェント |
-| **統合** | [エージェント向けガイド](agent-guide.md) | 利用手順・規約 | エージェント |
-| | [提案テンプレート](agent-proposal-template.md) | 出力様式 | エージェント |
-| **エージェント経路** | `_agent/README.md` | エントリポイント | エージェント |
-| | `_agent/decision-core.md` | 決定データ（軽量） | エージェント |
-| | `_agent/pattern-cards.json` | パターン選定データ | エージェント |
-| | `_agent/by-task.md` | タスク別逆引き | エージェント |
-| | `_agent/by-problem.md` | 問題別逆引き | エージェント |
