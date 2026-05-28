@@ -76,7 +76,7 @@ categories:
         forces: [F6, F8]
         related: [59, 11, 5, 14]
         dials: []
-        tradeoffs: [workflow-vs-agent]
+        tradeoffs: [workflow-vs-agent, orchestration-vs-choreography]
         when_to_use: "固定手順にAI判断を組み込む場面、規制業種で再現性が必要"
         when_not: ["F6=高（探索的タスク）", "手順が動的に変化する場合"]
         element_tech: [Temporal, Airflow, "Step Functions", Prefect, Hatchet, LangGraph, "OpenAI Agents SDK"]
@@ -291,7 +291,7 @@ categories:
         forces: [F2, F3]
         related: [8, 28, 37]
         dials: [best-of-n]
-        tradeoffs: [same-vs-different-model]
+        tradeoffs: [same-vs-different-model, single-vs-multi-agent]
         when_to_use: "高リスク判断（医療・金融）、正確性検証、不一致検出が高価値"
         when_not: ["大量低コストリクエスト（N倍コスト）", "主観的クリエイティブ", "F4=厳格（同期）"]
         element_tech: ["並列 asyncio/thread pool", "モデルミックス", "投票/スコアリング"]
@@ -451,7 +451,7 @@ categories:
         forces: [F5, F8]
         related: [18, 21, 32]
         dials: []
-        tradeoffs: []
+        tradeoffs: [llm-vs-tool]
         when_to_use: "複数ツール/MCPシステム、マルチテナント、認可・監査の一元化が必要"
         when_not: ["1–2ツール", "認証不要", "超低レイテンシ不許容"]
         element_tech: ["MCP Gateway/Proxy", "Kong", "Envoy", "AWS API Gateway", "OPA/Cedar", "OpenTelemetry"]
@@ -713,7 +713,7 @@ categories:
         tagline: "入出力検査し誤りを自己修正"
         forces: [F5, F4]
         related: [30, 28, 44]
-        dials: [guardrail-strictness]
+        dials: [guardrail-strictness, self-correction-loops]
         tradeoffs: [inline-vs-post-verification]
         when_to_use: "公開チャットボット、外部API入力、コンプライアンス要件、自動修正が許容"
         when_not: ["内部信頼入力のみ", "リアルタイムゼロレイテンシ要求", "オフラインバッチ"]
@@ -735,7 +735,7 @@ categories:
         tagline: "制約をコード化し別途判定"
         forces: [F2, F8]
         related: [29, 18, 52]
-        dials: []
+        dials: [guardrail-strictness]
         tradeoffs: [prompt-vs-code]
         when_to_use: "金融・医療・法務の高失敗コスト操作、監査証跡が必要、決定論的ルールが可能"
         when_not: ["曖昧なルール（トーン判断）", "形式が曖昧なドメイン"]
@@ -1002,7 +1002,7 @@ categories:
         forces: [F9]
         related: [37, 38, 36]
         dials: [retry-count]
-        tradeoffs: [fail-fast-vs-degradation]
+        tradeoffs: [fail-fast-vs-degradation, single-vs-multi-provider]
         when_to_use: "厳格なSLA、マルチプロバイダ利用可能、24/7運用（サポート・ワークフロー自動化）"
         when_not: ["単一プロバイダ固定", "専門モデルのみ成功可能（特化モデル依存）"]
         element_tech: ["LiteLLM Fallback", "Portkey Gateway", "resilience4j/Polly", "サーキットブレーカー"]
@@ -1144,7 +1144,7 @@ categories:
         forces: [F9, F8]
         related: [46, 47, 48]
         dials: []
-        tradeoffs: [build-vs-buy]
+        tradeoffs: [build-vs-buy, single-vs-multi-provider]
         when_to_use: "複数年の本番運用、マルチフレームワーク評価、将来のベンダーリスク"
         when_not: ["PoC/短期", "フレームワーク固有機能への重依存", "スピード優先プロトタイプ"]
         element_tech: ["Python Protocol/ABC", "TypeScript interface", "DI (dependency-injector/tsyringe)", "LangChain/LangGraph/OpenAI SDK/Semantic Kernel"]

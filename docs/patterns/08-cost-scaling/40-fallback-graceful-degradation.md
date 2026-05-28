@@ -7,7 +7,7 @@ tags:
 pattern_id: 40
 forces: [F9]
 dials: [retry-count]
-tradeoffs: [fail-fast-vs-degradation]
+tradeoffs: [fail-fast-vs-degradation, single-vs-multi-provider]
 when_to_use: "厳格なSLA、マルチプロバイダ利用可能、24/7運用（サポート・ワークフロー自動化）"
 when_not:
   - "単一プロバイダ固定"
@@ -32,7 +32,7 @@ prevents_anti_patterns: [ap-09]
 | **カテゴリ** | 08-cost-scaling — コスト・性能・スケーリング |
 | **フォース** | `[F9]` |
 | **ダイヤル** | retry-count |
-| **二者択一** | fail-fast-vs-degradation |
+| **二者択一** | fail-fast-vs-degradation, single-vs-multi-provider |
 | **関連パターン** | #37, #38, #36 |
 | **向き** | 厳格なSLA、マルチプロバイダ利用可能、24/7運用（サポート・ワークフロー自動化） |
 | **不向き** | 単一プロバイダ固定; 専門モデルのみ成功可能（特化モデル依存） |

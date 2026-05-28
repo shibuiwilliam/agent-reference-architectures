@@ -157,7 +157,7 @@ dials:
     poles: [修正なし, 無限ループ]
     driver: [F7, F3]
     default: "1–3回"
-    patterns: [8, 29]
+    patterns: [8, 28, 29]
     detail: dials/self-correction-loops.md
     value_mapping:
       - condition: { F7: high, F3: low }

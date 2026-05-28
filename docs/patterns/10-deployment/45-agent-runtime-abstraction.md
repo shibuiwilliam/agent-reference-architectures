@@ -8,7 +8,7 @@ tags:
 pattern_id: 45
 forces: [F9, F8]
 dials: []
-tradeoffs: [build-vs-buy]
+tradeoffs: [build-vs-buy, single-vs-multi-provider]
 when_to_use: "複数年の本番運用、マルチフレームワーク評価、将来のベンダーリスク"
 when_not:
   - "PoC/短期"
@@ -33,7 +33,7 @@ related: [46, 47, 48]
 | **カテゴリ** | 10-deployment — デプロイ・ベンダー抽象化・移行 |
 | **フォース** | `[F9]`, `[F8]` |
 | **ダイヤル** | — |
-| **二者択一** | build-vs-buy |
+| **二者択一** | build-vs-buy, single-vs-multi-provider |
 | **関連パターン** | #46, #47, #48 |
 | **向き** | 複数年の本番運用、マルチフレームワーク評価、将来のベンダーリスク |
 | **不向き** | PoC/短期; フレームワーク固有機能への重依存; スピード優先プロトタイプ |

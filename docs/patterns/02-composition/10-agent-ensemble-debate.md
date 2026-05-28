@@ -8,7 +8,7 @@ tags:
 pattern_id: 10
 forces: [F2, F3]
 dials: [best-of-n]
-tradeoffs: [same-vs-different-model]
+tradeoffs: [same-vs-different-model, single-vs-multi-agent]
 when_to_use: "高リスク判断（医療・金融）、正確性検証、不一致検出が高価値"
 when_not:
   - "大量低コストリクエスト（N倍コスト）"
@@ -33,7 +33,7 @@ related: [8, 28, 37]
 | **カテゴリ** | 02-composition — エージェント構成・分担 |
 | **フォース** | `[F2]`, `[F3]` |
 | **ダイヤル** | best-of-n |
-| **二者択一** | same-vs-different-model |
+| **二者択一** | same-vs-different-model, single-vs-multi-agent |
 | **関連パターン** | #8, #28, #37 |
 | **向き** | 高リスク判断（医療・金融）、正確性検証、不一致検出が高価値 |
 | **不向き** | 大量低コストリクエスト（N倍コスト）; 主観的クリエイティブ; F4=厳格（同期） |

@@ -8,7 +8,7 @@ tags:
 pattern_id: 3
 forces: [F6, F8]
 dials: []
-tradeoffs: [workflow-vs-agent]
+tradeoffs: [workflow-vs-agent, orchestration-vs-choreography]
 when_to_use: "固定手順にAI判断を組み込む場面、規制業種で再現性が必要"
 when_not:
   - "F6=高（探索的タスク）"
@@ -33,7 +33,7 @@ prevents_anti_patterns: [ap-08]
 | **カテゴリ** | 01-execution — 実行・セッション・オーケストレーション |
 | **フォース** | `[F6]`, `[F8]` |
 | **ダイヤル** | — |
-| **二者択一** | workflow-vs-agent |
+| **二者択一** | workflow-vs-agent, orchestration-vs-choreography |
 | **関連パターン** | #59, #11, #5, #14 |
 | **向き** | 固定手順にAI判断を組み込む場面、規制業種で再現性が必要 |
 | **不向き** | F6=高（探索的タスク）; 手順が動的に変化する場合 |
