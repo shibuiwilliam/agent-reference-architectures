@@ -25,18 +25,6 @@ AIエージェントは、プロトタイプならすぐ動く。しかし本番
 
 本カタログは人間だけでなく、**コーディングエージェント（LLM）にも読まれることを想定して設計**している。構造化データ（`catalog.json`）を読み込んで、設計要件に対してフォースやパターン番号を根拠にしたアーキテクチャ提案を生成できる。
 
-## まず「選定の5問」に答える
-
-どこから読むか迷ったら、以下の5問に答えるところから始める。
-
-1. **失敗したとき何が壊れるか？** → `[F2]` が高ければ [副作用重視構成](reference-architectures/02-side-effect-first.md)
-2. **入力は信頼できるか？** → `[F5]` が低ければ [信頼できない入力構成](reference-architectures/03-untrusted-input.md)
-3. **月間コスト上限は？** → `[F7]` が高ければ [コスト重視構成](reference-architectures/05-cost-first.md)
-4. **監査・規制要件はあるか？** → `[F8]` が高ければ [継続改善運用構成](reference-architectures/06-continuous-improvement.md)
-5. **まだプロトタイプか？** → はいなら [最小構成](reference-architectures/01-mvp.md) から始める
-
-→ 5問の詳細は [リファレンスアーキテクチャ](reference-architectures/index.md) を参照
-
 ## 読み方
 
 ### 人間の場合 — ブラウズ → 理解 → 判断
