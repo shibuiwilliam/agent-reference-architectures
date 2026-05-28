@@ -58,3 +58,17 @@ LLMプロバイダは従来のクラウドサービスと比べて障害頻度�
 - [#46 Model Behavior Compatibility Layer](../../patterns/10-deployment/46-model-behavior-compatibility-layer.md) — モデル間の挙動差を吸収する互換レイヤー
 - [#36 Shadow / Canary Deployment](../../patterns/07-observability/36-shadow-canary-deployment.md) — 新プロバイダ・新モデルへの切り替えを段階的に検証する
 - [#53 Agent Change Management](../../patterns/12-governance/53-agent-change-management.md) — プロバイダ変更を含む変更管理プロセス
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #35 | **Production Replay** | 本番ログを再生し新旧比較 | 大規模モデル/プロンプト更新、プロバイダ切替、評価データセットの陳腐化 |
+| #36 | **Shadow / Canary Deployment** | 段階投入と自動ロールバック | 十分な本番ボリューム、厳格なSLA、モデルアップグレード/プロンプト大幅改修 |
+| #40 | **Fallback & Graceful Degradation** | 障害時に段階縮退で継続 | 厳格なSLA、マルチプロバイダ利用可能、24/7運用（サポート・ワークフロー自動化） |
+| #45 | **Agent Runtime Abstraction** | 実行基盤を差替可能に | 複数年の本番運用、マルチフレームワーク評価、将来のベンダーリスク |
+| #46 | **Model Behavior Compatibility Layer** | モデル差を吸収する互換層 | マルチモデル運用/比較、プロバイダフォールバック、コスト動的ルーティング |
+| #53 | **Agent Change Management** | 変更を厳格なCI/カナリア対象に | 本番エージェント運用、複数人開発、規制上の変更ログが必要 |
+<!-- END:GEN:patterns -->

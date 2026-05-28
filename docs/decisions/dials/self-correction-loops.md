@@ -53,3 +53,14 @@ LLMは同じプロンプトで同じ間違いを繰り返すことがありま�
 ## 関連パターン
 
 - [#29 Guardrail Sidecar + Self-Correction](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) — 自己修正ループの実装パターン
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #8 | **Planner-Executor-Reviewer** | コード生成→テスト→修正、レポートのファクトチェック、検証基準が明確なマルチステップ調査 | 単純Q&A; 計算オーバーヘッドがタスクを上回る |
+| #28 | **Verifier Agent / Critic** | コード生成（テスト検証）、金融レポート、法務文書、公開コンテンツ | リアルタイムチャット; 失敗コスト低のブレインストーミング |
+| #29 | **Guardrail Sidecar + Self-Correction** | 公開チャットボット、外部API入力、コンプライアンス要件、自動修正が許容 | 内部信頼入力のみ; リアルタイムゼロレイテンシ要求 |
+<!-- END:GEN:patterns -->

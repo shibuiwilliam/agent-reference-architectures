@@ -52,3 +52,7 @@ Temperature はLLMのソフトマックス出力の鋭さを調整するパラ�
 ## 関連パターン
 
 - [#33 Version Pinning](../../patterns/07-observability/33-version-pinning.md) — プロンプト・モデル・パラメータを固定し再現性を確保する
+
+<!-- BEGIN:GEN:patterns -->
+（このダイヤルに直接関与するパターンはありません）
+<!-- END:GEN:patterns -->

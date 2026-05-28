@@ -59,3 +59,19 @@ tags:
 - [#31 Human Approval Checkpoint](../../patterns/06-reliability/31-human-approval-checkpoint.md) — 高リスク操作の前に人間の承認を得る
 - [#57 Autonomy Ladder](../../patterns/06-reliability/57-autonomy-ladder.md) — 実績に応じて自律性を段階的に昇格させる
 - [#16 Ambiguity Negotiation](../../patterns/03-io-contract/16-ambiguity-negotiation.md) — 曖昧な指示で不可逆操作を実行しないよう確認を挟む
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #1 | **Request-to-Job Gateway** | 1リクエストを非同期ジョブとして受け付ける | マルチステップの調査・コンテンツ生成・分析など、数秒〜数分かかるタスク |
+| #2 | **Durable Agent Session** | 状態を永続化し中断・再開に耐える | マルチステップの研究・コード生成・データパイプライン、ローリングデプロイ環境 |
+| #4 | **Agent Saga** | 副作用連鎖を補償で巻き戻す | 複数外部システムへの書き込み連鎖（カレンダー→チケット→メール） |
+| #16 | **Ambiguity Negotiation** | 曖昧なら確認してから実行 | 可逆な操作、複数解釈可能な入力（ファイル削除）、スロット不足の入力 |
+| #19 | **Dry-Run First Tool Execution** | 副作用はまず模擬実行→承認 | データ変更（削除・API書き込み）、インフラ変更（Terraform的操作） |
+| #31 | **Human Approval Checkpoint** | 高リスク前に人間承認 | 金融、インフラ変更、顧客メール送信、契約確認 |
+| #57 | **Autonomy Ladder** | 実績に応じ自律性を段階的に昇格 | エージェント権限の段階的ロールアウト、タスク種別ごとにリスクレベルが異なる |
+| #58 | **Sync Facade over Async Core** | 短ければ同期、超えたら非同期へ昇格 | 軽い挨拶と重い調査が同じエンドポイントに混在するハイブリッドワークロード |
+<!-- END:GEN:patterns -->

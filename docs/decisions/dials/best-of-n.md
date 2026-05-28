@@ -54,3 +54,12 @@ LLMの出力は確率的であり、1回の生成が最適解である保証は�
 ## 関連パターン
 
 - [#10 Agent Ensemble & Debate](../../patterns/02-composition/10-agent-ensemble-debate.md) — 複数エージェントで生成・討論し最良を選ぶ構成パターン
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #10 | **Agent Ensemble & Debate** | 高リスク判断（医療・金融）、正確性検証、不一致検出が高価値 | 大量低コストリクエスト（N倍コスト）; 主観的クリエイティブ |
+<!-- END:GEN:patterns -->

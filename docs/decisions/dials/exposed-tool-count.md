@@ -52,3 +52,12 @@ LLMはツール定義をコンテキストとして受け取るため、ツー�
 ## 関連パターン
 
 - [#18 Least-Privilege Tool Binding](../../patterns/04-tools-mcp/18-least-privilege-tool-binding.md) — セッションごとに最小権限のツールセットを束縛する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #18 | **Least-Privilege Tool Binding** | 10以上のツール、マルチテナント、ユーザー毎に異なる権限 | 2–3ツールで全ユーザー同一権限; 探索的ディスカバリが必要 |
+<!-- END:GEN:patterns -->

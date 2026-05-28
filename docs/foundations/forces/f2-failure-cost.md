@@ -61,3 +61,29 @@ tags:
 - [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) — 制約をコード化して機械的に判定する
 - [#10 Agent Ensemble & Debate](../../patterns/02-composition/10-agent-ensemble-debate.md) — 複数エージェントの合議で頑健性を高める
 - [#8 Planner-Executor-Reviewer](../../patterns/02-composition/08-planner-executor-reviewer.md) — 計画・実行・検証を分離し、各段階で品質を担保する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #4 | **Agent Saga** | 副作用連鎖を補償で巻き戻す | 複数外部システムへの書き込み連鎖（カレンダー→チケット→メール） |
+| #8 | **Planner-Executor-Reviewer** | 計画/実行/検証を別ロールに分ける | コード生成→テスト→修正、レポートのファクトチェック、検証基準が明確なマルチステップ調査 |
+| #10 | **Agent Ensemble & Debate** | 複数で解き合議・討論で頑健化 | 高リスク判断（医療・金融）、正確性検証、不一致検出が高価値 |
+| #11 | **Deterministic Core, Probabilistic Edge** | 中核は決定論、周辺だけAI | 金融・保険・医療プロトコル、正確な金額・ロジックが必須 |
+| #15 | **Inverted Structured Output** | 最終実行でなく中間判断を出させる | 承認・分類・ルーティング判断、判断のみ（実行はコード） |
+| #16 | **Ambiguity Negotiation** | 曖昧なら確認してから実行 | 可逆な操作、複数解釈可能な入力（ファイル削除）、スロット不足の入力 |
+| #18 | **Least-Privilege Tool Binding** | セッション毎に最小権限を束縛 | 10以上のツール、マルチテナント、ユーザー毎に異なる権限 |
+| #19 | **Dry-Run First Tool Execution** | 副作用はまず模擬実行→承認 | データ変更（削除・API書き込み）、インフラ変更（Terraform的操作） |
+| #28 | **Verifier Agent / Critic** | 独立した検証器で出荷前検査 | コード生成（テスト検証）、金融レポート、法務文書、公開コンテンツ |
+| #30 | **Policy-as-Code Guardrail** | 制約をコード化し別途判定 | 金融・医療・法務の高失敗コスト操作、監査証跡が必要、決定論的ルールが可能 |
+| #31 | **Human Approval Checkpoint** | 高リスク前に人間承認 | 金融、インフラ変更、顧客メール送信、契約確認 |
+| #44 | **Dual-LLM Privilege Separation** | 隔離LLMと特権LLMを分離 | 信頼できない入力→ツールチェーン、高リスク副作用（決済・削除・通知） |
+| #48 | **Strangler Fig** | 既存処理を段階的に置換 | 既存システムのエージェント置換（段階的リスク管理）、ルールベース→AI段階移行 |
+| #51 | **Agent-to-Human Escalation** | 自信/権限不足で人間へ引き継ぎ | サポート/法務/医療ドメイン、不確実→エスカレーションが推測より良い、専門家判断が必要 |
+| #52 | **Agent Constitution** | 行動原則を体系的に展開 | マルチエージェント組織、規制業種、監査証跡が必要、行動一貫性が重要 |
+| #56 | **Adaptive Effort** | 難易度で投入計算量を増減 | 難易度が変動するワークロード、thinking-budget API利用可能、コスト制約下の品質柔軟性 |
+| #57 | **Autonomy Ladder** | 実績に応じ自律性を段階的に昇格 | エージェント権限の段階的ロールアウト、タスク種別ごとにリスクレベルが異なる |
+| #59 | **Workflow–Agent Spectrum Selector** | サブタスク毎に決定論↔自律を選定 | 複数サブタスクのシステム設計、定型と探索が混在するタスク |
+<!-- END:GEN:patterns -->

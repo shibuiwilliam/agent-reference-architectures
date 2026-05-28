@@ -55,3 +55,13 @@ tags:
 
 - [#32 Agent Trace](../../patterns/07-observability/32-agent-trace.md) — エージェントの全ステップをトレースとして記録する基盤
 - [#54 Tiered Observability](../../patterns/07-observability/54-tiered-observability.md) — 観測データをHot/Coldに階層化するパターン
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #32 | **Agent Trace** | マルチステップエージェント、規制監査、モデル/ツール組合せの複雑なシステム | 単一呼び出しステートレスAPI; 標準アプリログで十分 |
+| #54 | **Tiered (Hot/Cold) Observability** | 高トラフィックエージェントシステム、規制上の長期保持、コスト最適化優先 | 低トラフィックで単一層で十分; 超高速コールドアクセスが必要 |
+<!-- END:GEN:patterns -->

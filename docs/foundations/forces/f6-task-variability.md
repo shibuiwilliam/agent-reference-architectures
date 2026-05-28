@@ -59,3 +59,16 @@ tags:
 - [#12 Blackboard](../../patterns/02-composition/12-blackboard.md) — 探索的タスクで複数エージェントが共有黒板を介して協調する
 - [#50 Editable Plan](../../patterns/11-ux/50-editable-plan.md) — エージェントの計画を人間が編集してから実行する
 - [#9 Supervisor & Specialist Agents](../../patterns/02-composition/09-supervisor-specialist-agents.md) — 変動性が高いタスクを専門エージェントに動的に委譲する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #3 | **Workflow Backbone + Agent Node** | 骨格は決定論、判断だけ委譲 | 固定手順にAI判断を組み込む場面、規制業種で再現性が必要 |
+| #9 | **Supervisor & Specialist Agents** | 統括役が専門役へ委譲する | 多様なタスク種別（FAQ/技術/請求）、マルチモーダル、ドメイン専門性が分離可能 |
+| #12 | **Blackboard** | 共有黒板で疎結合に協調 | 複雑なマルチエージェント分析、動的なエージェント参加、探索的問題解決 |
+| #50 | **Editable Plan** | 実行前に計画を人が編集 | マルチステップ、手順が変動、再実行コストが高い |
+| #59 | **Workflow–Agent Spectrum Selector** | サブタスク毎に決定論↔自律を選定 | 複数サブタスクのシステム設計、定型と探索が混在するタスク |
+<!-- END:GEN:patterns -->

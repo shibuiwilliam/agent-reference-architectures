@@ -52,3 +52,12 @@ tags:
 ## 関連パターン
 
 - [#26 Forgetting and Expiration](../../patterns/05-memory-context/26-forgetting-and-expiration.md) — 記憶に失効・鮮度を持たせる実装パターン
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #26 | **Forgetting and Expiration** | 顧客データの継続性、ニュース・市場情報の鮮度、GDPR/データ保持コンプライアンス | 法的アーカイブ（失効ではなく保持が必要）; 不変のマスタデータ |
+<!-- END:GEN:patterns -->

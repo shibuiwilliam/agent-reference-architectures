@@ -61,3 +61,20 @@ tags:
 - [#37 Semantic Gateway & Cost-Aware Router](../../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — コストを考慮してモデルを動的に選択する
 - [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — 時間・回数・コストを予算化してループの暴走を防ぐ
 - [#55 Deadline & Budget Cascade](../../patterns/01-execution/55-deadline-budget-cascade.md) — 予算上限を呼び出しツリーへ伝播する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #5 | **Time-Budgeted Agent Loop** | 時間・回数・コストを予算化し暴走を止める | SaaSでのコスト制限、マルチテナントの公平性確保 |
+| #9 | **Supervisor & Specialist Agents** | 統括役が専門役へ委譲する | 多様なタスク種別（FAQ/技術/請求）、マルチモーダル、ドメイン専門性が分離可能 |
+| #24 | **Context Pack / Assembly** | 文脈を組み立てグラウンディング | 社内ナレッジ、サポート、法務・医療の最新情報依存 |
+| #37 | **Semantic Gateway & Cost-Aware Router** | 難易度でモデルを動的選択 | 難易度分布が広い（70%簡単、30%複雑）、月間コスト上限あり |
+| #38 | **Semantic Result Cache** | 意味的に近い結果を再利用 | 繰り返しFAQ的クエリ、カスタマーサポート、ドキュメント検索 |
+| #39 | **Prompt Cache Optimized Context** | 共通prefixでキャッシュを効かせる | 長いシステムプロンプト/few-shot例、同カテゴリのバッチリクエスト、大量RAGコンテキスト |
+| #54 | **Tiered (Hot/Cold) Observability** | 観測を高速層と安価層に二分 | 高トラフィックエージェントシステム、規制上の長期保持、コスト最適化優先 |
+| #55 | **Deadline & Budget Cascade** | 期限・予算を呼出ツリーへ伝播 | マルチエージェント構成、再帰的ツール呼び出し、SaaSの厳格なコスト制限 |
+| #56 | **Adaptive Effort** | 難易度で投入計算量を増減 | 難易度が変動するワークロード、thinking-budget API利用可能、コスト制約下の品質柔軟性 |
+<!-- END:GEN:patterns -->

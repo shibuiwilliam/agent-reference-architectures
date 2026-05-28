@@ -60,3 +60,34 @@ tags:
 - [#34 Evaluation CI/CD](../../patterns/07-observability/34-evaluation-ci-cd.md) — 変更毎に自動評価で回帰を検知する
 - [#27 Evidence-First Answer](../../patterns/06-reliability/27-evidence-first-answer.md) — 回答前に根拠を取得・引用し、判断根拠を明示する
 - [#52 Agent Constitution](../../patterns/12-governance/52-agent-constitution.md) — 行動原則を体系的に展開する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #3 | **Workflow Backbone + Agent Node** | 骨格は決定論、判断だけ委譲 | 固定手順にAI判断を組み込む場面、規制業種で再現性が必要 |
+| #11 | **Deterministic Core, Probabilistic Edge** | 中核は決定論、周辺だけAI | 金融・保険・医療プロトコル、正確な金額・ロジックが必須 |
+| #14 | **Structured Output Contract** | 出力をスキーマで契約化 | APIレスポンス生成、フォーム入力、データ抽出、ワークフロールーティング |
+| #17 | **Tool / MCP Gateway** | ツール接続を集約し認可・監査 | 複数ツール/MCPシステム、マルチテナント、認可・監査の一元化が必要 |
+| #21 | **MCP Adapter Isolation** | MCPを信頼境界ごとに分離 | 信頼度が異なるアダプタの混在（内部DB＋外部API）、PCI-DSS規制データ |
+| #22 | **Anti-Corruption Layer** | レガシーとの概念汚染を防ぐ翻訳層 | レガシーシステム統合、外部APIモデルの正規化 |
+| #23 | **Layered Memory** | 短期/長期/共有に記憶を階層化 | 長時間ユーザー対話、マルチエージェント協調、パーソナライズが必要 |
+| #25 | **Memory Write Gate** | 長期保存を承認制にする | 顧客対話履歴、医療・法務記録、マルチセッションのパーソナライズ |
+| #26 | **Forgetting and Expiration** | 記憶に失効・鮮度を持たせる | 顧客データの継続性、ニュース・市場情報の鮮度、GDPR/データ保持コンプライアンス |
+| #27 | **Evidence-First Answer** | 回答前に根拠を取得・引用 | 法務・医療・金融Q&A、社内ナレッジ検索、監査証跡が必要なサポート |
+| #30 | **Policy-as-Code Guardrail** | 制約をコード化し別途判定 | 金融・医療・法務の高失敗コスト操作、監査証跡が必要、決定論的ルールが可能 |
+| #32 | **Agent Trace** | 全ステップを追記ログ化・再生 | マルチステップエージェント、規制監査、モデル/ツール組合せの複雑なシステム |
+| #33 | **Prompt/Model/Tool Version Pinning** | プロンプト/モデル/ツールを固定 | 本番エージェント、マルチモデル比較、モデル自動アップグレードリスク |
+| #34 | **Evaluation CI/CD** | 変更毎に自動評価で回帰検知 | 週次以上のプロンプト/モデル更新、品質SLA、複数人編集 |
+| #35 | **Production Replay** | 本番ログを再生し新旧比較 | 大規模モデル/プロンプト更新、プロバイダ切替、評価データセットの陳腐化 |
+| #41 | **Tenant-Isolated Agent Runtime** | テナント毎に実行・記憶を分離 | マルチテナントSaaS、規制業種（金融・医療）、数百規模のテナント |
+| #42 | **Data Boundary Firewall** | 入出力でPII/機密を検査・マスク | PII/健康/金融データを扱うエージェント、外部LLM API、GDPR/規制対象 |
+| #45 | **Agent Runtime Abstraction** | 実行基盤を差替可能に | 複数年の本番運用、マルチフレームワーク評価、将来のベンダーリスク |
+| #47 | **Agent Capability Registry** | 能力・権限・コストを台帳管理 | 10以上のエージェント運用、監査/コンプライアンス要件、エージェントコスト/SLA可視化 |
+| #48 | **Strangler Fig** | 既存処理を段階的に置換 | 既存システムのエージェント置換（段階的リスク管理）、ルールベース→AI段階移行 |
+| #52 | **Agent Constitution** | 行動原則を体系的に展開 | マルチエージェント組織、規制業種、監査証跡が必要、行動一貫性が重要 |
+| #53 | **Agent Change Management** | 変更を厳格なCI/カナリア対象に | 本番エージェント運用、複数人開発、規制上の変更ログが必要 |
+| #54 | **Tiered (Hot/Cold) Observability** | 観測を高速層と安価層に二分 | 高トラフィックエージェントシステム、規制上の長期保持、コスト最適化優先 |
+<!-- END:GEN:patterns -->

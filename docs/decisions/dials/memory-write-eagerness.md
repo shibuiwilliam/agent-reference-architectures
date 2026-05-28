@@ -51,3 +51,12 @@ tags:
 ## 関連パターン
 
 - [#25 Memory Write Gate](../../patterns/05-memory-context/25-memory-write-gate.md) — 長期メモリへの書き込みを承認制にするゲートパターン
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #25 | **Memory Write Gate** | 顧客対話履歴、医療・法務記録、マルチセッションのパーソナライズ | 使い捨てタスク; ステートレス |
+<!-- END:GEN:patterns -->

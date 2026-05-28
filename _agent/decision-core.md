@@ -1,8 +1,7 @@
 # Decision Core — AI Agent Architecture Patterns v1.2.0
 
 > This file contains the decision-making data needed for architecture proposals.
-> Read `_agent/README.md` first for the algorithm overview.
-> After narrowing pattern candidates, get details from `_agent/pattern-cards.json` or individual `docs/patterns/**/*.md` files.
+> Pattern details are in `catalog.json` and `glossary.md`.
 
 ## Forces (F1–F9)
 

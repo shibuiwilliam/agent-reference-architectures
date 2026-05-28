@@ -58,3 +58,21 @@ LLMベースのエージェントは自然言語を理解するがゆえに、�
 - [#43 Confused-Deputy Damage Limitation](../../patterns/09-security/43-confused-deputy-damage-limitation.md) — 騙されても被害半径を制限する
 - [#18 Least-Privilege Tool Binding](../../patterns/04-tools-mcp/18-least-privilege-tool-binding.md) — セッション毎に最小権限を束縛する
 - [#29 Guardrail Sidecar + Self-Correction](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) — 入出力を検査し不正を検出・修正する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #13 | **Natural Language Boundary Adapter** | 自然言語を構造化意図へ変換 | 明確なアクション分類（注文・チケット・検索）、有限のインテント種別 |
+| #17 | **Tool / MCP Gateway** | ツール接続を集約し認可・監査 | 複数ツール/MCPシステム、マルチテナント、認可・監査の一元化が必要 |
+| #18 | **Least-Privilege Tool Binding** | セッション毎に最小権限を束縛 | 10以上のツール、マルチテナント、ユーザー毎に異なる権限 |
+| #20 | **Sandboxed Tool Runtime** | コード/操作を隔離環境で実行 | コード実行エージェント、データ分析、ユーザー提供コード、CI/CD |
+| #21 | **MCP Adapter Isolation** | MCPを信頼境界ごとに分離 | 信頼度が異なるアダプタの混在（内部DB＋外部API）、PCI-DSS規制データ |
+| #29 | **Guardrail Sidecar + Self-Correction** | 入出力検査し誤りを自己修正 | 公開チャットボット、外部API入力、コンプライアンス要件、自動修正が許容 |
+| #41 | **Tenant-Isolated Agent Runtime** | テナント毎に実行・記憶を分離 | マルチテナントSaaS、規制業種（金融・医療）、数百規模のテナント |
+| #42 | **Data Boundary Firewall** | 入出力でPII/機密を検査・マスク | PII/健康/金融データを扱うエージェント、外部LLM API、GDPR/規制対象 |
+| #43 | **Confused-Deputy Damage Limitation** | 騙されても被害半径を制限 | 外部データ処理（メール・Web・ユーザー入力）、高インパクトツールアクセス |
+| #44 | **Dual-LLM Privilege Separation** | 隔離LLMと特権LLMを分離 | 信頼できない入力→ツールチェーン、高リスク副作用（決済・削除・通知） |
+<!-- END:GEN:patterns -->

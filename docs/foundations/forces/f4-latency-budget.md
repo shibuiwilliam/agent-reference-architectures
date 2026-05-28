@@ -59,3 +59,22 @@ tags:
 - [#58 Sync Facade over Async Core](../../patterns/01-execution/58-sync-facade-over-async-core.md) — 短ければ同期、超えたら非同期へ昇格する
 - [#38 Semantic Result Cache](../../patterns/08-cost-scaling/38-semantic-result-cache.md) — 意味的に近い過去の結果を再利用しレイテンシを削減する
 - [#39 Prompt Cache Optimized Context](../../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md) — 共通プレフィックスでプロンプトキャッシュを効かせる
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #1 | **Request-to-Job Gateway** | 1リクエストを非同期ジョブとして受け付ける | マルチステップの調査・コンテンツ生成・分析など、数秒〜数分かかるタスク |
+| #6 | **Interruptible Agent** | 途中で停止・方針修正できる | 長時間稼働のインタラクティブエージェント、人間が途中で方針変更する場面 |
+| #7 | **Streaming Progress** | 過程を監査可能な要約で逐次表示 | 5秒以上のタスク、ユーザーのインタラクティブ監視、規制トレースログ |
+| #24 | **Context Pack / Assembly** | 文脈を組み立てグラウンディング | 社内ナレッジ、サポート、法務・医療の最新情報依存 |
+| #28 | **Verifier Agent / Critic** | 独立した検証器で出荷前検査 | コード生成（テスト検証）、金融レポート、法務文書、公開コンテンツ |
+| #29 | **Guardrail Sidecar + Self-Correction** | 入出力検査し誤りを自己修正 | 公開チャットボット、外部API入力、コンプライアンス要件、自動修正が許容 |
+| #38 | **Semantic Result Cache** | 意味的に近い結果を再利用 | 繰り返しFAQ的クエリ、カスタマーサポート、ドキュメント検索 |
+| #39 | **Prompt Cache Optimized Context** | 共通prefixでキャッシュを効かせる | 長いシステムプロンプト/few-shot例、同カテゴリのバッチリクエスト、大量RAGコンテキスト |
+| #49 | **Agent Workbench** | 計画/進捗/承認を一画面管理 | マルチステップ5分以上のタスク（調査・コード・分析）、途中承認が必要なワークフロー |
+| #51 | **Agent-to-Human Escalation** | 自信/権限不足で人間へ引き継ぎ | サポート/法務/医療ドメイン、不確実→エスカレーションが推測より良い、専門家判断が必要 |
+| #58 | **Sync Facade over Async Core** | 短ければ同期、超えたら非同期へ昇格 | 軽い挨拶と重い調査が同じエンドポイントに混在するハイブリッドワークロード |
+<!-- END:GEN:patterns -->

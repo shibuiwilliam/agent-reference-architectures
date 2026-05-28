@@ -2,27 +2,31 @@
 """generate.py — patterns.yml + decisions.yml + anti-patterns.yml から機械可読成果物を冪等生成する。
 
 生成物:
-  - docs/catalog.json   … 機械可読マニフェスト（by_force, bidirectional_related, selection_guide, anti_patterns 含む）
-  - docs/llms.txt       … llmstxt.org 形式の索引
-  - docs/llms-core.txt  … 意思決定コア（低トークン・エージェント可読形式）
-  - docs/llms-full.txt  … 全ページ連結プレーンテキスト（エージェント可読形式）
-  - 各パターン .md に GEN:meta ブロック注入（Phase 2）
-  - _agent/pattern-cards.json … パターン選定用の軽量構造化データ
-  - _agent/decision-core.md   … エージェント向け意思決定コア（by_force逆引き付き）
-  - 各パターン .md のフロントマターにエージェント向けフィールドを注入
+  - docs/catalog.json      … 機械可読マニフェスト（patterns をフル保持）
+  - docs/llms.txt          … llmstxt.org 形式の索引
+  - docs/llms-core.txt     … 意思決定コア（低トークン・エージェント可読形式）
+  - docs/llms-full.txt     … 全ページ連結プレーンテキスト（エージェント可読形式）
+  - docs/glossary.md       … パターン早見表（語彙集）— GEN:glossary マーカー間
+  - 各ダイヤル/二者択一/F#ページ … GEN:patterns マーカー間に関与パターンを注入
+  - docs/decisions/rules.md … GEN:rules マーカー間
+  - docs/decisions/by-force.md … GEN:by-force マーカー間
+  - docs/decisions/tuning-dials.md … GEN:tuning-dials マーカー間
+  - docs/decisions/tradeoffs.md … GEN:tradeoffs マーカー間
+  - docs/pattern-index.md  … GEN:pattern-index マーカー間
+  - _agent/pattern-cards.json
+  - _agent/decision-core.md
 
 マーカー: <!-- BEGIN:GEN:xxx --> 〜 <!-- END:GEN:xxx --> 間のみ置換。
 人間が書いた箇所は不可侵。
 
 オプション:
   --validate  スキーマバリデーション（schemas/ が存在する場合）
-  --lint      パターンページの構造検証
+  --lint      パターンページの構造検証（旧パターンページが存在する場合のみ）
 """
 
 from __future__ import annotations
 
 import json
-import os
 import re
 import sys
 from collections import defaultdict
@@ -78,15 +82,12 @@ def inject_gen_block(file_path: Path, tag: str, content: str) -> bool:
 # ── agent-readable markdown conversion ──────────────────────────────
 
 def convert_to_agent_readable(text: str) -> str:
-    """MkDocs Material 記法をエージェント可読なプレーンマークダウンに変換。
-    パターン .md ファイル自体は変更しない。llms-full.txt / llms-core.txt 生成時のみ使用。"""
-
+    """MkDocs Material 記法をエージェント可読なプレーンマークダウンに変換。"""
     # 1. admonition → blockquote
     def replace_admonition(m):
         kind = m.group(1)
         title = m.group(2) or kind
         body_raw = m.group(3)
-        # Remove leading 4-space indent from body lines
         body_lines = []
         for line in body_raw.split("\n"):
             if line.startswith("    "):
@@ -127,9 +128,9 @@ def convert_to_agent_readable(text: str) -> str:
         text,
     )
 
-    # 5. GEN:meta block → remove (already in catalog.json)
+    # 5. GEN blocks → remove
     text = re.sub(
-        r'<!-- BEGIN:GEN:meta -->.*?<!-- END:GEN:meta -->',
+        r'<!-- BEGIN:GEN:\w+ -->.*?<!-- END:GEN:\w+ -->',
         "",
         text,
         flags=re.DOTALL,
@@ -163,8 +164,10 @@ def flatten_patterns(pdata: dict) -> list[dict]:
                 "when_not": p.get("when_not", []),
                 "element_tech": p.get("element_tech", []),
             }
-            if "summary_plain" in p:
-                entry["summary_plain"] = p["summary_plain"]
+            # Full fields for decision-only structure
+            for key in ("summary", "design", "primary_decision", "summary_plain"):
+                if key in p:
+                    entry[key] = p[key]
             if "selection_criteria" in p:
                 entry["selection_criteria"] = p["selection_criteria"]
             if "prevents_anti_patterns" in p:
@@ -188,45 +191,38 @@ def build_by_force_index(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
             "anti_patterns": [],
         }
 
-    # Patterns
     for cat in pdata["categories"]:
         for p in cat["patterns"]:
             for f in p.get("forces", []):
                 if f in index and p["num"] not in index[f]["patterns"]:
                     index[f]["patterns"].append(p["num"])
 
-    # Dials
     for d in ddata["dials"]:
         for f in d["driver"]:
             if f in index and d["id"] not in index[f]["dials"]:
                 index[f]["dials"].append(d["id"])
 
-    # Tradeoffs
     for t in ddata["tradeoffs"]:
         for f in t["driver"]:
             if f in index and t["id"] not in index[f]["tradeoffs"]:
                 index[f]["tradeoffs"].append(t["id"])
 
-    # Reference architectures
     for ra in ddata["reference_architectures"]:
         for f in ra["forces"]:
             if f in index and ra["id"] not in index[f]["reference_architectures"]:
                 index[f]["reference_architectures"].append(ra["id"])
 
-    # Rules
     for r in ddata["rules"]:
         for f in r["if"]:
             if f in index and r["id"] not in index[f]["rules"]:
                 index[f]["rules"].append(r["id"])
 
-    # Anti-patterns
     if apdata:
         for ap in apdata.get("anti_patterns", []):
             for f in ap.get("related_forces", []):
                 if f in index and ap["id"] not in index[f]["anti_patterns"]:
                     index[f]["anti_patterns"].append(ap["id"])
 
-    # Sort all lists
     for fid in index:
         index[fid]["patterns"].sort()
 
@@ -243,6 +239,17 @@ def build_bidirectional_related(pdata: dict) -> dict:
                 bidir[pid].add(r)
                 bidir[r].add(pid)
     return {str(k): sorted(v) for k, v in sorted(bidir.items())}
+
+
+# ── pattern lookup helpers ───────────────────────────────────────────
+
+def build_pattern_lookup(pdata: dict) -> dict[int, dict]:
+    """num → pattern dict"""
+    lookup = {}
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            lookup[p["num"]] = {**p, "_category": cat["id"], "_category_title": cat["title"]}
+    return lookup
 
 
 # ── catalog.json ─────────────────────────────────────────────────────
@@ -320,7 +327,6 @@ def build_catalog(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
             "if": r["if"],
             "rationale": r["rationale"],
         }
-        # Support both old (then_patterns) and new (required/recommended/optional) format
         if "required" in r:
             entry["required"] = r["required"]
             entry["recommended"] = r.get("recommended", [])
@@ -374,11 +380,9 @@ def build_catalog(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
         },
     }
 
-    # Architecture selection
     if "architecture_selection" in ddata:
         catalog["architecture_selection"] = ddata["architecture_selection"]
 
-    # Anti-patterns
     if apdata:
         catalog["anti_patterns"] = apdata.get("anti_patterns", [])
 
@@ -390,6 +394,230 @@ def generate_catalog_json(catalog: dict) -> None:
     changed = write_if_changed(DOCS / "catalog.json", content)
     if changed:
         print("  ✓ catalog.json")
+
+
+# ── glossary.md (パターン早見表・語彙集) ────────────────────────────
+
+CATEGORY_SHORT = {
+    "01-execution": "I. 実行",
+    "02-composition": "II. 構成",
+    "03-io-contract": "III. 契約",
+    "04-tools-mcp": "IV. ツール",
+    "05-memory-context": "V. メモリ",
+    "06-reliability": "VI. 信頼性",
+    "07-observability": "VII. 観測",
+    "08-cost-scaling": "VIII. コスト",
+    "09-security": "IX. セキュリティ",
+    "10-deployment": "X. デプロイ",
+    "11-ux": "XI. UX",
+    "12-governance": "XII. ガバナンス",
+}
+
+
+def _primary_decision_link(pd: str) -> str:
+    """primary_decision パスから表示用リンクテキストを生成"""
+    if "tradeoffs-catalog/" in pd:
+        slug = pd.split("/")[-1].replace(".md", "")
+        return f"[二者択一: {slug}](decisions/tradeoffs-catalog/{slug}.md)"
+    elif "dials/" in pd:
+        slug = pd.split("/")[-1].replace(".md", "")
+        return f"[ダイヤル: {slug}](decisions/dials/{slug}.md)"
+    elif "forces/" in pd:
+        slug = pd.split("/")[-1].replace(".md", "")
+        return f"[フォース: {slug}](foundations/forces/{slug}.md)"
+    elif "decision-flow" in pd:
+        return f"[意思決定の進め方](decisions/decision-flow.md)"
+    return f"[{pd}]({pd})"
+
+
+def generate_glossary(pdata: dict) -> None:
+    """docs/glossary.md を生成（パターン早見表・語彙集）"""
+    glossary_path = DOCS / "glossary.md"
+
+    # Build content
+    lines: list[str] = []
+    lines.append("---")
+    lines.append('title: "パターン早見表（語彙集）"')
+    lines.append("tags:")
+    lines.append('  - "パターン"')
+    lines.append('  - "語彙集"')
+    lines.append("---")
+    lines.append("")
+    lines.append("# パターン早見表（語彙集）")
+    lines.append("")
+    lines.append("!!! abstract \"一言\"")
+    lines.append("    59パターンの索引です。パターンは「意思決定の結果として現れる具体構造」であり、詳細は各意思決定ページと `catalog.json` を参照してください。")
+    lines.append("")
+    lines.append("<!-- BEGIN:GEN:glossary -->")
+    lines.append("")
+
+    lines.append("| # | パターン | カテゴリ | 一言要約 | フォース | 関与する決定 | 要素技術 |")
+    lines.append("|---|---------|---------|---------|---------|------------|---------|")
+
+    flat = flatten_patterns(pdata)
+    for p in flat:
+        cat_short = CATEGORY_SHORT.get(p["category"], p["category"])
+        title_parts = p["title"].split("｜")
+        short_title = title_parts[0].strip()
+        forces_str = ", ".join(f"`{f}`" for f in p["forces"])
+        pd = p.get("primary_decision", "")
+        pd_link = _primary_decision_link(pd) if pd else "—"
+        tech = ", ".join(p.get("element_tech", [])[:3])
+        if len(p.get("element_tech", [])) > 3:
+            tech += " …"
+        tagline = p["tagline"]
+        lines.append(f"| {p['id']} | **{short_title}** | {cat_short} | {tagline} | {forces_str} | {pd_link} | {tech} |")
+
+    lines.append("")
+    lines.append("<!-- END:GEN:glossary -->")
+    lines.append("")
+
+    content = "\n".join(lines)
+    changed = write_if_changed(glossary_path, content)
+    if changed:
+        print("  ✓ glossary.md")
+
+
+# ── GEN:patterns injection into decision pages ──────────────────────
+
+def generate_dial_patterns(pdata: dict, ddata: dict) -> None:
+    """各ダイヤルページに GEN:patterns ブロック（関与パターン一覧）を注入"""
+    lookup = build_pattern_lookup(pdata)
+    count = 0
+    for d in ddata["dials"]:
+        dial_id = d["id"]
+        detail = d.get("detail", "")
+        if not detail:
+            continue
+        dial_path = DOCS / "decisions" / detail
+        if not dial_path.exists():
+            continue
+
+        pat_nums = d.get("patterns", [])
+        if not pat_nums:
+            content = "（このダイヤルに直接関与するパターンはありません）"
+        else:
+            lines = []
+            lines.append("")
+            lines.append("## 関与する具体構造")
+            lines.append("")
+            lines.append("| # | パターン | 向き | 不向き |")
+            lines.append("|---|---------|------|--------|")
+            for num in pat_nums:
+                p = lookup.get(num)
+                if not p:
+                    continue
+                title_parts = p["title"].split("｜")
+                name = title_parts[0].strip()
+                when = p.get("when_to_use", "—")
+                when_not = p.get("when_not", [])
+                if isinstance(when_not, list):
+                    when_not_str = "; ".join(when_not[:2]) if when_not else "—"
+                else:
+                    when_not_str = when_not or "—"
+                lines.append(f"| #{num} | **{name}** | {when} | {when_not_str} |")
+            content = "\n".join(lines)
+
+        if inject_gen_block(dial_path, "patterns", content):
+            count += 1
+
+    if count:
+        print(f"  ✓ dial GEN:patterns: {count} files")
+
+
+def generate_tradeoff_patterns(pdata: dict, ddata: dict) -> None:
+    """各二者択一ページに GEN:patterns ブロックを注入"""
+    lookup = build_pattern_lookup(pdata)
+    count = 0
+    for t in ddata["tradeoffs"]:
+        detail = t.get("detail", "")
+        if not detail:
+            continue
+        path = DOCS / "decisions" / detail
+        if not path.exists():
+            continue
+
+        pat_nums = t.get("patterns", [])
+        if not pat_nums:
+            content = "（この二者択一に直接関与するパターンはありません）"
+        else:
+            lines = []
+            lines.append("")
+            lines.append("## 関与する具体構造")
+            lines.append("")
+            lines.append("| # | パターン | 向き | 不向き |")
+            lines.append("|---|---------|------|--------|")
+            for num in pat_nums:
+                p = lookup.get(num)
+                if not p:
+                    continue
+                title_parts = p["title"].split("｜")
+                name = title_parts[0].strip()
+                when = p.get("when_to_use", "—")
+                when_not = p.get("when_not", [])
+                if isinstance(when_not, list):
+                    when_not_str = "; ".join(when_not[:2]) if when_not else "—"
+                else:
+                    when_not_str = when_not or "—"
+                lines.append(f"| #{num} | **{name}** | {when} | {when_not_str} |")
+            content = "\n".join(lines)
+
+        if inject_gen_block(path, "patterns", content):
+            count += 1
+
+    if count:
+        print(f"  ✓ tradeoff GEN:patterns: {count} files")
+
+
+def generate_force_patterns(pdata: dict, ddata: dict) -> None:
+    """各フォースページに GEN:patterns ブロック（そのフォースが効くパターン）を注入"""
+    lookup = build_pattern_lookup(pdata)
+    by_force = build_by_force_index(pdata, ddata, None)
+    count = 0
+
+    force_slugs = {
+        "F1": "f1-reversibility",
+        "F2": "f2-failure-cost",
+        "F3": "f3-request-value",
+        "F4": "f4-latency-budget",
+        "F5": "f5-input-trust",
+        "F6": "f6-task-variability",
+        "F7": "f7-cost-sensitivity",
+        "F8": "f8-accountability",
+        "F9": "f9-provider-reliability",
+    }
+
+    for fid, slug in force_slugs.items():
+        path = DOCS / "foundations" / "forces" / f"{slug}.md"
+        if not path.exists():
+            continue
+
+        pat_nums = by_force.get(fid, {}).get("patterns", [])
+        if not pat_nums:
+            content = "（このフォースに関連するパターンはありません）"
+        else:
+            lines = []
+            lines.append("")
+            lines.append("## 関与する具体構造")
+            lines.append("")
+            lines.append("| # | パターン | 一言 | 向き |")
+            lines.append("|---|---------|------|------|")
+            for num in sorted(pat_nums):
+                p = lookup.get(num)
+                if not p:
+                    continue
+                title_parts = p["title"].split("｜")
+                name = title_parts[0].strip()
+                tagline = p.get("tagline", "")
+                when = p.get("when_to_use", "—")
+                lines.append(f"| #{num} | **{name}** | {tagline} | {when} |")
+            content = "\n".join(lines)
+
+        if inject_gen_block(path, "patterns", content):
+            count += 1
+
+    if count:
+        print(f"  ✓ force GEN:patterns: {count} files")
 
 
 # ── llms.txt ─────────────────────────────────────────────────────────
@@ -424,20 +652,26 @@ def generate_llms_txt(pdata: dict, ddata: dict) -> None:
     lines.append(f"- [パラメータ化]({SITE_URL}/decisions/parameterization/): パターンのパラメータ化の考え方")
     lines.append("")
 
-    # Patterns by category
-    lines.append("## パターン（59 Patterns）")
+    # Glossary (replaces old pattern listings)
+    lines.append("## パターン早見表（語彙集・59 Patterns）")
     lines.append("")
-    for cat in pdata["categories"]:
-        lines.append(f"### {cat['roman']}. {cat['title']}")
-        lines.append("")
-        for p in cat["patterns"]:
-            url = f"{SITE_URL}/patterns/{cat['id']}/{p['num']:02d}-{p['slug']}/"
-            forces_str = ", ".join(p.get("forces", []))
-            lines.append(f"- [#{p['num']} {p['title']}]({url}): {p['tagline']} [{forces_str}]")
-        lines.append("")
+    lines.append(f"- [パターン早見表]({SITE_URL}/glossary/): 全59パターンの索引（意思決定の結果として現れる具体構造）")
+    lines.append("")
+
+    flat = flatten_patterns(pdata)
+    for p in flat:
+        forces_str = ", ".join(p.get("forces", []))
+        pd = p.get("primary_decision", "")
+        if pd:
+            # Link to decision page instead of pattern page
+            url = f"{SITE_URL}/{pd.replace('.md', '/')}"
+        else:
+            url = f"{SITE_URL}/glossary/"
+        lines.append(f"- [#{p['id']} {p['title']}]({url}): {p['tagline']} [{forces_str}]")
+    lines.append("")
 
     # Reference architectures
-    lines.append("## リファレンスアーキテクチャ（Reference Architectures）")
+    lines.append("## 意思決定プリセット（Reference Architectures）")
     lines.append("")
     for ra in ddata["reference_architectures"]:
         lines.append(f"- [{ra['name']}]({SITE_URL}/{ra['detail'].replace('.md', '/')}): フォース {ra['forces']}")
@@ -499,7 +733,7 @@ def generate_llms_core_txt(pdata: dict, ddata: dict) -> None:
     lines.append("")
 
     # Reference Architectures
-    lines.append("## リファレンスアーキテクチャ（6）")
+    lines.append("## 意思決定プリセット（6）")
     lines.append("")
     for ra in ddata["reference_architectures"]:
         forces_str = ", ".join(f"{k}={v}" for k, v in ra["forces"].items())
@@ -507,7 +741,7 @@ def generate_llms_core_txt(pdata: dict, ddata: dict) -> None:
         lines.append(f"- **{ra['name']}** ({forces_str}): {layer_strs}")
     lines.append("")
 
-    # Rules (new format with required/recommended/optional)
+    # Rules
     lines.append("## 決定規則（IF–THEN候補）")
     lines.append("")
     for r in ddata["rules"]:
@@ -557,7 +791,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
     parts.append(f"> {pdata['site']['principle']}")
     parts.append("")
 
-    # Core files to include
+    # Core decision files
     core_files = [
         DOCS / "foundations" / "forces.md",
         DOCS / "foundations" / "characteristics.md",
@@ -574,7 +808,6 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
     for f in core_files:
         if f.exists():
             text = f.read_text(encoding="utf-8")
-            # Strip YAML frontmatter
             text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
             text = convert_to_agent_readable(text)
             parts.append(text.strip())
@@ -582,25 +815,60 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
             parts.append("---")
             parts.append("")
 
-    # All patterns
+    # Glossary
+    glossary = DOCS / "glossary.md"
+    if glossary.exists():
+        text = glossary.read_text(encoding="utf-8")
+        text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
+        text = convert_to_agent_readable(text)
+        parts.append(text.strip())
+        parts.append("")
+        parts.append("---")
+        parts.append("")
+
+    # Pattern data from patterns.yml (replaces reading pattern .md files)
+    parts.append("# パターン詳細（59 Patterns — patterns.yml より）")
+    parts.append("")
     for cat in pdata["categories"]:
-        parts.append(f"# {cat['roman']}. {cat['title']}")
+        parts.append(f"## {cat['roman']}. {cat['title']}")
         parts.append("")
         parts.append(cat["summary"])
         parts.append("")
         for p in cat["patterns"]:
-            md_path = DOCS / "patterns" / cat["id"] / f"{p['num']:02d}-{p['slug']}.md"
-            if md_path.exists():
-                text = md_path.read_text(encoding="utf-8")
-                text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
-                text = convert_to_agent_readable(text)
-                parts.append(text.strip())
+            parts.append(f"### #{p['num']} {p['title']}")
+            parts.append("")
+            parts.append(f"> {p['tagline']}")
+            parts.append("")
+            summary = p.get("summary", p.get("summary_plain", ""))
+            if summary:
+                # Clean admonition blocks from summary
+                summary = re.sub(r'!!! \w+(?: "[^"]*")?\n(?:    .+\n?|\n)*', '', summary).strip()
+                parts.append(summary)
                 parts.append("")
-                parts.append("---")
+            design = p.get("design", "")
+            if design:
+                # Replace mermaid with note
+                design = re.sub(r'```mermaid\n.*?```', '[図省略]', design, flags=re.DOTALL)
+                parts.append(f"**設計**: {design}")
                 parts.append("")
+            when = p.get("when_to_use", "")
+            when_not = p.get("when_not", [])
+            if isinstance(when_not, list):
+                when_not_str = "; ".join(when_not)
+            else:
+                when_not_str = when_not
+            parts.append(f"- **向き**: {when}")
+            parts.append(f"- **不向き**: {when_not_str}")
+            forces_str = ", ".join(p.get("forces", []))
+            parts.append(f"- **フォース**: {forces_str}")
+            tech = ", ".join(p.get("element_tech", []))
+            parts.append(f"- **要素技術**: {tech}")
+            related = ", ".join(f"#{r}" for r in p.get("related", []))
+            parts.append(f"- **関連**: {related}")
+            parts.append("")
 
     # Reference architectures
-    parts.append("# リファレンスアーキテクチャ")
+    parts.append("# 意思決定プリセット（リファレンスアーキテクチャ）")
     parts.append("")
     ra_index = DOCS / "reference-architectures" / "index.md"
     if ra_index.exists():
@@ -615,6 +883,8 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
     for i in range(1, 7):
         ra_files = list((DOCS / "reference-architectures").glob(f"{i:02d}-*.md"))
         for rf in ra_files:
+            if rf.name.endswith(".en.md"):
+                continue
             text = rf.read_text(encoding="utf-8")
             text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
             text = convert_to_agent_readable(text)
@@ -623,7 +893,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
             parts.append("---")
             parts.append("")
 
-    # Agent guide & proposal template (if exist)
+    # Agent guide & proposal template
     for extra in [DOCS / "agent-guide.md", DOCS / "agent-proposal-template.md"]:
         if extra.exists():
             text = extra.read_text(encoding="utf-8")
@@ -640,74 +910,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
         print("  ✓ llms-full.txt")
 
 
-# ── Phase 2: meta block injection ────────────────────────────────────
-
-def generate_meta_blocks(pdata: dict) -> None:
-    """各パターン .md に GEN:meta ブロックを注入"""
-    count = 0
-    for cat in pdata["categories"]:
-        for p in cat["patterns"]:
-            md_path = DOCS / "patterns" / cat["id"] / f"{p['num']:02d}-{p['slug']}.md"
-            if not md_path.exists():
-                continue
-
-            # Build meta content
-            meta_lines = []
-            meta_lines.append('<details markdown="1">')
-            meta_lines.append(f'<summary>メタデータ（機械可読） — #{p["num"]} {p["title"]}</summary>')
-            meta_lines.append("")
-            meta_lines.append(f"| 項目 | 値 |")
-            meta_lines.append(f"|------|-----|")
-            meta_lines.append(f"| **ID** | {p['num']} |")
-            meta_lines.append(f"| **カテゴリ** | {cat['id']} — {cat['title']} |")
-            forces_str = ", ".join(f"`[{f}]`" for f in p.get("forces", []))
-            meta_lines.append(f"| **フォース** | {forces_str} |")
-            dials_str = ", ".join(p.get("dials", [])) or "—"
-            meta_lines.append(f"| **ダイヤル** | {dials_str} |")
-            tradeoffs_str = ", ".join(p.get("tradeoffs", [])) or "—"
-            meta_lines.append(f"| **二者択一** | {tradeoffs_str} |")
-            related_str = ", ".join(f"#{r}" for r in p.get("related", [])) or "—"
-            meta_lines.append(f"| **関連パターン** | {related_str} |")
-            when_use = p.get("when_to_use", "")
-            meta_lines.append(f"| **向き** | {when_use} |")
-            when_not = p.get("when_not", [])
-            if isinstance(when_not, list):
-                when_not_str = "; ".join(when_not) if when_not else "—"
-            else:
-                when_not_str = when_not or "—"
-            meta_lines.append(f"| **不向き** | {when_not_str} |")
-            tech_str = ", ".join(p.get("element_tech", [])) or "—"
-            meta_lines.append(f"| **要素技術** | {tech_str} |")
-            meta_lines.append("")
-            meta_lines.append("</details>")
-
-            meta_content = "\n".join(meta_lines)
-
-            changed = inject_gen_block(md_path, "meta", meta_content)
-            if changed:
-                count += 1
-
-    if count:
-        print(f"  ✓ meta blocks injected: {count} files")
-
-
-# ── Phase 2: pattern-index generation ────────────────────────────────
-
-CATEGORY_SHORT = {
-    "01-execution": "I. 実行",
-    "02-composition": "II. 構成",
-    "03-io-contract": "III. 契約",
-    "04-tools-mcp": "IV. ツール",
-    "05-memory-context": "V. メモリ",
-    "06-reliability": "VI. 信頼性",
-    "07-observability": "VII. 観測",
-    "08-cost-scaling": "VIII. コスト",
-    "09-security": "IX. セキュリティ",
-    "10-deployment": "X. デプロイ",
-    "11-ux": "XI. UX",
-    "12-governance": "XII. ガバナンス",
-}
-
+# ── pattern-index (legacy, still generated if marker exists) ────────
 
 def generate_pattern_index(pdata: dict) -> None:
     """docs/pattern-index.md の GEN:pattern-index ブロックを再生成"""
@@ -722,10 +925,10 @@ def generate_pattern_index(pdata: dict) -> None:
     flat = flatten_patterns(pdata)
     for p in flat:
         cat_short = CATEGORY_SHORT.get(p["category"], p["category"])
-        # Extract short English name from title (before ｜)
         title_parts = p["title"].split("｜")
         short_title = title_parts[0].strip()
-        link = f"[{short_title}](patterns/{p['category']}/{p['id']:02d}-{p['slug']}.md)"
+        # Link to glossary instead of pattern pages
+        link = f"[{short_title}](glossary.md)"
         lines.append(f"| {p['id']} | {link} | {cat_short} | {p['tagline']} |")
 
     content = "\n".join(lines)
@@ -734,7 +937,7 @@ def generate_pattern_index(pdata: dict) -> None:
         print("  ✓ pattern-index.md")
 
 
-# ── Phase 2: by-force regeneration ───────────────────────────────────
+# ── tuning-dials / tradeoffs / by-force / rules tables ──────────────
 
 def generate_tuning_dials_table(ddata: dict) -> None:
     """docs/decisions/tuning-dials.md の GEN:tuning-dials ブロックを再生成"""
@@ -750,7 +953,6 @@ def generate_tuning_dials_table(ddata: dict) -> None:
         "観測・記録制御": "ログ・トレース・プロンプト管理に関するダイヤル。監査・デバッグの粒度とコストのバランスを取る。",
     }
 
-    # Group dials by category
     cats: dict[str, list] = {}
     for d in ddata["dials"]:
         cat = d["category"]
@@ -792,7 +994,6 @@ def generate_tradeoffs_table(ddata: dict) -> None:
         "インフラ・データ": "通信・状態管理・構築方針に関する択一。",
     }
 
-    # Group tradeoffs by category
     cats: dict[str, list] = {}
     for t in ddata["tradeoffs"]:
         cat = t["category"]
@@ -827,12 +1028,6 @@ def generate_by_force(pdata: dict, ddata: dict) -> None:
     if not path.exists():
         return
 
-    # Build pattern slug lookup for links
-    pslug: dict[int, tuple[str, str]] = {}  # id -> (category, slug)
-    for cat in pdata["categories"]:
-        for p in cat["patterns"]:
-            pslug[p["num"]] = (cat["id"], p["slug"])
-
     lines: list[str] = []
     for f in ddata["forces"]:
         fid = f["id"]
@@ -855,18 +1050,14 @@ def generate_by_force(pdata: dict, ddata: dict) -> None:
             elif rtype == "pattern":
                 kind = "パターン"
                 pid = r["id"]
-                if pid in pslug:
-                    cat_id, slug = pslug[pid]
-                    r_label = f"[{r['label']}](../patterns/{cat_id}/{pid:02d}-{slug}.md)"
-                else:
-                    r_label = r["label"]
+                # Link to glossary instead of pattern pages
+                r_label = r["label"]
                 lines.append(f"| {kind} | {r_label} | {r['advice']} |")
                 continue
             else:
                 kind = rtype
             lines.append(f"| {kind} | {r['label']} | {r['advice']} |")
 
-        # Optional low_note
         low_note = f.get("low_note", "")
         if low_note:
             lines.append("")
@@ -876,7 +1067,6 @@ def generate_by_force(pdata: dict, ddata: dict) -> None:
         lines.append("---")
         lines.append("")
 
-    # Remove trailing ---
     while lines and lines[-1].strip() in ("---", ""):
         lines.pop()
 
@@ -892,7 +1082,6 @@ def generate_rules_page(pdata: dict, ddata: dict) -> None:
     if not rules_path.exists():
         return
 
-    # Build pattern title lookup
     ptitles: dict[int, str] = {}
     for cat in pdata["categories"]:
         for p in cat["patterns"]:
@@ -928,12 +1117,128 @@ def generate_rules_page(pdata: dict, ddata: dict) -> None:
         print("  ✓ decisions/rules.md")
 
 
+# ── meta block injection (kept for backward compat if pattern pages still exist) ──
+
+def generate_meta_blocks(pdata: dict) -> None:
+    """各パターン .md に GEN:meta ブロックを注入（パターンページが存在する場合のみ）"""
+    count = 0
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            md_path = DOCS / "patterns" / cat["id"] / f"{p['num']:02d}-{p['slug']}.md"
+            if not md_path.exists():
+                continue
+
+            meta_lines = []
+            meta_lines.append('<details markdown="1">')
+            meta_lines.append(f'<summary>メタデータ（機械可読） — #{p["num"]} {p["title"]}</summary>')
+            meta_lines.append("")
+            meta_lines.append("| 項目 | 値 |")
+            meta_lines.append("|------|-----|")
+            meta_lines.append(f"| **ID** | {p['num']} |")
+            meta_lines.append(f"| **カテゴリ** | {cat['id']} — {cat['title']} |")
+            forces_str = ", ".join(f"`[{f}]`" for f in p.get("forces", []))
+            meta_lines.append(f"| **フォース** | {forces_str} |")
+            dials_str = ", ".join(p.get("dials", [])) or "—"
+            meta_lines.append(f"| **ダイヤル** | {dials_str} |")
+            tradeoffs_str = ", ".join(p.get("tradeoffs", [])) or "—"
+            meta_lines.append(f"| **二者択一** | {tradeoffs_str} |")
+            related_str = ", ".join(f"#{r}" for r in p.get("related", [])) or "—"
+            meta_lines.append(f"| **関連パターン** | {related_str} |")
+            when_use = p.get("when_to_use", "")
+            meta_lines.append(f"| **向き** | {when_use} |")
+            when_not = p.get("when_not", [])
+            if isinstance(when_not, list):
+                when_not_str = "; ".join(when_not) if when_not else "—"
+            else:
+                when_not_str = when_not or "—"
+            meta_lines.append(f"| **不向き** | {when_not_str} |")
+            tech_str = ", ".join(p.get("element_tech", [])) or "—"
+            meta_lines.append(f"| **要素技術** | {tech_str} |")
+            meta_lines.append("")
+            meta_lines.append("</details>")
+
+            meta_content = "\n".join(meta_lines)
+            changed = inject_gen_block(md_path, "meta", meta_content)
+            if changed:
+                count += 1
+
+    if count:
+        print(f"  ✓ meta blocks injected: {count} files")
+
+
+# ── frontmatter injection (kept for backward compat) ──────────────
+
+def _build_frontmatter_yaml(title: str, tags: list[str], p: dict) -> str:
+    lines = []
+    lines.append("---")
+    lines.append(f'title: "{title}"')
+    lines.append("tags:")
+    for tag in tags:
+        lines.append(f'  - "{tag}"')
+    lines.append("# ── agent-readable (generated by generate.py) ──")
+    lines.append(f"pattern_id: {p['num']}")
+    forces = p.get("forces", [])
+    lines.append(f"forces: [{', '.join(forces)}]")
+    dials = p.get("dials", [])
+    lines.append(f"dials: [{', '.join(dials)}]")
+    tradeoffs = p.get("tradeoffs", [])
+    lines.append(f"tradeoffs: [{', '.join(tradeoffs)}]")
+    when_to_use = p.get("when_to_use", "")
+    lines.append(f'when_to_use: "{when_to_use}"')
+    when_not = p.get("when_not", [])
+    if isinstance(when_not, list):
+        lines.append("when_not:")
+        for wn in when_not:
+            lines.append(f'  - "{wn}"')
+    else:
+        lines.append(f'when_not: ["{when_not}"]')
+    related = p.get("related", [])
+    lines.append(f"related: [{', '.join(str(r) for r in related)}]")
+    paps = p.get("prevents_anti_patterns", [])
+    if paps:
+        lines.append(f"prevents_anti_patterns: [{', '.join(paps)}]")
+    lines.append("---")
+    return "\n".join(lines) + "\n"
+
+
+def update_pattern_frontmatter(pdata: dict) -> None:
+    """各パターン .md のYAMLフロントマターにエージェント向けフィールドを注入する。"""
+    count = 0
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            md_path = DOCS / "patterns" / cat["id"] / f"{p['num']:02d}-{p['slug']}.md"
+            if not md_path.exists():
+                continue
+
+            text = md_path.read_text(encoding="utf-8")
+            fm_match = re.match(r"^---\n(.*?\n)---\n", text, re.DOTALL)
+            if not fm_match:
+                continue
+            fm_text = fm_match.group(1)
+            body = text[fm_match.end():]
+            try:
+                fm_data = yaml.safe_load(fm_text)
+            except yaml.YAMLError:
+                continue
+            if not isinstance(fm_data, dict):
+                continue
+
+            title = fm_data.get("title", p["title"])
+            tags = fm_data.get("tags", [])
+            new_fm = _build_frontmatter_yaml(title, tags, p)
+            new_text = new_fm + body
+
+            if write_if_changed(md_path, new_text):
+                count += 1
+
+    if count:
+        print(f"  ✓ frontmatter updated: {count} files")
+
+
 # ── _agent/pattern-cards.json ────────────────────────────────────────
 
 def generate_pattern_cards(pdata: dict, ddata: dict, apdata: dict | None) -> None:
-    """_agent/pattern-cards.json — パターン選定用の軽量構造化データ"""
     version = pdata.get("version", "0.0.0")
-
     patterns = []
     for cat in pdata["categories"]:
         for p in cat["patterns"]:
@@ -948,15 +1253,13 @@ def generate_pattern_cards(pdata: dict, ddata: dict, apdata: dict | None) -> Non
                 "dials": p.get("dials", []),
                 "tradeoffs": p.get("tradeoffs", []),
                 "related": p.get("related", []),
-                "detail_path": f"docs/patterns/{cat['id']}/{p['num']:02d}-{p['slug']}.md",
+                "primary_decision": p.get("primary_decision", ""),
             }
             if "prevents_anti_patterns" in p:
                 entry["prevents_anti_patterns"] = p["prevents_anti_patterns"]
-            # selection_criteria is in catalog.json; omitted here for size
             patterns.append(entry)
 
     patterns.sort(key=lambda x: x["id"])
-
     cards = {
         "version": version,
         "patterns": patterns,
@@ -972,15 +1275,13 @@ def generate_pattern_cards(pdata: dict, ddata: dict, apdata: dict | None) -> Non
 # ── _agent/decision-core.md ─────────────────────────────────────────
 
 def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> None:
-    """_agent/decision-core.md — エージェント向け意思決定コア（by_force逆引き付き）"""
     lines: list[str] = []
     version = pdata.get("version", "0.0.0")
 
     lines.append(f"# Decision Core — AI Agent Architecture Patterns v{version}")
     lines.append("")
     lines.append("> This file contains the decision-making data needed for architecture proposals.")
-    lines.append("> Read `_agent/README.md` first for the algorithm overview.")
-    lines.append("> After narrowing pattern candidates, get details from `_agent/pattern-cards.json` or individual `docs/patterns/**/*.md` files.")
+    lines.append("> Pattern details are in `catalog.json` and `glossary.md`.")
     lines.append("")
 
     # Forces
@@ -992,7 +1293,6 @@ def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> Non
         lines.append(f"  - low → {f['low_implies']}")
     lines.append("")
 
-    # Dials summary
     lines.append("## Dials (20)")
     lines.append("")
     lines.append("| Dial | Driver | Default |")
@@ -1002,7 +1302,6 @@ def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> Non
         lines.append(f"| {d['name']} | {driver} | {d['default']} |")
     lines.append("")
 
-    # Tradeoffs summary
     lines.append("## Tradeoffs (16)")
     lines.append("")
     lines.append("| A | B | Driver | Default |")
@@ -1012,7 +1311,6 @@ def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> Non
         lines.append(f"| {t['a']} | {t['b']} | {driver} | {t['default']} |")
     lines.append("")
 
-    # Reference Architectures
     lines.append("## Reference Architectures (6)")
     lines.append("")
     for ra in ddata["reference_architectures"]:
@@ -1021,7 +1319,6 @@ def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> Non
         lines.append(f"- **{ra['name']}** ({forces_str}): {layer_strs}")
     lines.append("")
 
-    # Rules (structured format)
     lines.append("## Decision Rules")
     lines.append("")
     for r in ddata["rules"]:
@@ -1033,12 +1330,10 @@ def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> Non
             lines.append(f"- **Required**: {req}")
             rec = r.get("recommended", [])
             if rec:
-                rec_str = ", ".join(f"#{p}" for p in rec)
-                lines.append(f"- **Recommended**: {rec_str}")
+                lines.append(f"- **Recommended**: {', '.join(f'#{p}' for p in rec)}")
             opt = r.get("optional", [])
             if opt:
-                opt_str = ", ".join(f"#{p}" for p in opt)
-                lines.append(f"- **Optional**: {opt_str}")
+                lines.append(f"- **Optional**: {', '.join(f'#{p}' for p in opt)}")
         else:
             pats = ", ".join(f"#{p}" for p in r.get("then_patterns", []))
             lines.append(f"- **Patterns**: {pats}")
@@ -1055,15 +1350,15 @@ def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> Non
         lines.append(f"### {fid} {fname}")
         pats = ", ".join(f"#{p}" for p in data["patterns"]) or "—"
         lines.append(f"- **Patterns**: {pats}")
-        dials = ", ".join(data["dials"]) or "—"
-        lines.append(f"- **Dials**: {dials}")
+        dials_str = ", ".join(data["dials"]) or "—"
+        lines.append(f"- **Dials**: {dials_str}")
         toffs = ", ".join(data["tradeoffs"]) or "—"
         lines.append(f"- **Tradeoffs**: {toffs}")
         aps = ", ".join(data["anti_patterns"]) or "—"
         lines.append(f"- **Anti-patterns**: {aps}")
         lines.append("")
 
-    # Quick pattern reference
+    # Quick reference
     lines.append("## Pattern Quick Reference (59)")
     lines.append("")
     lines.append("| # | Pattern | Forces | Tagline |")
@@ -1080,109 +1375,10 @@ def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> Non
         print("  ✓ _agent/decision-core.md")
 
 
-# ── frontmatter injection ───────────────────────────────────────────
-
-def _build_frontmatter_yaml(title: str, tags: list[str], p: dict) -> str:
-    """パターンのフロントマターYAMLテキストを構築する。"""
-    lines = []
-    lines.append("---")
-
-    # title (preserve original quoting)
-    lines.append(f'title: "{title}"')
-
-    # tags
-    lines.append("tags:")
-    for tag in tags:
-        lines.append(f'  - "{tag}"')
-
-    # agent-readable section
-    lines.append("# ── agent-readable (generated by generate.py) ──")
-    lines.append(f"pattern_id: {p['num']}")
-
-    # forces
-    forces = p.get("forces", [])
-    lines.append(f"forces: [{', '.join(forces)}]")
-
-    # dials
-    dials = p.get("dials", [])
-    lines.append(f"dials: [{', '.join(dials)}]")
-
-    # tradeoffs
-    tradeoffs = p.get("tradeoffs", [])
-    lines.append(f"tradeoffs: [{', '.join(tradeoffs)}]")
-
-    # when_to_use
-    when_to_use = p.get("when_to_use", "")
-    lines.append(f'when_to_use: "{when_to_use}"')
-
-    # when_not
-    when_not = p.get("when_not", [])
-    if isinstance(when_not, list):
-        lines.append(f"when_not:")
-        for wn in when_not:
-            lines.append(f'  - "{wn}"')
-    else:
-        lines.append(f'when_not: ["{when_not}"]')
-
-    # related
-    related = p.get("related", [])
-    lines.append(f"related: [{', '.join(str(r) for r in related)}]")
-
-    # prevents_anti_patterns
-    paps = p.get("prevents_anti_patterns", [])
-    if paps:
-        lines.append(f"prevents_anti_patterns: [{', '.join(paps)}]")
-
-    lines.append("---")
-    return "\n".join(lines) + "\n"
-
-
-def update_pattern_frontmatter(pdata: dict) -> None:
-    """各パターン .md のYAMLフロントマターにエージェント向けフィールドを注入する。"""
-    count = 0
-    for cat in pdata["categories"]:
-        for p in cat["patterns"]:
-            md_path = DOCS / "patterns" / cat["id"] / f"{p['num']:02d}-{p['slug']}.md"
-            if not md_path.exists():
-                continue
-
-            text = md_path.read_text(encoding="utf-8")
-
-            # Extract existing frontmatter
-            fm_match = re.match(r"^---\n(.*?\n)---\n", text, re.DOTALL)
-            if not fm_match:
-                continue
-
-            fm_text = fm_match.group(1)
-            body = text[fm_match.end():]
-
-            # Parse existing frontmatter to get title and tags
-            try:
-                fm_data = yaml.safe_load(fm_text)
-            except yaml.YAMLError:
-                continue
-
-            if not isinstance(fm_data, dict):
-                continue
-
-            title = fm_data.get("title", p["title"])
-            tags = fm_data.get("tags", [])
-
-            # Build new frontmatter
-            new_fm = _build_frontmatter_yaml(title, tags, p)
-            new_text = new_fm + body
-
-            if write_if_changed(md_path, new_text):
-                count += 1
-
-    if count:
-        print(f"  ✓ frontmatter updated: {count} files")
-
-
 # ── --lint: structural validation ────────────────────────────────────
 
 def lint_patterns(pdata: dict) -> int:
-    """全59パターンの .md ファイルの構造を検証。エラー数を返す。"""
+    """全59パターンの .md ファイルの構造を検証（パターンページが存在する場合のみ）。"""
     errors = 0
     required_sections = ["## 概要", "## 設計", "## 解決する課題", "## 向き / 不向き", "## 要素技術", "## 関連パターン"]
 
@@ -1190,24 +1386,20 @@ def lint_patterns(pdata: dict) -> int:
         for p in cat["patterns"]:
             md_path = DOCS / "patterns" / cat["id"] / f"{p['num']:02d}-{p['slug']}.md"
             if not md_path.exists():
-                print(f"  LINT ERROR: {md_path} does not exist")
-                errors += 1
+                # Pattern pages may have been removed in the restructure
                 continue
 
             text = md_path.read_text(encoding="utf-8")
             prefix = f"#{p['num']} {p['slug']}"
 
-            # 1. Required sections
             for section in required_sections:
                 if section not in text:
                     print(f"  LINT WARN: {prefix}: missing '{section}'")
 
-            # 2. GEN:meta marker
             if "<!-- BEGIN:GEN:meta -->" not in text:
                 print(f"  LINT ERROR: {prefix}: missing GEN:meta marker")
                 errors += 1
 
-            # 3. Related pattern links validity
             related_section = re.search(r'## 関連パターン\n(.*?)(?=\n## |\Z)', text, re.DOTALL)
             if related_section:
                 links = re.findall(r'\]\(([^)]+\.md)', related_section.group(1))
@@ -1223,7 +1415,6 @@ def lint_patterns(pdata: dict) -> int:
 # ── --validate: schema validation ────────────────────────────────────
 
 def validate_schemas() -> int:
-    """JSON Schema でバリデーション（schemas/ が存在する場合のみ）"""
     schemas_dir = ROOT / "schemas"
     if not schemas_dir.exists():
         print("  schemas/ not found, skipping validation")
@@ -1236,7 +1427,6 @@ def validate_schemas() -> int:
         return 0
 
     errors = 0
-
     schema_targets = [
         ("patterns.schema.json", PATTERNS_YML, "patterns.yml"),
         ("decisions.schema.json", DECISIONS_YML, "decisions.yml"),
@@ -1256,7 +1446,6 @@ def validate_schemas() -> int:
             print(f"  VALIDATE ERROR: {target_name}: {e.message}")
             errors += 1
 
-    # catalog.json schema
     catalog_schema_path = schemas_dir / "catalog.schema.json"
     if catalog_schema_path.exists():
         with open(catalog_schema_path) as f:
@@ -1307,7 +1496,6 @@ def main() -> None:
     pdata = load_yaml(PATTERNS_YML)
     ddata = load_yaml(DECISIONS_YML)
 
-    # Load anti-patterns if available
     apdata = None
     if ANTI_PATTERNS_YML.exists():
         apdata = load_yaml(ANTI_PATTERNS_YML)
@@ -1315,20 +1503,28 @@ def main() -> None:
     catalog = build_catalog(pdata, ddata, apdata)
 
     generate_catalog_json(catalog)
+    generate_glossary(pdata)
     generate_llms_txt(pdata, ddata)
     generate_llms_core_txt(pdata, ddata)
     generate_llms_full_txt(pdata, ddata)
-    generate_meta_blocks(pdata)
     generate_pattern_index(pdata)
     generate_tuning_dials_table(ddata)
     generate_tradeoffs_table(ddata)
     generate_by_force(pdata, ddata)
     generate_rules_page(pdata, ddata)
 
+    # Decision page pattern injection
+    generate_dial_patterns(pdata, ddata)
+    generate_tradeoff_patterns(pdata, ddata)
+    generate_force_patterns(pdata, ddata)
+
+    # Legacy: pattern page meta blocks and frontmatter (only if pattern pages still exist)
+    generate_meta_blocks(pdata)
+    update_pattern_frontmatter(pdata)
+
     # _agent/ directory outputs
     generate_pattern_cards(pdata, ddata, apdata)
     generate_decision_core(pdata, ddata, apdata)
-    update_pattern_frontmatter(pdata)
 
     print("generate.py: 完了")
 

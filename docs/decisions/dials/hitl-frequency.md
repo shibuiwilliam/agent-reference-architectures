@@ -51,3 +51,12 @@ tags:
 ## 関連パターン
 
 - [#31 Human Approval Checkpoint](../../patterns/06-reliability/31-human-approval-checkpoint.md) — 高リスク操作前に人間承認を挟むチェックポイントの実装
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #31 | **Human Approval Checkpoint** | 金融、インフラ変更、顧客メール送信、契約確認 | リアルタイムチャット; 人間不在（#30の自動化に切替） |
+<!-- END:GEN:patterns -->

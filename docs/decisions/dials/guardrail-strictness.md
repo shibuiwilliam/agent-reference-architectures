@@ -54,3 +54,13 @@ tags:
 
 - [#29 Guardrail Sidecar + Self-Correction](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) — ガードレール検査と自己修正ループの実装
 - [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) — ポリシーをコードとして管理・適用する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #29 | **Guardrail Sidecar + Self-Correction** | 公開チャットボット、外部API入力、コンプライアンス要件、自動修正が許容 | 内部信頼入力のみ; リアルタイムゼロレイテンシ要求 |
+| #30 | **Policy-as-Code Guardrail** | 金融・医療・法務の高失敗コスト操作、監査証跡が必要、決定論的ルールが可能 | 曖昧なルール（トーン判断）; 形式が曖昧なドメイン |
+<!-- END:GEN:patterns -->

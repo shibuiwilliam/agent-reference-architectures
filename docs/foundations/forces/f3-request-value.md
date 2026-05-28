@@ -59,3 +59,16 @@ tags:
 - [#56 Adaptive Effort](../../patterns/08-cost-scaling/56-adaptive-effort.md) — 難易度に応じて投入する計算量を増減する
 - [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — リクエスト価値に応じた予算でループ回数を制御する
 - [#55 Deadline & Budget Cascade](../../patterns/01-execution/55-deadline-budget-cascade.md) — 予算をサブタスクへ伝播させる
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 一言 | 向き |
+|---|---------|------|------|
+| #5 | **Time-Budgeted Agent Loop** | 時間・回数・コストを予算化し暴走を止める | SaaSでのコスト制限、マルチテナントの公平性確保 |
+| #8 | **Planner-Executor-Reviewer** | 計画/実行/検証を別ロールに分ける | コード生成→テスト→修正、レポートのファクトチェック、検証基準が明確なマルチステップ調査 |
+| #10 | **Agent Ensemble & Debate** | 複数で解き合議・討論で頑健化 | 高リスク判断（医療・金融）、正確性検証、不一致検出が高価値 |
+| #37 | **Semantic Gateway & Cost-Aware Router** | 難易度でモデルを動的選択 | 難易度分布が広い（70%簡単、30%複雑）、月間コスト上限あり |
+| #55 | **Deadline & Budget Cascade** | 期限・予算を呼出ツリーへ伝播 | マルチエージェント構成、再帰的ツール呼び出し、SaaSの厳格なコスト制限 |
+<!-- END:GEN:patterns -->

@@ -53,3 +53,12 @@ kが小さいと関連情報を見逃し、不正確な回答やハルシネー�
 ## 関連パターン
 
 - [#24 Context Pack / Assembly](../../patterns/05-memory-context/24-context-pack-assembly.md) — 検索結果を含むコンテキストの組み立てパターン
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #24 | **Context Pack / Assembly** | 社内ナレッジ、サポート、法務・医療の最新情報依存 | モデルの汎用知識で十分; 極端なリアルタイムストリーム要求 |
+<!-- END:GEN:patterns -->

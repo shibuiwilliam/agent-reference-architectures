@@ -54,3 +54,13 @@ tags:
 
 - [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — 時間・回数・コストを予算化してループを制御する
 - [#55 Deadline & Budget Cascade](../../patterns/01-execution/55-deadline-budget-cascade.md) — 予算を呼び出しツリー全体に伝播する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #5 | **Time-Budgeted Agent Loop** | SaaSでのコスト制限、マルチテナントの公平性確保 | バッチで必要な分だけ使う方針（ただしコスト上限は常に推奨） |
+| #55 | **Deadline & Budget Cascade** | マルチエージェント構成、再帰的ツール呼び出し、SaaSの厳格なコスト制限 | 単一エージェントの1ショット; オーバーヘッドが利益を超える軽量タスク |
+<!-- END:GEN:patterns -->

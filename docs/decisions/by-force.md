@@ -22,9 +22,9 @@ title: フォース別逆引き
 | 二者択一 | Plan↔ReAct | Plan先行で副作用前に承認を取る |
 | ダイヤル | チェックポイント頻度 | 毎ステップに上げる |
 | ダイヤル | 自律性レベル | 低く設定し人間承認を挟む |
-| パターン | [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md) | 補償トランザクションで巻き戻す |
-| パターン | [#19 Dry-Run First](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) | 模擬実行で確認してから実行 |
-| パターン | [#31 Human Approval](../patterns/06-reliability/31-human-approval-checkpoint.md) | 高リスク操作前に人間承認 |
+| パターン | #4 Agent Saga | 補償トランザクションで巻き戻す |
+| パターン | #19 Dry-Run First | 模擬実行で確認してから実行 |
+| パターン | #31 Human Approval | 高リスク操作前に人間承認 |
 
 ---
 
@@ -38,10 +38,10 @@ title: フォース別逆引き
 | ダイヤル | Best-of-N | 3–5に引き上げ |
 | ダイヤル | ガードレール厳しさ | 高めに設定 |
 | ダイヤル | HITL頻度 | 高リスク操作は全件承認 |
-| パターン | [#8 Planner-Executor-Reviewer](../patterns/02-composition/08-planner-executor-reviewer.md) | 計画・実行・検証の分離 |
-| パターン | [#10 Agent Ensemble](../patterns/02-composition/10-agent-ensemble-debate.md) | 合議で頑健化 |
-| パターン | [#28 Verifier Agent](../patterns/06-reliability/28-verifier-agent-critic.md) | 独立した検証 |
-| パターン | [#57 Autonomy Ladder](../patterns/06-reliability/57-autonomy-ladder.md) | 段階的に自律性を昇格 |
+| パターン | #8 Planner-Executor-Reviewer | 計画・実行・検証の分離 |
+| パターン | #10 Agent Ensemble | 合議で頑健化 |
+| パターン | #28 Verifier Agent | 独立した検証 |
+| パターン | #57 Autonomy Ladder | 段階的に自律性を昇格 |
 
 ---
 
@@ -53,8 +53,8 @@ title: フォース別逆引き
 | ダイヤル | 予算上限 | リクエスト価値に見合う水準まで引き上げ |
 | ダイヤル | モデル階層 | 大モデル優先 |
 | 二者択一 | Fail-fast↔縮退 | 縮退運転（価値の高いリクエストを落とさない） |
-| パターン | [#10 Agent Ensemble](../patterns/02-composition/10-agent-ensemble-debate.md) | 合議で品質向上 |
-| パターン | [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) | 価値に応じてモデル選択 |
+| パターン | #10 Agent Ensemble | 合議で品質向上 |
+| パターン | #37 Semantic Gateway | 価値に応じてモデル選択 |
 
 ---
 
@@ -66,9 +66,9 @@ title: フォース別逆引き
 | 二者択一 | インライン↔事後検証 | 事後検証（レイテンシ優先） |
 | ダイヤル | 自己修正ループ回数 | 0–1回（時間制約） |
 | ダイヤル | 検索 top-k | 少なめ（検索時間削減） |
-| パターン | [#7 Streaming Progress](../patterns/01-execution/07-streaming-progress.md) | 待機中に進捗表示 |
-| パターン | [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) | キャッシュでレイテンシ削減 |
-| パターン | [#39 Prompt Cache](../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md) | prefix共有で高速化 |
+| パターン | #7 Streaming Progress | 待機中に進捗表示 |
+| パターン | #38 Semantic Result Cache | キャッシュでレイテンシ削減 |
+| パターン | #39 Prompt Cache | prefix共有で高速化 |
 
 ---
 
@@ -78,11 +78,11 @@ title: フォース別逆引き
 |------|------|----------------------|
 | ダイヤル | ガードレール厳しさ | 高めに設定 |
 | ダイヤル | 露出ツール数 | 最小限に絞る |
-| パターン | [#13 NL Boundary Adapter](../patterns/03-io-contract/13-natural-language-boundary-adapter.md) | 入力の構造化 |
-| パターン | [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md) | PII/インジェクション検査 |
-| パターン | [#43 Confused-Deputy](../patterns/09-security/43-confused-deputy-damage-limitation.md) | 被害半径の制限 |
-| パターン | [#44 Dual-LLM](../patterns/09-security/44-dual-llm-privilege-separation.md) | 隔離LLMと特権LLMの分離 |
-| パターン | [#18 Least-Privilege](../patterns/04-tools-mcp/18-least-privilege-tool-binding.md) | 最小権限 |
+| パターン | #13 NL Boundary Adapter | 入力の構造化 |
+| パターン | #42 Data Boundary Firewall | PII/インジェクション検査 |
+| パターン | #43 Confused-Deputy | 被害半径の制限 |
+| パターン | #44 Dual-LLM | 隔離LLMと特権LLMの分離 |
+| パターン | #18 Least-Privilege | 最小権限 |
 
 ---
 
@@ -93,8 +93,8 @@ title: フォース別逆引き
 | 二者択一 | ワークフロー↔エージェント | エージェント（自律的探索） |
 | 二者択一 | シングル↔マルチエージェント | 専門性が分離できるならマルチ |
 | ダイヤル | 温度 | 0.5–0.8（多様性重視） |
-| パターン | [#59 Spectrum Selector](../patterns/01-execution/59-workflow-agent-spectrum-selector.md) | サブタスク毎に判定 |
-| パターン | [#12 Blackboard](../patterns/02-composition/12-blackboard.md) | 疎結合な協調 |
+| パターン | #59 Spectrum Selector | サブタスク毎に判定 |
+| パターン | #12 Blackboard | 疎結合な協調 |
 
 F6が**低い**（定型）とき → ワークフロー、#3 Workflow Backbone、#11 Deterministic Core を優先。
 
@@ -108,10 +108,10 @@ F6が**低い**（定型）とき → ワークフロー、#3 Workflow Backbone�
 | ダイヤル | モデル階層閾値 | 上げて小モデル利用を増やす |
 | ダイヤル | キャッシュ類似度閾値 | やや緩めてヒット率向上 |
 | ダイヤル | トレースサンプリング率 | 1–5%に抑制 |
-| パターン | [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) | 難易度別ルーティング |
-| パターン | [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) | 結果再利用 |
-| パターン | [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) | 計算量の動的調整 |
-| パターン | [#5 Time-Budgeted](../patterns/01-execution/05-time-budgeted-agent-loop.md) | 予算上限 |
+| パターン | #37 Semantic Gateway | 難易度別ルーティング |
+| パターン | #38 Semantic Result Cache | 結果再利用 |
+| パターン | #56 Adaptive Effort | 計算量の動的調整 |
+| パターン | #5 Time-Budgeted | 予算上限 |
 
 ---
 
@@ -124,10 +124,10 @@ F6が**低い**（定型）とき → ワークフロー、#3 Workflow Backbone�
 | ダイヤル | プロンプト保存粒度 | 全バージョンをGit管理 |
 | 二者択一 | プロンプト↔コード制御 | コード制御（テスト・監査可能） |
 | 二者択一 | 構造化↔自由出力 | 構造化（監査しやすい） |
-| パターン | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) | 完全な監査証跡 |
-| パターン | [#30 Policy-as-Code](../patterns/06-reliability/30-policy-as-code-guardrail.md) | 制約のコード化 |
-| パターン | [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) | 再現可能性 |
-| パターン | [#52 Agent Constitution](../patterns/12-governance/52-agent-constitution.md) | 行動原則の体系化 |
+| パターン | #32 Agent Trace | 完全な監査証跡 |
+| パターン | #30 Policy-as-Code | 制約のコード化 |
+| パターン | #33 Version Pinning | 再現可能性 |
+| パターン | #52 Agent Constitution | 行動原則の体系化 |
 
 ---
 
@@ -138,9 +138,9 @@ F6が**低い**（定型）とき → ワークフロー、#3 Workflow Backbone�
 | 二者択一 | 単一↔マルチプロバイダ | マルチプロバイダ |
 | 二者択一 | Fail-fast↔縮退 | 縮退運転 |
 | ダイヤル | リトライ回数 | 2–3回 + 指数バックオフ |
-| パターン | [#40 Fallback](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) | 段階縮退 |
-| パターン | [#45 Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md) | プロバイダ差し替え |
-| パターン | [#46 Compatibility Layer](../patterns/10-deployment/46-model-behavior-compatibility-layer.md) | モデル差吸収 |
+| パターン | #40 Fallback | 段階縮退 |
+| パターン | #45 Runtime Abstraction | プロバイダ差し替え |
+| パターン | #46 Compatibility Layer | モデル差吸収 |
 <!-- END:GEN:by-force -->
 
 ---

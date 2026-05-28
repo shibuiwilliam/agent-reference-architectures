@@ -58,3 +58,12 @@ flowchart TD
 
 - [タイムアウト](../dials/timeout.md) — 各縮退段のタイムアウトがfail-fastへの切替閾値になる
 - [リトライ回数](../dials/retry-count.md) — リトライ上限を超えたらfail-fastまたは次の縮退段へ
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #40 | **Fallback & Graceful Degradation** | 厳格なSLA、マルチプロバイダ利用可能、24/7運用（サポート・ワークフロー自動化） | 単一プロバイダ固定; 専門モデルのみ成功可能（特化モデル依存） |
+<!-- END:GEN:patterns -->

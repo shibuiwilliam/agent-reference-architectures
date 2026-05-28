@@ -53,3 +53,12 @@ tags:
 ## 関連パターン
 
 - [#37 Semantic Gateway / Cost-Aware Router](../../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — モデル階層ルーティングの実装パターン
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #37 | **Semantic Gateway & Cost-Aware Router** | 難易度分布が広い（70%簡単、30%複雑）、月間コスト上限あり | 均一な難易度分布; 誤ルーティングの許容度が低い |
+<!-- END:GEN:patterns -->

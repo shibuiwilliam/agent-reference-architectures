@@ -52,3 +52,12 @@ tags:
 ## 関連パターン
 
 - [#33 Version Pinning](../../patterns/07-observability/33-version-pinning.md) — プロンプト・モデル・ツールのバージョンを固定し再現性を確保する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #33 | **Prompt/Model/Tool Version Pinning** | 本番エージェント、マルチモデル比較、モデル自動アップグレードリスク | 実験的プロトタイプで常に最新が好ましい |
+<!-- END:GEN:patterns -->

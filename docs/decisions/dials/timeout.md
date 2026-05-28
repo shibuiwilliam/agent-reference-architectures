@@ -52,3 +52,14 @@ LLMの推論やツール呼び出しが完了する前にリクエストが打�
 
 - [#1 Request-to-Job Gateway](../../patterns/01-execution/01-request-to-job-gateway.md) — 同期タイムアウトを超えるリクエストを非同期ジョブへ切り替える入口
 - [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — タイムアウトをエージェントループ内の予算として内在化する
+
+<!-- BEGIN:GEN:patterns -->
+
+## 関与する具体構造
+
+| # | パターン | 向き | 不向き |
+|---|---------|------|--------|
+| #1 | **Request-to-Job Gateway** | マルチステップの調査・コンテンツ生成・分析など、数秒〜数分かかるタスク | F4=低（数秒以内に同期で完了できるタスク） |
+| #5 | **Time-Budgeted Agent Loop** | SaaSでのコスト制限、マルチテナントの公平性確保 | バッチで必要な分だけ使う方針（ただしコスト上限は常に推奨） |
+| #58 | **Sync Facade over Async Core** | 軽い挨拶と重い調査が同じエンドポイントに混在するハイブリッドワークロード | 一様に高速または低速; 全非同期専用クライアント設計 |
+<!-- END:GEN:patterns -->
