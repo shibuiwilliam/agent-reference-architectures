@@ -6,7 +6,7 @@
     - **主な二者択一**: 構造化↔自由出力、LLM推論↔ツール委譲 → [相反（二者択一）](../../decisions/tradeoffs.md)
     - **意思決定の進め方**: [意思決定の進め方](../../decisions/decision-flow.md)
 
-LLMの入力はあいまいな自然言語であり、出力は毎回微妙に異なる確率的なテキストである。これらを既存のソフトウェアが安全に受け渡しできる「契約」に変換する境界を担うパターン群である。
+LLMの入力はあいまいな自然言語であり、出力は毎回微妙に異なる確率的なテキストです。これらを既存のソフトウェアが安全に受け渡しできる「契約」に変換する境界を担うパターン群です。
 
 - [#13 Natural Language Boundary Adapter｜自然言語境界](13-natural-language-boundary-adapter.md) — 自然言語を構造化された意図表現へ変換する
 - [#14 Structured Output Contract｜構造化出力契約](14-structured-output-contract.md) — LLMの出力をスキーマで契約化する
