@@ -23,6 +23,7 @@ title: 相反する仕組みの選定基準
 
 16の二者択一は、設計判断の領域によって4つに分類できる。
 
+<!-- BEGIN:GEN:tradeoffs -->
 ### 実行モデル
 
 エージェントの実行方式・制御フローに関する択一。
@@ -66,6 +67,7 @@ title: 相反する仕組みの選定基準
 | 文脈内状態 | 外部状態 | `[F4]` `[F8]` | 短期は文脈内、永続は外部 | [→](tradeoffs-catalog/in-context-vs-external.md) |
 | ビルド | バイ | `[F8]` `[F7]` | 差別化はビルド | [→](tradeoffs-catalog/build-vs-buy.md) |
 | 構造化出力 | 自由形式出力 | `[F8]` `[F6]` | 下流連携は構造化 | [→](tradeoffs-catalog/structured-vs-freeform.md) |
+<!-- END:GEN:tradeoffs -->
 
 ## 使い方
 

@@ -66,45 +66,129 @@ forces:
     question: 失敗をやり直せるか
     high_implies: リトライ・再実行が容易。ガードを緩められる
     low_implies: 不可逆操作。補償・承認・Dry-Runが必須
+    active_condition: "低い（不可逆）"
+    recommendations:
+      - { type: tradeoff, id: sync-vs-async, label: "同期↔非同期", advice: "非同期＋チェックポイントで巻き戻し可能にする" }
+      - { type: tradeoff, id: plan-vs-react, label: "Plan↔ReAct", advice: "Plan先行で副作用前に承認を取る" }
+      - { type: dial, id: checkpoint-frequency, label: "チェックポイント頻度", advice: "毎ステップに上げる" }
+      - { type: dial, id: autonomy-level, label: "自律性レベル", advice: "低く設定し人間承認を挟む" }
+      - { type: pattern, id: 4, label: "#4 Agent Saga", advice: "補償トランザクションで巻き戻す" }
+      - { type: pattern, id: 19, label: "#19 Dry-Run First", advice: "模擬実行で確認してから実行" }
+      - { type: pattern, id: 31, label: "#31 Human Approval", advice: "高リスク操作前に人間承認" }
   - id: F2
     name: 失敗コスト
     question: 金銭/法務/安全の痛み
     high_implies: 多重検証・HITL・Plan先行が必要
     low_implies: 最小構成で十分。事後検証で可
+    active_condition: "高い（失敗が高コスト）"
+    recommendations:
+      - { type: tradeoff, id: plan-vs-react, label: "Plan↔ReAct", advice: "Plan先行（事前に全体を検討）" }
+      - { type: tradeoff, id: inline-vs-post-verification, label: "インライン↔事後検証", advice: "インライン検証（出荷前に止める）" }
+      - { type: tradeoff, id: same-vs-different-model, label: "同一↔別モデル検証", advice: "別モデル（同一モデルの盲点を補う）" }
+      - { type: dial, id: best-of-n, label: "Best-of-N", advice: "3–5に引き上げ" }
+      - { type: dial, id: guardrail-strictness, label: "ガードレール厳しさ", advice: "高めに設定" }
+      - { type: dial, id: hitl-frequency, label: "HITL頻度", advice: "高リスク操作は全件承認" }
+      - { type: pattern, id: 8, label: "#8 Planner-Executor-Reviewer", advice: "計画・実行・検証の分離" }
+      - { type: pattern, id: 10, label: "#10 Agent Ensemble", advice: "合議で頑健化" }
+      - { type: pattern, id: 28, label: "#28 Verifier Agent", advice: "独立した検証" }
+      - { type: pattern, id: 57, label: "#57 Autonomy Ladder", advice: "段階的に自律性を昇格" }
   - id: F3
     name: 1リクエストの価値
     question: 売上/意思決定への寄与
     high_implies: コストをかけた検証・合議が見合う
     low_implies: 軽量モデル・キャッシュで効率化
+    active_condition: "高い（高価値リクエスト）"
+    recommendations:
+      - { type: dial, id: best-of-n, label: "Best-of-N", advice: "3–5に引き上げ（コスト許容）" }
+      - { type: dial, id: budget-cap, label: "予算上限", advice: "リクエスト価値に見合う水準まで引き上げ" }
+      - { type: dial, id: model-tier-routing, label: "モデル階層", advice: "大モデル優先" }
+      - { type: tradeoff, id: fail-fast-vs-degradation, label: "Fail-fast↔縮退", advice: "縮退運転（価値の高いリクエストを落とさない）" }
+      - { type: pattern, id: 10, label: "#10 Agent Ensemble", advice: "合議で品質向上" }
+      - { type: pattern, id: 37, label: "#37 Semantic Gateway", advice: "価値に応じてモデル選択" }
   - id: F4
     name: レイテンシ予算
     question: ユーザーの待機耐性
     high_implies: 非同期・多段検証を許容できる
     low_implies: 同期・ストリーミング・キャッシュ優先
+    active_condition: "短い（即応を期待）"
+    recommendations:
+      - { type: tradeoff, id: sync-vs-async, label: "同期↔非同期", advice: "同期（または #58 Sync Facade）" }
+      - { type: tradeoff, id: inline-vs-post-verification, label: "インライン↔事後検証", advice: "事後検証（レイテンシ優先）" }
+      - { type: dial, id: self-correction-loops, label: "自己修正ループ回数", advice: "0–1回（時間制約）" }
+      - { type: dial, id: retrieval-top-k, label: "検索 top-k", advice: "少なめ（検索時間削減）" }
+      - { type: pattern, id: 7, label: "#7 Streaming Progress", advice: "待機中に進捗表示" }
+      - { type: pattern, id: 38, label: "#38 Semantic Result Cache", advice: "キャッシュでレイテンシ削減" }
+      - { type: pattern, id: 39, label: "#39 Prompt Cache", advice: "prefix共有で高速化" }
   - id: F5
     name: 入力の信頼度
     question: 攻撃/汚染の混入可能性
     high_implies: 社内ユーザー。ガードレール緩め
     low_implies: 不特定入力。境界防御・権限分離が必須
+    active_condition: "低い（信頼できない入力）"
+    recommendations:
+      - { type: dial, id: guardrail-strictness, label: "ガードレール厳しさ", advice: "高めに設定" }
+      - { type: dial, id: exposed-tool-count, label: "露出ツール数", advice: "最小限に絞る" }
+      - { type: pattern, id: 13, label: "#13 NL Boundary Adapter", advice: "入力の構造化" }
+      - { type: pattern, id: 42, label: "#42 Data Boundary Firewall", advice: "PII/インジェクション検査" }
+      - { type: pattern, id: 43, label: "#43 Confused-Deputy", advice: "被害半径の制限" }
+      - { type: pattern, id: 44, label: "#44 Dual-LLM", advice: "隔離LLMと特権LLMの分離" }
+      - { type: pattern, id: 18, label: "#18 Least-Privilege", advice: "最小権限" }
   - id: F6
     name: タスクの変動性
     question: 定型↔探索
     high_implies: エージェント・マルチ構成・高温度
     low_implies: ワークフロー・決定論コア・低温度
+    active_condition: "高い（探索的）"
+    recommendations:
+      - { type: tradeoff, id: workflow-vs-agent, label: "ワークフロー↔エージェント", advice: "エージェント（自律的探索）" }
+      - { type: tradeoff, id: single-vs-multi-agent, label: "シングル↔マルチエージェント", advice: "専門性が分離できるならマルチ" }
+      - { type: dial, id: temperature, label: "温度", advice: "0.5–0.8（多様性重視）" }
+      - { type: pattern, id: 59, label: "#59 Spectrum Selector", advice: "サブタスク毎に判定" }
+      - { type: pattern, id: 12, label: "#12 Blackboard", advice: "疎結合な協調" }
+    low_note: "F6が**低い**（定型）とき → ワークフロー、#3 Workflow Backbone、#11 Deterministic Core を優先。"
   - id: F7
     name: コスト感度・スケール
     question: QPS・月間コスト上限
     high_implies: ルーティング・キャッシュ・努力配分が必須
     low_implies: 単一モデルで十分
+    active_condition: "高い（厳しいコスト制約）"
+    recommendations:
+      - { type: tradeoff, id: single-vs-multi-provider, label: "単一↔マルチプロバイダ", advice: "コスト比較でマルチ" }
+      - { type: dial, id: model-tier-routing, label: "モデル階層閾値", advice: "上げて小モデル利用を増やす" }
+      - { type: dial, id: cache-similarity, label: "キャッシュ類似度閾値", advice: "やや緩めてヒット率向上" }
+      - { type: dial, id: trace-sampling-rate, label: "トレースサンプリング率", advice: "1–5%に抑制" }
+      - { type: pattern, id: 37, label: "#37 Semantic Gateway", advice: "難易度別ルーティング" }
+      - { type: pattern, id: 38, label: "#38 Semantic Result Cache", advice: "結果再利用" }
+      - { type: pattern, id: 56, label: "#56 Adaptive Effort", advice: "計算量の動的調整" }
+      - { type: pattern, id: 5, label: "#5 Time-Budgeted", advice: "予算上限" }
   - id: F8
     name: 説明責任・規制
     question: 監査・コンプラ要件
     high_implies: 全件トレース・バージョン固定・ポリシーコード化
     low_implies: サンプリング・最低限ログで可
+    active_condition: "高い（規制業種）"
+    recommendations:
+      - { type: dial, id: trace-sampling-rate, label: "トレースサンプリング率", advice: "100%（全件記録）" }
+      - { type: dial, id: log-retention, label: "ログ保持期間", advice: "1–7年（規制準拠）" }
+      - { type: dial, id: prompt-storage, label: "プロンプト保存粒度", advice: "全バージョンをGit管理" }
+      - { type: tradeoff, id: prompt-vs-code, label: "プロンプト↔コード制御", advice: "コード制御（テスト・監査可能）" }
+      - { type: tradeoff, id: structured-vs-freeform, label: "構造化↔自由出力", advice: "構造化（監査しやすい）" }
+      - { type: pattern, id: 32, label: "#32 Agent Trace", advice: "完全な監査証跡" }
+      - { type: pattern, id: 30, label: "#30 Policy-as-Code", advice: "制約のコード化" }
+      - { type: pattern, id: 33, label: "#33 Version Pinning", advice: "再現可能性" }
+      - { type: pattern, id: 52, label: "#52 Agent Constitution", advice: "行動原則の体系化" }
   - id: F9
     name: プロバイダ信頼度
     question: 外部LLMの可用性
     high_implies: 単一プロバイダで十分
+    active_condition: "低い（可用性に懸念）"
+    recommendations:
+      - { type: tradeoff, id: single-vs-multi-provider, label: "単一↔マルチプロバイダ", advice: "マルチプロバイダ" }
+      - { type: tradeoff, id: fail-fast-vs-degradation, label: "Fail-fast↔縮退", advice: "縮退運転" }
+      - { type: dial, id: retry-count, label: "リトライ回数", advice: "2–3回 + 指数バックオフ" }
+      - { type: pattern, id: 40, label: "#40 Fallback", advice: "段階縮退" }
+      - { type: pattern, id: 45, label: "#45 Runtime Abstraction", advice: "プロバイダ差し替え" }
+      - { type: pattern, id: 46, label: "#46 Compatibility Layer", advice: "モデル差吸収" }
     low_implies: マルチプロバイダ・フォールバック・抽象化が必要
 
 dials:

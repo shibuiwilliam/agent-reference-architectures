@@ -736,10 +736,154 @@ def generate_pattern_index(pdata: dict) -> None:
 
 # ── Phase 2: by-force regeneration ───────────────────────────────────
 
+def generate_tuning_dials_table(ddata: dict) -> None:
+    """docs/decisions/tuning-dials.md の GEN:tuning-dials ブロックを再生成"""
+    path = DOCS / "decisions" / "tuning-dials.md"
+    if not path.exists():
+        return
+
+    DIAL_CATEGORY_DESC = {
+        "実行制御": "エージェントの実行時間・リトライ・コストに関するダイヤル。システムの安定性と応答性に直結する。",
+        "自律性・安全制御": "エージェントにどこまで任せるか、人間がどこで介入するかを決めるダイヤル。",
+        "モデル・生成制御": "LLMの使い方とコスト配分を決めるダイヤル。",
+        "メモリ・コンテキスト制御": "エージェントが参照・蓄積する情報量を決めるダイヤル。",
+        "観測・記録制御": "ログ・トレース・プロンプト管理に関するダイヤル。監査・デバッグの粒度とコストのバランスを取る。",
+    }
+
+    # Group dials by category
+    cats: dict[str, list] = {}
+    for d in ddata["dials"]:
+        cat = d["category"]
+        cats.setdefault(cat, []).append(d)
+
+    lines: list[str] = []
+    for cat_name, dials in cats.items():
+        desc = DIAL_CATEGORY_DESC.get(cat_name, "")
+        lines.append(f"### {cat_name}")
+        lines.append("")
+        if desc:
+            lines.append(desc)
+            lines.append("")
+        lines.append("| ダイヤル | 決め手 | 目安 | 詳細 |")
+        lines.append("|---------|-------|------|------|")
+        for d in dials:
+            driver = " ".join(f"`[{f}]`" for f in d["driver"])
+            detail = d.get("detail", "")
+            link = f"[→]({detail})" if detail else ""
+            lines.append(f"| **{d['name']}** | {driver} | {d['default']} | {link} |")
+        lines.append("")
+
+    content = "\n".join(lines).rstrip()
+    changed = inject_gen_block(path, "tuning-dials", content)
+    if changed:
+        print("  ✓ tuning-dials.md table")
+
+
+def generate_tradeoffs_table(ddata: dict) -> None:
+    """docs/decisions/tradeoffs.md の GEN:tradeoffs ブロックを再生成"""
+    path = DOCS / "decisions" / "tradeoffs.md"
+    if not path.exists():
+        return
+
+    TRADEOFF_CATEGORY_DESC = {
+        "実行モデル": "エージェントの実行方式・制御フローに関する択一。",
+        "制御・知識ソース": "エージェントの振る舞いをどこで・何で制御するかの択一。",
+        "検証・信頼性": "出力の検証方式とエラー時の振る舞いに関する択一。",
+        "インフラ・データ": "通信・状態管理・構築方針に関する択一。",
+    }
+
+    # Group tradeoffs by category
+    cats: dict[str, list] = {}
+    for t in ddata["tradeoffs"]:
+        cat = t["category"]
+        cats.setdefault(cat, []).append(t)
+
+    lines: list[str] = []
+    for cat_name, tradeoffs in cats.items():
+        desc = TRADEOFF_CATEGORY_DESC.get(cat_name, "")
+        lines.append(f"### {cat_name}")
+        lines.append("")
+        if desc:
+            lines.append(desc)
+            lines.append("")
+        lines.append("| 選択肢 A | 選択肢 B | 決定変数 | デフォルト | 詳細 |")
+        lines.append("|----------|----------|---------|-----------|------|")
+        for t in tradeoffs:
+            driver = " ".join(f"`[{f}]`" for f in t["driver"])
+            detail = t.get("detail", "")
+            link = f"[→]({detail})" if detail else ""
+            lines.append(f"| {t['a']} | {t['b']} | {driver} | {t['default']} | {link} |")
+        lines.append("")
+
+    content = "\n".join(lines).rstrip()
+    changed = inject_gen_block(path, "tradeoffs", content)
+    if changed:
+        print("  ✓ tradeoffs.md table")
+
+
 def generate_by_force(pdata: dict, ddata: dict) -> None:
     """docs/decisions/by-force.md の GEN:by-force ブロックを再生成"""
-    # by-force.md is hand-curated and excellent. No marker-based generation.
-    pass
+    path = DOCS / "decisions" / "by-force.md"
+    if not path.exists():
+        return
+
+    # Build pattern slug lookup for links
+    pslug: dict[int, tuple[str, str]] = {}  # id -> (category, slug)
+    for cat in pdata["categories"]:
+        for p in cat["patterns"]:
+            pslug[p["num"]] = (cat["id"], p["slug"])
+
+    lines: list[str] = []
+    for f in ddata["forces"]:
+        fid = f["id"]
+        fname = f["name"]
+        question = f["question"]
+        active = f.get("active_condition", "")
+        recs = f.get("recommendations", [])
+
+        lines.append(f"## `[{fid}]` {fname} — {question}")
+        lines.append("")
+        lines.append(f"| 種別 | 項目 | {fid}が**{active}**とき |")
+        lines.append("|------|------|" + "-" * (len(active) + 10) + "|")
+
+        for r in recs:
+            rtype = r["type"]
+            if rtype == "tradeoff":
+                kind = "二者択一"
+            elif rtype == "dial":
+                kind = "ダイヤル"
+            elif rtype == "pattern":
+                kind = "パターン"
+                pid = r["id"]
+                if pid in pslug:
+                    cat_id, slug = pslug[pid]
+                    r_label = f"[{r['label']}](../patterns/{cat_id}/{pid:02d}-{slug}.md)"
+                else:
+                    r_label = r["label"]
+                lines.append(f"| {kind} | {r_label} | {r['advice']} |")
+                continue
+            else:
+                kind = rtype
+            lines.append(f"| {kind} | {r['label']} | {r['advice']} |")
+
+        # Optional low_note
+        low_note = f.get("low_note", "")
+        if low_note:
+            lines.append("")
+            lines.append(low_note)
+
+        lines.append("")
+        lines.append("---")
+        lines.append("")
+
+    # Remove trailing ---
+    while lines and lines[-1].strip() in ("---", ""):
+        lines.pop()
+
+    content = "\n".join(lines)
+    changed = inject_gen_block(path, "by-force", content)
+    if changed:
+        print("  ✓ by-force.md tables")
 
 
 def generate_rules_page(pdata: dict, ddata: dict) -> None:
@@ -1176,6 +1320,8 @@ def main() -> None:
     generate_llms_full_txt(pdata, ddata)
     generate_meta_blocks(pdata)
     generate_pattern_index(pdata)
+    generate_tuning_dials_table(ddata)
+    generate_tradeoffs_table(ddata)
     generate_by_force(pdata, ddata)
     generate_rules_page(pdata, ddata)
 
