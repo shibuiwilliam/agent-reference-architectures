@@ -15,9 +15,9 @@
   - [x] GEN:meta blocks in all 59 patterns (JP + EN)
   - [x] Rules in catalog.json + human-readable decisions/rules.md
   - [x] pattern-index.md table generated from markers
-  - [ ] tuning-dials.md table generated from markers
-  - [ ] tradeoffs.md table generated from markers
-  - [ ] by-force.md table generated from markers
+  - [x] tuning-dials.md table generated from markers
+  - [x] tradeoffs.md table generated from markers
+  - [x] by-force.md table generated from markers
   - [x] Worked examples: 3 systems (RAG chatbot, payment, support)
   - [x] check_links.py — bidirectional link audit
   - [x] check_lang_parity.py — JP/EN coverage
