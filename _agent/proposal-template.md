@@ -5,7 +5,6 @@
 
 ## Architecture Proposal
 
-**Catalog Version**: v{version}
 **Date**: {YYYY-MM-DD}
 **Target System**: {system name and brief description}
 

@@ -1,6 +1,6 @@
 # AGENTS.md — Coding Agent System Prompt
 
-> AI Agent Production Architecture Catalog v2.0.0
+> AI Agent Production Architecture Catalog
 > 59 patterns · 9 characteristics · 9 forces · 20 dials · 16 tradeoffs · 6 reference architectures
 
 ## Role
@@ -63,7 +63,7 @@ Read the `_agent/` directory directly — the most complete and lowest-latency o
 #### Minimal rule snippet for `.cursor/rules` etc.
 
 ```
-You are an AI architecture advisor using the Agent Reference Architectures catalog (v2.0.0).
+You are an AI architecture advisor using the Agent Reference Architectures catalog.
 Read _agent/README.md for the decision algorithm, then _agent/decision-core.md for data.
 Use only the 59 cataloged patterns. Cite [F#] and #N for every decision.
 Output proposals using _agent/proposal-template.md format.

@@ -255,7 +255,6 @@ def build_pattern_lookup(pdata: dict) -> dict[int, dict]:
 # ── catalog.json ─────────────────────────────────────────────────────
 
 def build_catalog(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
-    version = pdata.get("version", ddata.get("version", "0.0.0"))
     principle = pdata["site"]["principle"]
 
     characteristics = []
@@ -340,7 +339,6 @@ def build_catalog(pdata: dict, ddata: dict, apdata: dict | None) -> dict:
     patterns = flatten_patterns(pdata)
 
     catalog = {
-        "version": version,
         "principle": principle,
         "characteristics": characteristics,
         "forces": forces,
@@ -626,12 +624,10 @@ def generate_llms_txt(pdata: dict, ddata: dict) -> None:
     lines: list[str] = []
     title = pdata["site"]["title"]
     principle = pdata["site"]["principle"]
-    version = pdata.get("version", "0.0.0")
 
     lines.append(f"# {title}")
     lines.append("")
     lines.append(f"> {principle}")
-    lines.append(f"> Version: {version}")
     lines.append("")
 
     # Foundations
@@ -696,9 +692,8 @@ def generate_llms_txt(pdata: dict, ddata: dict) -> None:
 def generate_llms_core_txt(pdata: dict, ddata: dict) -> None:
     """意思決定コア — フォース＋ダイヤル＋二者択一＋リファレンスアーキ＋規則。低トークン。"""
     lines: list[str] = []
-    version = pdata.get("version", "0.0.0")
 
-    lines.append(f"# AIエージェント本番アーキテクチャ — 意思決定コア v{version}")
+    lines.append("# AIエージェント本番アーキテクチャ — 意思決定コア")
     lines.append("")
     lines.append(f"> {pdata['site']['principle']}")
     lines.append("")
@@ -784,9 +779,8 @@ def generate_llms_core_txt(pdata: dict, ddata: dict) -> None:
 def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
     """全ページ連結プレーンテキスト（エージェント可読形式）"""
     parts: list[str] = []
-    version = pdata.get("version", "0.0.0")
 
-    parts.append(f"# AIエージェント本番アーキテクチャ・パターン v{version}")
+    parts.append("# AIエージェント本番アーキテクチャ・パターン")
     parts.append("")
     parts.append(f"> {pdata['site']['principle']}")
     parts.append("")
@@ -1238,7 +1232,6 @@ def update_pattern_frontmatter(pdata: dict) -> None:
 # ── _agent/pattern-cards.json ────────────────────────────────────────
 
 def generate_pattern_cards(pdata: dict, ddata: dict, apdata: dict | None) -> None:
-    version = pdata.get("version", "0.0.0")
     patterns = []
     for cat in pdata["categories"]:
         for p in cat["patterns"]:
@@ -1261,7 +1254,6 @@ def generate_pattern_cards(pdata: dict, ddata: dict, apdata: dict | None) -> Non
 
     patterns.sort(key=lambda x: x["id"])
     cards = {
-        "version": version,
         "patterns": patterns,
         "by_force": build_by_force_index(pdata, ddata, apdata),
     }
@@ -1276,9 +1268,8 @@ def generate_pattern_cards(pdata: dict, ddata: dict, apdata: dict | None) -> Non
 
 def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> None:
     lines: list[str] = []
-    version = pdata.get("version", "0.0.0")
 
-    lines.append(f"# Decision Core — AI Agent Architecture Patterns v{version}")
+    lines.append("# Decision Core — AI Agent Architecture Patterns")
     lines.append("")
     lines.append("> This file contains the decision-making data needed for architecture proposals.")
     lines.append("> Pattern details are in `catalog.json` and `glossary.md`.")

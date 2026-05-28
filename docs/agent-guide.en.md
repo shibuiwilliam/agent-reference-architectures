@@ -112,12 +112,6 @@ Always output according to the [Architecture Proposal Template](agent-proposal-t
 
 ---
 
-## Catalog Version
-
-Include the `version` from `catalog.json` in proposals (e.g., `v1.0.0`). Since pattern additions and changes may occur when the version changes, this is necessary for citation reproducibility.
-
----
-
 ## Related Pages
 
 - [catalog.json](catalog.json) -- Machine-readable manifest

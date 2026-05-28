@@ -159,4 +159,3 @@ Marker convention: `<!-- BEGIN:GEN:xxx -->` … `<!-- END:GEN:xxx -->` — only 
 - **`docs/agent-proposal-template.md`** defines the agent output format. If you change it, update `AGENTS.md` too.
 - **MCP server** (`mcp/server.py`) reads `catalog.json`, which is generated — you rarely need to touch the server.
 - **取り込み経路**: A. リポジトリ同梱 (`_agent/`)、B. URL直読 (`llms.txt` 等)、C. MCP (`mcp/server.py`)
-- **Versioning** lives in the `version` field of `patterns.yml` / `decisions.yml`. Bump it and update `CHANGELOG.md` together.

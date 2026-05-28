@@ -2,7 +2,6 @@
 # scripts/generate.py がこのファイル + decisions.yml から機械可読成果物を生成します。
 # 新パターンの追加・改名・並び替えは必ずここで行い、mkdocs.yml の nav も合わせて更新すること。
 
-version: "2.0.0"
 site:
   title: AIエージェント本番アーキテクチャ・パターン
   principle: 確率的なコアを、決定論的な殻——契約・検証・予算・権限・観測——で囲む。

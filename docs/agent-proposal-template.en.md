@@ -22,7 +22,6 @@ Copy and use the following. Replace `{...}` with specific content.
 ````markdown
 ## Architecture Proposal
 
-**Catalog Version**: v{version}
 **Date**: {YYYY-MM-DD}
 **Target System**: {System name and overview}
 
@@ -98,7 +97,7 @@ Copy and use the following. Replace `{...}` with specific content.
 2. **Ground rationale in forces**: Cite `[F#]` evaluation values as rationale, not "just because"
 3. **Do not hide uncertainty**: If you lack confidence in a force evaluation, state it in Section 9
 4. **Show alternatives**: Demonstrate that you considered other architectures beyond the main proposal. This enables humans to make comparative judgments
-5. **State the version**: Include the `catalog.json` version to ensure citation reproducibility
+5. **Cite stable IDs**: Always cite pattern `#N`, force `[F#]`, dial names, and tradeoff names
 
 ---
 
