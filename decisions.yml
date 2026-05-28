@@ -2,7 +2,7 @@
 # characteristics / forces / dials / tradeoffs / reference_architectures / rules / architecture_selection を定義する。
 # scripts/generate.py がこのファイル + patterns.yml から成果物を生成する。
 
-version: "1.2.0"
+version: "2.0.0"
 
 characteristics:
   - id: C1

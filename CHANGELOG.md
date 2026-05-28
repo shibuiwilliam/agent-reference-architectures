@@ -1,5 +1,32 @@
 # Changelog
 
+## [2.0.0] — 2026-05-28
+
+### BREAKING: Pattern Reference dissolved into Decision Layer
+
+The 59 independent pattern pages (`docs/patterns/**`) have been **removed** and their content integrated into the decision layer. All external URLs are preserved via redirects.
+
+#### What changed
+- **Pattern pages deleted**: All 59 pattern pages (JP + EN) and 12 category index pages removed
+- **72 redirects**: All old `/patterns/**` URLs redirect to the relevant decision page (dial, tradeoff, or force) via `mkdocs-redirects`
+- **Nav restructured**: "パターン・リファレンス（語彙）" tab removed; patterns are now "vocabulary" referenced within decision pages
+- **Glossary**: New `docs/glossary.md` — 59-row quick-reference table replacing the pattern catalog
+- **Decision pages enriched**: Each dial, tradeoff, and force page now shows related patterns (`GEN:patterns` blocks)
+- **catalog.json expanded**: Patterns now include `summary`, `design`, `primary_decision` fields (full data retention)
+- **patterns.yml expanded**: Each pattern now has `summary`, `design`, `primary_decision` fields
+- **Sections reframed**: "リファレンスアーキテクチャ" → "意思決定プリセット", "アンチパターン" → "意思決定の誤り"
+
+#### Migration for consumers
+- **External links**: All 72 old URLs redirect automatically — no action needed
+- **catalog.json**: Same endpoint, same structure + new fields. Backward compatible.
+- **Agents**: Use `glossary.md` or `catalog.json` instead of pattern `.md` files
+- **llms.txt / llms-core.txt / llms-full.txt**: Updated to decision-centric structure
+
+#### Why
+Patterns are now "conclusions of decisions" rather than "a second reference to look up." The decision layer is the single backbone: forces → dials/tradeoffs → patterns (#N) → presets → ADR.
+
+---
+
 ## [1.2.0] — 2026-05-28
 
 ### Decision layer (`decisions.yml`)

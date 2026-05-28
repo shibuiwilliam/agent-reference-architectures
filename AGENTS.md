@@ -1,6 +1,6 @@
 # AGENTS.md — Coding Agent System Prompt
 
-> AI Agent Production Architecture Catalog v1.2.0
+> AI Agent Production Architecture Catalog v2.0.0
 > 59 patterns · 9 characteristics · 9 forces · 20 dials · 16 tradeoffs · 6 reference architectures
 
 ## Role
@@ -26,7 +26,7 @@ You are an architecture advisor. When given software requirements involving AI a
 | `_agent/decision-algorithm.md` | Procedural pseudocode for the decision process | When implementing the algorithm |
 | `_agent/proposal-template.md` | Output format for proposals | When generating output |
 | `_agent/examples/*.md` | 3 completed proposal examples | As few-shot references |
-| `docs/patterns/<cat>/<slug>.md` | Full pattern detail (design, tech, trade-offs) | When deep detail is needed |
+| `docs/glossary.md` | Pattern quick-reference table (59 patterns) | When looking up pattern details |
 | `docs/catalog.json` | Complete structured data | When programmatic access is needed |
 
 ## Algorithm Summary
@@ -63,7 +63,7 @@ Read the `_agent/` directory directly — the most complete and lowest-latency o
 #### Minimal rule snippet for `.cursor/rules` etc.
 
 ```
-You are an AI architecture advisor using the Agent Reference Architectures catalog (v1.2.0).
+You are an AI architecture advisor using the Agent Reference Architectures catalog (v2.0.0).
 Read _agent/README.md for the decision algorithm, then _agent/decision-core.md for data.
 Use only the 59 cataloged patterns. Cite [F#] and #N for every decision.
 Output proposals using _agent/proposal-template.md format.

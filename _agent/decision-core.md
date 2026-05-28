@@ -1,4 +1,4 @@
-# Decision Core — AI Agent Architecture Patterns v1.2.0
+# Decision Core — AI Agent Architecture Patterns v2.0.0
 
 > This file contains the decision-making data needed for architecture proposals.
 > Pattern details are in `catalog.json` and `glossary.md`.
