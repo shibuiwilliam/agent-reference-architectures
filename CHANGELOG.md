@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.2.0] — 2026-05-28
+
+### Decision layer (`decisions.yml`)
+- Added `characteristics` (C1–C9) with id, name, description, group, and force linkages
+- Version bumped to 1.2.0
+
+### Catalog (`catalog.json`)
+- Added `characteristics` array — 9 AI agent characteristics with force mappings
+- All required keys now present: version, principle, characteristics, forces, dials, tradeoffs, reference_architectures, rules, patterns
+
+### Decision rules page (`docs/decisions/rules.md`)
+- New human-readable IF–THEN rules page generated from `decisions.yml` rules
+- Both JP and EN versions with `GEN:rules` marker-based generation
+
+### Scripts
+- `scripts/check_links.py` — bidirectional link audit (dials/tradeoffs ↔ patterns)
+- `scripts/check_lang_parity.py` — JP/EN coverage check
+
+### Link integrity
+- Fixed 8 bidirectional link inconsistencies between patterns.yml and decisions.yml
+- All dial↔pattern and tradeoff↔pattern references are now symmetric
+
+### MCP server (`mcp/`)
+- New `mcp/` directory with server.py, smoke_test.py, README.md
+- Fixed `recommend()` to handle new required/recommended/optional rule format
+- Smoke test validates catalog structure and all tool functions
+
+### Agent integration (`AGENTS.md`)
+- Added 引用規約 (citation rules), 境界規約 (safety rules), 最終判断は人間
+- Added 取り込み経路 3 lanes (local files / URL fetch / MCP)
+- Added `.cursor/rules` snippet for minimal agent configuration
+
+### Documentation
+- `CLAUDE.md` — updated with generation pipeline diagram, check scripts, marker convention
+- `PROJECT.md` — updated directory layout with mcp/, check scripts
+
 ## [1.1.0] — 2026-05-27
 
 ### Decision layer (`decisions.yml`)
