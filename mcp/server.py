@@ -6,7 +6,7 @@ patterns, forces, dials, tradeoffs, and get recommendations.
 
 Usage:
     # stdio transport (for Claude Code, Cursor, etc.)
-    python mcp-server/server.py
+    python mcp/server.py
 
     # Or via uv
     uv run python mcp/server.py
@@ -100,7 +100,9 @@ def recommend(force_profile: dict[str, str]) -> str:
                        値は "high", "medium", "low" のいずれか。
     """
     matched_rules = []
-    recommended_pattern_ids: set[int] = set()
+    required_ids: set[int] = set()
+    recommended_ids: set[int] = set()
+    optional_ids: set[int] = set()
 
     for rule in CATALOG["rules"]:
         match = True
@@ -111,11 +113,13 @@ def recommend(force_profile: dict[str, str]) -> str:
                 break
         if match:
             matched_rules.append(rule)
+            # Support both new (required/recommended/optional) and old (then_patterns) format
             if "required" in rule:
-                recommended_pattern_ids.update(rule["required"])
-                recommended_pattern_ids.update(rule.get("recommended", []))
+                required_ids.update(rule["required"])
+                recommended_ids.update(rule.get("recommended", []))
+                optional_ids.update(rule.get("optional", []))
             elif "then_patterns" in rule:
-                recommended_pattern_ids.update(rule["then_patterns"])
+                required_ids.update(rule["then_patterns"])
 
     # Also check reference architectures
     matching_archs = []
@@ -134,21 +138,25 @@ def recommend(force_profile: dict[str, str]) -> str:
                 "layers": ra["layers"],
             })
 
-    patterns = []
-    for pid in sorted(recommended_pattern_ids):
-        p = _PATTERNS_BY_ID.get(pid)
-        if p:
-            patterns.append({
-                "id": p["id"],
-                "title": p["title"],
-                "tagline": p["tagline"],
-                "forces": p["forces"],
-            })
+    def build_pattern_list(ids: set[int]) -> list[dict]:
+        patterns = []
+        for pid in sorted(ids):
+            p = _PATTERNS_BY_ID.get(pid)
+            if p:
+                patterns.append({
+                    "id": p["id"],
+                    "title": p["title"],
+                    "tagline": p["tagline"],
+                    "forces": p["forces"],
+                })
+        return patterns
 
     return json.dumps({
         "force_profile": force_profile,
         "matched_rules": matched_rules,
-        "recommended_patterns": patterns,
+        "required_patterns": build_pattern_list(required_ids),
+        "recommended_patterns": build_pattern_list(recommended_ids),
+        "optional_patterns": build_pattern_list(optional_ids),
         "matching_reference_architectures": matching_archs,
     }, ensure_ascii=False, indent=2)
 
