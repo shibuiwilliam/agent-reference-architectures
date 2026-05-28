@@ -33,9 +33,9 @@ In customer support, after 30 conversation turns, the early context is lost and 
 
 ## Safeguard Patterns
 
-- [#23 Layered Memory](../../glossary.md) -- Organize memory into short-term, long-term, and shared layers, loading only necessary information into context
-- [#24 Context Pack / Assembly](../../glossary.md) -- Selectively assemble relevant information via RAG or summarization to use the window efficiently
-- [#26 Forgetting and Expiration](../../glossary.md) -- Set expiration dates on old information to prevent window pressure
+- [#23 Layered Memory](../../decisions/tradeoffs-catalog/in-context-vs-external.md) -- Organize memory into short-term, long-term, and shared layers, loading only necessary information into context
+- [#24 Context Pack / Assembly](../../decisions/tradeoffs-catalog/rag-vs-finetuning.md) -- Selectively assemble relevant information via RAG or summarization to use the window efficiently
+- [#26 Forgetting and Expiration](../../decisions/dials/memory-ttl.md) -- Set expiration dates on old information to prevent window pressure
 
 ## Related Design Decisions
 

@@ -3,9 +3,8 @@
 
 Checks:
 1. patterns.yml has summary/design/when_to_use/when_not/element_tech/related/primary_decision non-empty
-2. glossary.md contains a row for each pattern
-3. primary_decision redirect target is defined
-4. Pattern is referenced from at least one decision page (dial/tradeoff/force/by-force)
+2. primary_decision redirect target is defined
+3. Pattern is referenced from at least one decision page (dial/tradeoff/force/by-force)
 
 Exit code 0 = all green, 1 = failures found.
 """
@@ -43,21 +42,6 @@ def check_fields(patterns):
             val = p.get(field)
             if not val:
                 errors.append(f"  #{p['num']} {p['slug']}: missing or empty '{field}'")
-    return errors
-
-
-def check_glossary(patterns):
-    """Check that glossary.md contains a row for each pattern."""
-    glossary_path = DOCS / "glossary.md"
-    if not glossary_path.exists():
-        return [f"  glossary.md does not exist at {glossary_path}"]
-
-    text = glossary_path.read_text(encoding="utf-8")
-    errors = []
-    for p in patterns:
-        # Look for pattern number in a table row
-        if f"| {p['num']} |" not in text and f"| #{p['num']} " not in text:
-            errors.append(f"  #{p['num']} {p['slug']}: not found in glossary.md")
     return errors
 
 
@@ -101,11 +85,6 @@ def check_decision_references(patterns):
         if f.exists():
             all_text += f.read_text(encoding="utf-8")
 
-    # Also check glossary
-    glossary = DOCS / "glossary.md"
-    if glossary.exists():
-        all_text += glossary.read_text(encoding="utf-8")
-
     errors = []
     for p in patterns:
         # Check for #N reference in any decision page
@@ -132,14 +111,6 @@ def main():
         print(f"  ✗ {len(errs)} field errors")
     else:
         print("  ✓ All fields present")
-
-    print("check_migration: Checking glossary.md...")
-    errs = check_glossary(patterns)
-    all_errors.extend(errs)
-    if errs:
-        print(f"  ✗ {len(errs)} glossary errors")
-    else:
-        print("  ✓ All patterns in glossary")
 
     print("check_migration: Checking redirect targets...")
     errs = check_redirect_targets(patterns)

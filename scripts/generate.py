@@ -6,7 +6,6 @@
   - docs/llms.txt          … llmstxt.org 形式の索引
   - docs/llms-core.txt     … 意思決定コア（低トークン・エージェント可読形式）
   - docs/llms-full.txt     … 全ページ連結プレーンテキスト（エージェント可読形式）
-  - docs/glossary.md       … パターン早見表（語彙集）— GEN:glossary マーカー間
   - 各ダイヤル/二者択一/F#ページ … GEN:patterns マーカー間に関与パターンを注入
   - docs/decisions/rules.md … GEN:rules マーカー間
   - docs/decisions/by-force.md … GEN:by-force マーカー間
@@ -394,88 +393,6 @@ def generate_catalog_json(catalog: dict) -> None:
         print("  ✓ catalog.json")
 
 
-# ── glossary.md (パターン早見表・語彙集) ────────────────────────────
-
-CATEGORY_SHORT = {
-    "01-execution": "I. 実行",
-    "02-composition": "II. 構成",
-    "03-io-contract": "III. 契約",
-    "04-tools-mcp": "IV. ツール",
-    "05-memory-context": "V. メモリ",
-    "06-reliability": "VI. 信頼性",
-    "07-observability": "VII. 観測",
-    "08-cost-scaling": "VIII. コスト",
-    "09-security": "IX. セキュリティ",
-    "10-deployment": "X. デプロイ",
-    "11-ux": "XI. UX",
-    "12-governance": "XII. ガバナンス",
-}
-
-
-def _primary_decision_link(pd: str) -> str:
-    """primary_decision パスから表示用リンクテキストを生成"""
-    if "tradeoffs-catalog/" in pd:
-        slug = pd.split("/")[-1].replace(".md", "")
-        return f"[二者択一: {slug}](decisions/tradeoffs-catalog/{slug}.md)"
-    elif "dials/" in pd:
-        slug = pd.split("/")[-1].replace(".md", "")
-        return f"[ダイヤル: {slug}](decisions/dials/{slug}.md)"
-    elif "forces/" in pd:
-        slug = pd.split("/")[-1].replace(".md", "")
-        return f"[フォース: {slug}](foundations/forces/{slug}.md)"
-    elif "decision-flow" in pd:
-        return f"[意思決定の進め方](decisions/decision-flow.md)"
-    return f"[{pd}]({pd})"
-
-
-def generate_glossary(pdata: dict) -> None:
-    """docs/glossary.md を生成（パターン早見表・語彙集）"""
-    glossary_path = DOCS / "glossary.md"
-
-    # Build content
-    lines: list[str] = []
-    lines.append("---")
-    lines.append('title: "パターン早見表（語彙集）"')
-    lines.append("tags:")
-    lines.append('  - "パターン"')
-    lines.append('  - "語彙集"')
-    lines.append("---")
-    lines.append("")
-    lines.append("# パターン早見表（語彙集）")
-    lines.append("")
-    lines.append("!!! abstract \"一言\"")
-    lines.append("    59パターンの索引です。パターンは「意思決定の結果として現れる具体構造」であり、詳細は各意思決定ページと `catalog.json` を参照してください。")
-    lines.append("")
-    lines.append("<!-- BEGIN:GEN:glossary -->")
-    lines.append("")
-
-    lines.append("| # | パターン | カテゴリ | 一言要約 | フォース | 関与する決定 | 要素技術 |")
-    lines.append("|---|---------|---------|---------|---------|------------|---------|")
-
-    flat = flatten_patterns(pdata)
-    for p in flat:
-        cat_short = CATEGORY_SHORT.get(p["category"], p["category"])
-        title_parts = p["title"].split("｜")
-        short_title = title_parts[0].strip()
-        forces_str = ", ".join(f"`{f}`" for f in p["forces"])
-        pd = p.get("primary_decision", "")
-        pd_link = _primary_decision_link(pd) if pd else "—"
-        tech = ", ".join(p.get("element_tech", [])[:3])
-        if len(p.get("element_tech", [])) > 3:
-            tech += " …"
-        tagline = p["tagline"]
-        lines.append(f"| {p['id']} | **{short_title}** | {cat_short} | {tagline} | {forces_str} | {pd_link} | {tech} |")
-
-    lines.append("")
-    lines.append("<!-- END:GEN:glossary -->")
-    lines.append("")
-
-    content = "\n".join(lines)
-    changed = write_if_changed(glossary_path, content)
-    if changed:
-        print("  ✓ glossary.md")
-
-
 # ── GEN:patterns injection into decision pages ──────────────────────
 
 def generate_dial_patterns(pdata: dict, ddata: dict) -> None:
@@ -648,21 +565,15 @@ def generate_llms_txt(pdata: dict, ddata: dict) -> None:
     lines.append(f"- [パラメータ化]({SITE_URL}/decisions/parameterization/): パターンのパラメータ化の考え方")
     lines.append("")
 
-    # Glossary (replaces old pattern listings)
-    lines.append("## パターン早見表（語彙集・59 Patterns）")
-    lines.append("")
-    lines.append(f"- [パターン早見表]({SITE_URL}/glossary/): 全59パターンの索引（意思決定の結果として現れる具体構造）")
+    # Patterns (59)
+    lines.append("## パターン（59 Patterns）")
     lines.append("")
 
     flat = flatten_patterns(pdata)
     for p in flat:
         forces_str = ", ".join(p.get("forces", []))
         pd = p.get("primary_decision", "")
-        if pd:
-            # Link to decision page instead of pattern page
-            url = f"{SITE_URL}/{pd.replace('.md', '/')}"
-        else:
-            url = f"{SITE_URL}/glossary/"
+        url = f"{SITE_URL}/{pd.replace('.md', '/')}" if pd else f"{SITE_URL}/reference-architectures/"
         lines.append(f"- [#{p['id']} {p['title']}]({url}): {p['tagline']} [{forces_str}]")
     lines.append("")
 
@@ -809,18 +720,7 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
             parts.append("---")
             parts.append("")
 
-    # Glossary
-    glossary = DOCS / "glossary.md"
-    if glossary.exists():
-        text = glossary.read_text(encoding="utf-8")
-        text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
-        text = convert_to_agent_readable(text)
-        parts.append(text.strip())
-        parts.append("")
-        parts.append("---")
-        parts.append("")
-
-    # Pattern data from patterns.yml (replaces reading pattern .md files)
+    # Pattern data from patterns.yml
     parts.append("# パターン詳細（59 Patterns — patterns.yml より）")
     parts.append("")
     for cat in pdata["categories"]:
@@ -902,33 +802,6 @@ def generate_llms_full_txt(pdata: dict, ddata: dict) -> None:
     changed = write_if_changed(DOCS / "llms-full.txt", content)
     if changed:
         print("  ✓ llms-full.txt")
-
-
-# ── pattern-index (legacy, still generated if marker exists) ────────
-
-def generate_pattern_index(pdata: dict) -> None:
-    """docs/pattern-index.md の GEN:pattern-index ブロックを再生成"""
-    idx_path = DOCS / "pattern-index.md"
-    if not idx_path.exists():
-        return
-
-    lines = []
-    lines.append("| # | パターン | カテゴリ | 一言 |")
-    lines.append("|---|---------|---------|------|")
-
-    flat = flatten_patterns(pdata)
-    for p in flat:
-        cat_short = CATEGORY_SHORT.get(p["category"], p["category"])
-        title_parts = p["title"].split("｜")
-        short_title = title_parts[0].strip()
-        # Link to glossary instead of pattern pages
-        link = f"[{short_title}](glossary.md)"
-        lines.append(f"| {p['id']} | {link} | {cat_short} | {p['tagline']} |")
-
-    content = "\n".join(lines)
-    changed = inject_gen_block(idx_path, "pattern-index", content)
-    if changed:
-        print("  ✓ pattern-index.md")
 
 
 # ── tuning-dials / tradeoffs / by-force / rules tables ──────────────
@@ -1044,7 +917,6 @@ def generate_by_force(pdata: dict, ddata: dict) -> None:
             elif rtype == "pattern":
                 kind = "パターン"
                 pid = r["id"]
-                # Link to glossary instead of pattern pages
                 r_label = r["label"]
                 lines.append(f"| {kind} | {r_label} | {r['advice']} |")
                 continue
@@ -1272,7 +1144,7 @@ def generate_decision_core(pdata: dict, ddata: dict, apdata: dict | None) -> Non
     lines.append("# Decision Core — AI Agent Architecture Patterns")
     lines.append("")
     lines.append("> This file contains the decision-making data needed for architecture proposals.")
-    lines.append("> Pattern details are in `catalog.json` and `glossary.md`.")
+    lines.append("> Pattern details are in `catalog.json`.")
     lines.append("")
 
     # Forces
@@ -1494,11 +1366,9 @@ def main() -> None:
     catalog = build_catalog(pdata, ddata, apdata)
 
     generate_catalog_json(catalog)
-    generate_glossary(pdata)
     generate_llms_txt(pdata, ddata)
     generate_llms_core_txt(pdata, ddata)
     generate_llms_full_txt(pdata, ddata)
-    generate_pattern_index(pdata)
     generate_tuning_dials_table(ddata)
     generate_tradeoffs_table(ddata)
     generate_by_force(pdata, ddata)

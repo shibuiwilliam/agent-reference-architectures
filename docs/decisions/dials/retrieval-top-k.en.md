@@ -52,4 +52,4 @@ Search results occupy most of the context window, reducing the relative influenc
 
 ## Related Patterns
 
-- [#24 Context Pack / Assembly](../../glossary.md) -- Pattern for assembling context including search results
+- [#24 Context Pack / Assembly](../../decisions/tradeoffs-catalog/rag-vs-finetuning.md) -- Pattern for assembling context including search results

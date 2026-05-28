@@ -38,7 +38,7 @@ Start with workflows for routine tasks. Workflows have advantages in reproducibi
 
 ## Hybrid Approach
 
-[#59 Spectrum Selector](../../glossary.md) dynamically selects workflow or agent per subtask. [#3 Workflow Backbone](../../glossary.md) fixes the skeleton as a workflow and delegates only the nodes requiring judgment to agents. Both adopt the strategy of "maximizing the scope covered by determinism and minimizing autonomy."
+[#59 Spectrum Selector](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) dynamically selects workflow or agent per subtask. [#3 Workflow Backbone](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) fixes the skeleton as a workflow and delegates only the nodes requiring judgment to agents. Both adopt the strategy of "maximizing the scope covered by determinism and minimizing autonomy."
 
 ## Decision Flowchart
 
@@ -52,9 +52,9 @@ flowchart TD
 
 ## Related Patterns
 
-- [#3 Workflow Backbone + Agent Node](../../glossary.md) — Hybrid incorporating agent nodes into a deterministic skeleton
-- [#11 Deterministic Core, Probabilistic Edge](../../glossary.md) — Design principle of fixing the core with determinism and using AI only at the edges
-- [#59 Workflow-Agent Spectrum Selector](../../glossary.md) — Meta-pattern for per-subtask selection
+- [#3 Workflow Backbone + Agent Node](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) — Hybrid incorporating agent nodes into a deterministic skeleton
+- [#11 Deterministic Core, Probabilistic Edge](../../decisions/tradeoffs-catalog/prompt-vs-code.md) — Design principle of fixing the core with determinism and using AI only at the edges
+- [#59 Workflow-Agent Spectrum Selector](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) — Meta-pattern for per-subtask selection
 
 ## Related Dials
 

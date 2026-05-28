@@ -105,6 +105,6 @@ for request in all_requests:
 
 ## 関連パターン
 
-- [#54 Tiered (Hot/Cold) Observability](../glossary.md) — Hot/Coldの分離アーキテクチャ
-- [#32 Agent Trace](../glossary.md) — トレースの設計
-- [#34 Evaluation CI/CD](../glossary.md) — 評価をCI/CDに組み込みます
+- [#54 Tiered (Hot/Cold) Observability](../decisions/dials/trace-sampling-rate.md) — Hot/Coldの分離アーキテクチャ
+- [#32 Agent Trace](../decisions/dials/trace-sampling-rate.md) — トレースの設計
+- [#34 Evaluation CI/CD](../foundations/forces/f8-accountability.md) — 評価をCI/CDに組み込みます

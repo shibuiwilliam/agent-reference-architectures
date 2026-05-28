@@ -34,9 +34,9 @@ The provider updates a minor version of "gpt-4o" and the JSON output format subt
 
 ## Safeguard Patterns
 
-- [#33 Version Pinning](../../glossary.md) -- Pin prompt, model, and tool versions to prevent unintended changes
-- [#35 Production Replay](../../glossary.md) -- Replay production logs with the new model and detect differences from the old model
-- [#36 Shadow / Canary Deployment](../../glossary.md) -- Roll out model updates gradually and auto-rollback on issues
+- [#33 Version Pinning](../../decisions/dials/prompt-storage.md) -- Pin prompt, model, and tool versions to prevent unintended changes
+- [#35 Production Replay](../../foundations/forces/f8-accountability.md) -- Replay production logs with the new model and detect differences from the old model
+- [#36 Shadow / Canary Deployment](../../foundations/forces/f9-provider-reliability.md) -- Roll out model updates gradually and auto-rollback on issues
 
 ## Related Design Decisions
 

@@ -54,8 +54,8 @@ Situations tolerating waits of minutes to hours. Typical examples include resear
 
 ## Related Patterns
 
-- [#1 Request-to-Job Gateway](../../glossary.md) -- Accept requests that exceed the budget as asynchronous jobs
-- [#7 Streaming Progress](../../glossary.md) -- Stream progress during processing to reduce perceived wait time
-- [#58 Sync Facade over Async Core](../../glossary.md) -- Respond synchronously if fast enough, promote to async otherwise
-- [#38 Semantic Result Cache](../../glossary.md) -- Reuse semantically similar past results to reduce latency
-- [#39 Prompt Cache Optimized Context](../../glossary.md) -- Leverage prompt cache via common prefixes
+- [#1 Request-to-Job Gateway](../../decisions/tradeoffs-catalog/sync-vs-async.md) -- Accept requests that exceed the budget as asynchronous jobs
+- [#7 Streaming Progress](../../decisions/tradeoffs-catalog/push-vs-pull.md) -- Stream progress during processing to reduce perceived wait time
+- [#58 Sync Facade over Async Core](../../decisions/tradeoffs-catalog/sync-vs-async.md) -- Respond synchronously if fast enough, promote to async otherwise
+- [#38 Semantic Result Cache](../../decisions/dials/cache-similarity.md) -- Reuse semantically similar past results to reduce latency
+- [#39 Prompt Cache Optimized Context](../../foundations/forces/f7-cost-sensitivity.md) -- Leverage prompt cache via common prefixes

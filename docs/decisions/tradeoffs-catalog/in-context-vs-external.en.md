@@ -38,7 +38,7 @@ Keep short-term working state in-context and save state that needs persistence t
 
 ## Hybrid Approach
 
-As demonstrated by [#23 Layered Memory](../../glossary.md), a three-tier structure of working memory (in-context), short-term memory (session DB), and long-term memory (persistent store) is effective. Frequently accessed information is kept in-context, while information with decreasing access frequency is evicted to external storage. [#2 Durable Agent Session](../../glossary.md) enables state management that withstands interruption and resumption.
+As demonstrated by [#23 Layered Memory](../../decisions/tradeoffs-catalog/in-context-vs-external.md), a three-tier structure of working memory (in-context), short-term memory (session DB), and long-term memory (persistent store) is effective. Frequently accessed information is kept in-context, while information with decreasing access frequency is evicted to external storage. [#2 Durable Agent Session](../../decisions/tradeoffs-catalog/in-context-vs-external.md) enables state management that withstands interruption and resumption.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#23 Layered Memory](../../glossary.md) — Layering memory into short-term, long-term, and shared tiers
-- [#2 Durable Agent Session](../../glossary.md) — Enabling interruptible and resumable sessions with external state
+- [#23 Layered Memory](../../decisions/tradeoffs-catalog/in-context-vs-external.md) — Layering memory into short-term, long-term, and shared tiers
+- [#2 Durable Agent Session](../../decisions/tradeoffs-catalog/in-context-vs-external.md) — Enabling interruptible and resumable sessions with external state
 
 ## Related Dials
 

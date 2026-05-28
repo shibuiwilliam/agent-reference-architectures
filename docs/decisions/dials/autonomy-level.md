@@ -52,7 +52,7 @@ tags:
 
 ## 関連パターン
 
-- [#57 Autonomy Ladder](../../glossary.md) — 実績に応じた段階的な自律性昇格の実装パターン
+- [#57 Autonomy Ladder](../../decisions/dials/autonomy-level.md) — 実績に応じた段階的な自律性昇格の実装パターン
 
 <!-- BEGIN:GEN:patterns -->
 

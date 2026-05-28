@@ -56,4 +56,4 @@ Forces can be grouped into three categories.
 
 ## Forces Are Not Static
 
-Forces are not fixed values. Even for the same system, force values can change due to feature additions, user base shifts, or regulatory changes. Therefore, periodic reviews and re-adjustment of pattern application levels are required (--> [#53 Agent Change Management](../glossary.md)).
+Forces are not fixed values. Even for the same system, force values can change due to feature additions, user base shifts, or regulatory changes. Therefore, periodic reviews and re-adjustment of pattern application levels are required (--> [#53 Agent Change Management](../foundations/forces/f8-accountability.md)).

@@ -46,8 +46,9 @@ plugins:
         - en
   - redirects:
       redirect_maps:
-        "pattern-index.md": "glossary.md"
-        "patterns/01-execution/index.md": "glossary.md"
+        "glossary.md": "reference-architectures/index.md"
+        "pattern-index.md": "reference-architectures/index.md"
+        "patterns/01-execution/index.md": "reference-architectures/index.md"
         "patterns/01-execution/01-request-to-job-gateway.md": "decisions/tradeoffs-catalog/sync-vs-async.md"
         "patterns/01-execution/02-durable-agent-session.md": "decisions/tradeoffs-catalog/in-context-vs-external.md"
         "patterns/01-execution/03-workflow-backbone-agent-node.md": "decisions/tradeoffs-catalog/workflow-vs-agent.md"
@@ -58,64 +59,64 @@ plugins:
         "patterns/01-execution/55-deadline-budget-cascade.md": "decisions/dials/budget-cap.md"
         "patterns/01-execution/58-sync-facade-over-async-core.md": "decisions/tradeoffs-catalog/sync-vs-async.md"
         "patterns/01-execution/59-workflow-agent-spectrum-selector.md": "decisions/tradeoffs-catalog/workflow-vs-agent.md"
-        "patterns/02-composition/index.md": "glossary.md"
+        "patterns/02-composition/index.md": "reference-architectures/index.md"
         "patterns/02-composition/08-planner-executor-reviewer.md": "decisions/tradeoffs-catalog/plan-vs-react.md"
         "patterns/02-composition/09-supervisor-specialist-agents.md": "decisions/tradeoffs-catalog/single-vs-multi-agent.md"
         "patterns/02-composition/10-agent-ensemble-debate.md": "decisions/tradeoffs-catalog/same-vs-different-model.md"
         "patterns/02-composition/11-deterministic-core-probabilistic-edge.md": "decisions/tradeoffs-catalog/prompt-vs-code.md"
         "patterns/02-composition/12-blackboard.md": "decisions/tradeoffs-catalog/orchestration-vs-choreography.md"
-        "patterns/03-io-contract/index.md": "glossary.md"
+        "patterns/03-io-contract/index.md": "reference-architectures/index.md"
         "patterns/03-io-contract/13-natural-language-boundary-adapter.md": "foundations/forces/f5-input-trust.md"
         "patterns/03-io-contract/14-structured-output-contract.md": "decisions/tradeoffs-catalog/structured-vs-freeform.md"
         "patterns/03-io-contract/15-inverted-structured-output.md": "decisions/tradeoffs-catalog/llm-vs-tool.md"
         "patterns/03-io-contract/16-ambiguity-negotiation.md": "foundations/forces/f1-reversibility.md"
-        "patterns/04-tools-mcp/index.md": "glossary.md"
+        "patterns/04-tools-mcp/index.md": "reference-architectures/index.md"
         "patterns/04-tools-mcp/17-tool-mcp-gateway.md": "decisions/tradeoffs-catalog/llm-vs-tool.md"
         "patterns/04-tools-mcp/18-least-privilege-tool-binding.md": "decisions/dials/exposed-tool-count.md"
         "patterns/04-tools-mcp/19-dry-run-first-tool-execution.md": "foundations/forces/f1-reversibility.md"
         "patterns/04-tools-mcp/20-sandboxed-tool-runtime.md": "foundations/forces/f5-input-trust.md"
         "patterns/04-tools-mcp/21-mcp-adapter-isolation.md": "foundations/forces/f5-input-trust.md"
         "patterns/04-tools-mcp/22-anti-corruption-layer.md": "foundations/forces/f8-accountability.md"
-        "patterns/05-memory-context/index.md": "glossary.md"
+        "patterns/05-memory-context/index.md": "reference-architectures/index.md"
         "patterns/05-memory-context/23-layered-memory.md": "decisions/tradeoffs-catalog/in-context-vs-external.md"
         "patterns/05-memory-context/24-context-pack-assembly.md": "decisions/tradeoffs-catalog/rag-vs-finetuning.md"
         "patterns/05-memory-context/25-memory-write-gate.md": "decisions/dials/memory-write-eagerness.md"
         "patterns/05-memory-context/26-forgetting-and-expiration.md": "decisions/dials/memory-ttl.md"
-        "patterns/06-reliability/index.md": "glossary.md"
+        "patterns/06-reliability/index.md": "reference-architectures/index.md"
         "patterns/06-reliability/27-evidence-first-answer.md": "decisions/tradeoffs-catalog/rag-vs-finetuning.md"
         "patterns/06-reliability/28-verifier-agent-critic.md": "decisions/tradeoffs-catalog/inline-vs-post-verification.md"
         "patterns/06-reliability/29-guardrail-sidecar-self-correction.md": "decisions/tradeoffs-catalog/inline-vs-post-verification.md"
         "patterns/06-reliability/30-policy-as-code-guardrail.md": "decisions/tradeoffs-catalog/prompt-vs-code.md"
         "patterns/06-reliability/31-human-approval-checkpoint.md": "decisions/dials/autonomy-level.md"
         "patterns/06-reliability/57-autonomy-ladder.md": "decisions/dials/autonomy-level.md"
-        "patterns/07-observability/index.md": "glossary.md"
+        "patterns/07-observability/index.md": "reference-architectures/index.md"
         "patterns/07-observability/32-agent-trace.md": "decisions/dials/trace-sampling-rate.md"
         "patterns/07-observability/33-version-pinning.md": "decisions/dials/prompt-storage.md"
         "patterns/07-observability/34-evaluation-ci-cd.md": "foundations/forces/f8-accountability.md"
         "patterns/07-observability/35-production-replay.md": "foundations/forces/f8-accountability.md"
         "patterns/07-observability/36-shadow-canary-deployment.md": "foundations/forces/f9-provider-reliability.md"
         "patterns/07-observability/54-tiered-observability.md": "decisions/dials/trace-sampling-rate.md"
-        "patterns/08-cost-scaling/index.md": "glossary.md"
+        "patterns/08-cost-scaling/index.md": "reference-architectures/index.md"
         "patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md": "decisions/dials/model-tier-routing.md"
         "patterns/08-cost-scaling/38-semantic-result-cache.md": "decisions/dials/cache-similarity.md"
         "patterns/08-cost-scaling/39-prompt-cache-optimized-context.md": "foundations/forces/f7-cost-sensitivity.md"
         "patterns/08-cost-scaling/40-fallback-graceful-degradation.md": "decisions/tradeoffs-catalog/fail-fast-vs-degradation.md"
         "patterns/08-cost-scaling/56-adaptive-effort.md": "foundations/forces/f7-cost-sensitivity.md"
-        "patterns/09-security/index.md": "glossary.md"
+        "patterns/09-security/index.md": "reference-architectures/index.md"
         "patterns/09-security/41-tenant-isolated-agent-runtime.md": "foundations/forces/f5-input-trust.md"
         "patterns/09-security/42-data-boundary-firewall.md": "foundations/forces/f5-input-trust.md"
         "patterns/09-security/43-confused-deputy-damage-limitation.md": "foundations/forces/f5-input-trust.md"
         "patterns/09-security/44-dual-llm-privilege-separation.md": "foundations/forces/f5-input-trust.md"
-        "patterns/10-deployment/index.md": "glossary.md"
+        "patterns/10-deployment/index.md": "reference-architectures/index.md"
         "patterns/10-deployment/45-agent-runtime-abstraction.md": "decisions/tradeoffs-catalog/build-vs-buy.md"
         "patterns/10-deployment/46-model-behavior-compatibility-layer.md": "decisions/tradeoffs-catalog/single-vs-multi-provider.md"
         "patterns/10-deployment/47-agent-capability-registry.md": "foundations/forces/f8-accountability.md"
         "patterns/10-deployment/48-strangler-fig.md": "foundations/forces/f2-failure-cost.md"
-        "patterns/11-ux/index.md": "glossary.md"
+        "patterns/11-ux/index.md": "reference-architectures/index.md"
         "patterns/11-ux/49-agent-workbench.md": "foundations/forces/f4-latency-budget.md"
         "patterns/11-ux/50-editable-plan.md": "decisions/tradeoffs-catalog/plan-vs-react.md"
         "patterns/11-ux/51-agent-to-human-escalation.md": "foundations/forces/f2-failure-cost.md"
-        "patterns/12-governance/index.md": "glossary.md"
+        "patterns/12-governance/index.md": "reference-architectures/index.md"
         "patterns/12-governance/52-agent-constitution.md": "foundations/forces/f8-accountability.md"
         "patterns/12-governance/53-agent-change-management.md": "foundations/forces/f8-accountability.md"
   - i18n:
@@ -218,16 +219,15 @@ plugins:
                 - Architecture Decision Record (ADR): decisions/adr-template.md
                 - Worked Examples: decisions/worked-examples.md
                 - Pattern Parameterization: decisions/parameterization.md
-            - "Composite & Anti-Patterns":
-                - "Decision Presets (Reference Architectures)":
-                    - reference-architectures/index.md
-                    - "MVP (Minimum Viable)": reference-architectures/01-mvp.md
-                    - Side-Effect-First: reference-architectures/02-side-effect-first.md
-                    - Untrusted Input: reference-architectures/03-untrusted-input.md
-                    - Factuality-First: reference-architectures/04-factuality-first.md
-                    - Cost-First: reference-architectures/05-cost-first.md
-                    - Continuous Improvement: reference-architectures/06-continuous-improvement.md
-                - "Decision Mistakes (Anti-Patterns)":
+                - Composite Configurations: reference-architectures/index.md
+            - "[Reference] Reference Architectures":
+                - "MVP (Minimum Viable)": reference-architectures/01-mvp.md
+                - Side-Effect-First: reference-architectures/02-side-effect-first.md
+                - Untrusted Input: reference-architectures/03-untrusted-input.md
+                - Factuality-First: reference-architectures/04-factuality-first.md
+                - Cost-First: reference-architectures/05-cost-first.md
+                - Continuous Improvement: reference-architectures/06-continuous-improvement.md
+                - Anti-Patterns:
                     - anti-patterns/index.md
                     - "Infinite / Excessive Timeout": anti-patterns/01-infinite-timeout.md
                     - Excessive Guardrails: anti-patterns/02-excessive-guardrails.md
@@ -240,7 +240,6 @@ plugins:
                     - Retry Storm: anti-patterns/09-retry-storm.md
                     - Prompt as Security Boundary: anti-patterns/10-prompt-as-security.md
                     - LLM as Calculator: anti-patterns/11-llm-as-calculator.md
-                - "Pattern Glossary": glossary.md
             - Agent Integration:
                 - Coding Agent Guide: agent-guide.md
                 - Architecture Proposal Template: agent-proposal-template.md
@@ -342,16 +341,15 @@ nav:
       - 意思決定記録（ADR）: decisions/adr-template.md
       - 通し例: decisions/worked-examples.md
       - パターンのパラメータ化: decisions/parameterization.md
-  - 複合構成・アンチパターン:
-      - 意思決定プリセット（リファレンスアーキテクチャ）:
-          - reference-architectures/index.md
-          - 最小構成（MVP）: reference-architectures/01-mvp.md
-          - 副作用重視構成: reference-architectures/02-side-effect-first.md
-          - 信頼できない入力構成: reference-architectures/03-untrusted-input.md
-          - 事実性重視構成: reference-architectures/04-factuality-first.md
-          - コスト重視構成: reference-architectures/05-cost-first.md
-          - 継続改善運用構成: reference-architectures/06-continuous-improvement.md
-      - 意思決定の誤り（アンチパターン）:
+      - 複合構成: reference-architectures/index.md
+  - "[参考] リファレンスアーキテクチャ":
+      - 最小構成（MVP）: reference-architectures/01-mvp.md
+      - 副作用重視構成: reference-architectures/02-side-effect-first.md
+      - 信頼できない入力構成: reference-architectures/03-untrusted-input.md
+      - 事実性重視構成: reference-architectures/04-factuality-first.md
+      - コスト重視構成: reference-architectures/05-cost-first.md
+      - 継続改善運用構成: reference-architectures/06-continuous-improvement.md
+      - アンチパターン:
           - anti-patterns/index.md
           - 無限・過大タイムアウト: anti-patterns/01-infinite-timeout.md
           - 過剰ガードレール: anti-patterns/02-excessive-guardrails.md
@@ -364,7 +362,6 @@ nav:
           - リトライストーム: anti-patterns/09-retry-storm.md
           - プロンプトをセキュリティ境界にする: anti-patterns/10-prompt-as-security.md
           - LLMに算術や厳密検索をやらせる: anti-patterns/11-llm-as-calculator.md
-      - パターン早見表（語彙集）: glossary.md
   - エージェント統合:
       - コーディングエージェント向けガイド: agent-guide.md
       - アーキテクチャ提案テンプレート: agent-proposal-template.md

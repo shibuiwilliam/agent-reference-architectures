@@ -52,7 +52,7 @@ LLMは同じプロンプトで同じ間違いを繰り返すことがありま�
 
 ## 関連パターン
 
-- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) — 自己修正ループの実装パターン
+- [#29 Guardrail Sidecar + Self-Correction](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — 自己修正ループの実装パターン
 
 <!-- BEGIN:GEN:patterns -->
 

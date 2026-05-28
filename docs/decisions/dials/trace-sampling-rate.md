@@ -53,8 +53,8 @@ tags:
 
 ## 関連パターン
 
-- [#32 Agent Trace](../../glossary.md) — エージェントの全ステップをトレースとして記録する基盤
-- [#54 Tiered Observability](../../glossary.md) — 観測データをHot/Coldに階層化するパターン
+- [#32 Agent Trace](../../decisions/dials/trace-sampling-rate.md) — エージェントの全ステップをトレースとして記録する基盤
+- [#54 Tiered Observability](../../decisions/dials/trace-sampling-rate.md) — 観測データをHot/Coldに階層化するパターン
 
 <!-- BEGIN:GEN:patterns -->
 

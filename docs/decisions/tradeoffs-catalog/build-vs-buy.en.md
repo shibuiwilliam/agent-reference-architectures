@@ -34,11 +34,11 @@ Development speed is fast, and you can leverage community knowledge and support.
 
 ## Default (When in Doubt)
 
-Build differentiating elements (core agent logic, domain-specific decisions). Buy commodity functions (authentication, logging, monitoring, base runtime). When in doubt, insert an abstraction layer with [#45 Runtime Abstraction](../../glossary.md) to enable switching later.
+Build differentiating elements (core agent logic, domain-specific decisions). Buy commodity functions (authentication, logging, monitoring, base runtime). When in doubt, insert an abstraction layer with [#45 Runtime Abstraction](../../decisions/tradeoffs-catalog/build-vs-buy.md) to enable switching later.
 
 ## Hybrid Approach
 
-Building the core logic in-house while using off-the-shelf products for peripheral functions — "build core + buy peripherals" — is the common approach. A strategy of quickly launching with off-the-shelf products and gradually replacing with in-house implementations as differentiation needs arise, as with [#48 Strangler Fig](../../glossary.md), is also effective.
+Building the core logic in-house while using off-the-shelf products for peripheral functions — "build core + buy peripherals" — is the common approach. A strategy of quickly launching with off-the-shelf products and gradually replacing with in-house implementations as differentiation needs arise, as with [#48 Strangler Fig](../../foundations/forces/f2-failure-cost.md), is also effective.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#45 Agent Runtime Abstraction](../../glossary.md) — Abstraction layer to facilitate build/buy switching
-- [#48 Strangler Fig](../../glossary.md) — Gradually replacing off-the-shelf with in-house development
+- [#45 Agent Runtime Abstraction](../../decisions/tradeoffs-catalog/build-vs-buy.md) — Abstraction layer to facilitate build/buy switching
+- [#48 Strangler Fig](../../foundations/forces/f2-failure-cost.md) — Gradually replacing off-the-shelf with in-house development
 
 ## Related Dials
 

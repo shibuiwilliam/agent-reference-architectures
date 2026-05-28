@@ -34,9 +34,9 @@ Long-running tasks get cut off by load balancer or API Gateway timeouts (typical
 
 ## Safeguard Patterns
 
-- [#1 Request-to-Job Gateway](../../glossary.md) -- Decouple from synchronous HTTP and execute as an asynchronous job
-- [#5 Time-Budgeted Agent Loop](../../glossary.md) -- Set budgets for time, iterations, and cost to prevent runaway execution
-- [#6 Interruptible Agent](../../glossary.md) -- Structure the agent so it can be stopped mid-execution and course-corrected
+- [#1 Request-to-Job Gateway](../../decisions/tradeoffs-catalog/sync-vs-async.md) -- Decouple from synchronous HTTP and execute as an asynchronous job
+- [#5 Time-Budgeted Agent Loop](../../decisions/dials/budget-cap.md) -- Set budgets for time, iterations, and cost to prevent runaway execution
+- [#6 Interruptible Agent](../../foundations/forces/f4-latency-budget.md) -- Structure the agent so it can be stopped mid-execution and course-corrected
 
 ## Related Design Decisions
 

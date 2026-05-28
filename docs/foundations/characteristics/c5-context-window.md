@@ -33,9 +33,9 @@ LLMのコンテキストウィンドウには上限があります（数千〜�
 
 ## 防波堤となるパターン
 
-- [#23 Layered Memory](../../glossary.md) — 短期・長期・共有に記憶を階層化し、必要な情報だけをコンテキストに載せる
-- [#24 Context Pack / Assembly](../../glossary.md) — RAGや要約で関連情報を選択的に組み立て、窓を効率的に使う
-- [#26 Forgetting and Expiration](../../glossary.md) — 古い情報に失効期限を設け、窓の圧迫を防ぐ
+- [#23 Layered Memory](../../decisions/tradeoffs-catalog/in-context-vs-external.md) — 短期・長期・共有に記憶を階層化し、必要な情報だけをコンテキストに載せる
+- [#24 Context Pack / Assembly](../../decisions/tradeoffs-catalog/rag-vs-finetuning.md) — RAGや要約で関連情報を選択的に組み立て、窓を効率的に使う
+- [#26 Forgetting and Expiration](../../decisions/dials/memory-ttl.md) — 古い情報に失効期限を設け、窓の圧迫を防ぐ
 
 ## 関連する設計判断
 

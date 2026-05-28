@@ -102,6 +102,6 @@ response = llm_client.chat(
 
 ## Related Patterns
 
-- [#37 Semantic Gateway & Cost-Aware Router](../glossary.md) — Route to different models based on difficulty
-- [#56 Adaptive Effort](../glossary.md) — Dynamically adjust computational effort
-- [#40 Fallback & Graceful Degradation](../glossary.md) — Cascading model switching
+- [#37 Semantic Gateway & Cost-Aware Router](../decisions/dials/model-tier-routing.md) — Route to different models based on difficulty
+- [#56 Adaptive Effort](../foundations/forces/f7-cost-sensitivity.md) — Dynamically adjust computational effort
+- [#40 Fallback & Graceful Degradation](../decisions/tradeoffs-catalog/fail-fast-vs-degradation.md) — Cascading model switching

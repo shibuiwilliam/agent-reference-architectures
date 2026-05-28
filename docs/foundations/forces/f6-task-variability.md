@@ -54,11 +54,11 @@ tags:
 
 ## 関連パターン
 
-- [#3 Workflow Backbone + Agent Node](../../glossary.md) — 骨格はワークフロー、判断が必要なノードだけエージェントに委譲する
-- [#59 Workflow-Agent Spectrum Selector](../../glossary.md) — サブタスク毎に決定論と自律のバランスを選定する
-- [#12 Blackboard](../../glossary.md) — 探索的タスクで複数エージェントが共有黒板を介して協調する
-- [#50 Editable Plan](../../glossary.md) — エージェントの計画を人間が編集してから実行する
-- [#9 Supervisor & Specialist Agents](../../glossary.md) — 変動性が高いタスクを専門エージェントに動的に委譲する
+- [#3 Workflow Backbone + Agent Node](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) — 骨格はワークフロー、判断が必要なノードだけエージェントに委譲する
+- [#59 Workflow-Agent Spectrum Selector](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) — サブタスク毎に決定論と自律のバランスを選定する
+- [#12 Blackboard](../../decisions/tradeoffs-catalog/orchestration-vs-choreography.md) — 探索的タスクで複数エージェントが共有黒板を介して協調する
+- [#50 Editable Plan](../../decisions/tradeoffs-catalog/plan-vs-react.md) — エージェントの計画を人間が編集してから実行する
+- [#9 Supervisor & Specialist Agents](../../decisions/tradeoffs-catalog/single-vs-multi-agent.md) — 変動性が高いタスクを専門エージェントに動的に委譲する
 
 <!-- BEGIN:GEN:patterns -->
 

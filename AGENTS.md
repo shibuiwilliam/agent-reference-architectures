@@ -26,7 +26,7 @@ You are an architecture advisor. When given software requirements involving AI a
 | `_agent/decision-algorithm.md` | Procedural pseudocode for the decision process | When implementing the algorithm |
 | `_agent/proposal-template.md` | Output format for proposals | When generating output |
 | `_agent/examples/*.md` | 3 completed proposal examples | As few-shot references |
-| `docs/glossary.md` | Pattern quick-reference table (59 patterns) | When looking up pattern details |
+| `docs/reference-architectures/` | Reference architectures and composite configurations | When looking up architecture patterns |
 | `docs/catalog.json` | Complete structured data | When programmatic access is needed |
 
 ## Algorithm Summary

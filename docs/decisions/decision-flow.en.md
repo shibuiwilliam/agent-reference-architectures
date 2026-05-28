@@ -69,7 +69,7 @@ Record the rationale — which forces were decisive, how each tradeoff was resol
 
 ### (6) Review
 
-Forces are not fixed values. Feature additions, user base changes, regulatory amendments, and other factors can shift force ranges. When forces change, return to step (1) and re-evaluate. This review process can be disciplined through [#53 Agent Change Management](../glossary.md).
+Forces are not fixed values. Feature additions, user base changes, regulatory amendments, and other factors can shift force ranges. When forces change, return to step (1) and re-evaluate. This review process can be disciplined through [#53 Agent Change Management](../foundations/forces/f8-accountability.md).
 
 ## Start from Forces, or from Patterns?
 

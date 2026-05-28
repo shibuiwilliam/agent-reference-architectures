@@ -52,8 +52,8 @@ tags:
 
 ## 関連パターン
 
-- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) — ガードレール検査と自己修正ループの実装
-- [#30 Policy-as-Code Guardrail](../../glossary.md) — ポリシーをコードとして管理・適用する
+- [#29 Guardrail Sidecar + Self-Correction](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — ガードレール検査と自己修正ループの実装
+- [#30 Policy-as-Code Guardrail](../../decisions/tradeoffs-catalog/prompt-vs-code.md) — ポリシーをコードとして管理・適用する
 
 <!-- BEGIN:GEN:patterns -->
 

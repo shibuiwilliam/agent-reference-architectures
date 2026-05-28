@@ -48,10 +48,10 @@ flowchart LR
 
 | Layer | Pattern | Role | Why It's Needed |
 |---|---------|------|-----------|
-| Intake | [#1 Request-to-Job Gateway](../glossary.md) | Async processing to avoid timeouts | LLM calls take seconds to minutes, so sync HTTP connections will drop |
-| State | [#2 Durable Agent Session](../glossary.md) | Suspend/resume | When sessions are lost on process restart or scale-in, users must start over |
-| Output | [#14 Structured Output Contract](../glossary.md) | Downstream system integration | Natural language output causes downstream parse failures |
-| Observability | [#32 Agent Trace](../glossary.md) | Minimal debugging info | Without traces, there's no way to post-hoc verify "why that answer was given" |
+| Intake | [#1 Request-to-Job Gateway](../decisions/tradeoffs-catalog/sync-vs-async.md) | Async processing to avoid timeouts | LLM calls take seconds to minutes, so sync HTTP connections will drop |
+| State | [#2 Durable Agent Session](../decisions/tradeoffs-catalog/in-context-vs-external.md) | Suspend/resume | When sessions are lost on process restart or scale-in, users must start over |
+| Output | [#14 Structured Output Contract](../decisions/tradeoffs-catalog/structured-vs-freeform.md) | Downstream system integration | Natural language output causes downstream parse failures |
+| Observability | [#32 Agent Trace](../decisions/dials/trace-sampling-rate.md) | Minimal debugging info | Without traces, there's no way to post-hoc verify "why that answer was given" |
 
 ## Layer Details
 
@@ -74,7 +74,7 @@ Records all LLM calls and tool executions as traces. Even at the MVP stage, trac
 ## What Can Be Omitted / What to Consider Adding
 
 - **Can omit**: Guardrails (output inspection can be skipped while `[F2]` is low), multi-agent architecture (single agent is sufficient), cost optimization (unnecessary while request volume is low)
-- **Consider adding**: If input is unstructured, add [#13 Natural Language Boundary Adapter](../glossary.md). If streaming display is needed, add [#7 Streaming Progress](../glossary.md)
+- **Consider adding**: If input is unstructured, add [#13 Natural Language Boundary Adapter](../foundations/forces/f5-input-trust.md). If streaming display is needed, add [#7 Streaming Progress](../decisions/tradeoffs-catalog/push-vs-pull.md)
 
 ## Concrete Scenario
 

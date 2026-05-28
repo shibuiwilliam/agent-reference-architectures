@@ -101,6 +101,6 @@ response = agent.run(
 
 ## Related Patterns
 
-- [#5 Time-Budgeted Agent Loop](../glossary.md) — Set caps on 3 axes: time, steps, and cost
-- [#55 Deadline & Budget Cascade](../glossary.md) — Propagate budgets to child tasks
-- [#1 Request-to-Job Gateway](../glossary.md) — Allocate budgets at request intake
+- [#5 Time-Budgeted Agent Loop](../decisions/dials/budget-cap.md) — Set caps on 3 axes: time, steps, and cost
+- [#55 Deadline & Budget Cascade](../decisions/dials/budget-cap.md) — Propagate budgets to child tasks
+- [#1 Request-to-Job Gateway](../decisions/tradeoffs-catalog/sync-vs-async.md) — Allocate budgets at request intake

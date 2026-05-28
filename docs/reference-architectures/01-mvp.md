@@ -48,10 +48,10 @@ flowchart LR
 
 | 層 | パターン | 役割 | なぜ必要か |
 |---|---------|------|-----------|
-| 受付 | [#1 Request-to-Job Gateway](../glossary.md) | 非同期化でタイムアウト回避 | LLM呼び出しは数秒〜数分かかるため、同期HTTPでは接続が切れます |
-| 状態 | [#2 Durable Agent Session](../glossary.md) | 中断・再開 | プロセス再起動やスケールイン時にセッションが消えると、ユーザーが最初からやり直しになります |
-| 出力 | [#14 Structured Output Contract](../glossary.md) | 下流システムとの接続 | 自然言語出力のままでは後続処理がパースに失敗します |
-| 観測 | [#32 Agent Trace](../glossary.md) | 最低限のデバッグ情報 | トレースがないと「なぜその回答になったか」を事後検証できません |
+| 受付 | [#1 Request-to-Job Gateway](../decisions/tradeoffs-catalog/sync-vs-async.md) | 非同期化でタイムアウト回避 | LLM呼び出しは数秒〜数分かかるため、同期HTTPでは接続が切れます |
+| 状態 | [#2 Durable Agent Session](../decisions/tradeoffs-catalog/in-context-vs-external.md) | 中断・再開 | プロセス再起動やスケールイン時にセッションが消えると、ユーザーが最初からやり直しになります |
+| 出力 | [#14 Structured Output Contract](../decisions/tradeoffs-catalog/structured-vs-freeform.md) | 下流システムとの接続 | 自然言語出力のままでは後続処理がパースに失敗します |
+| 観測 | [#32 Agent Trace](../decisions/dials/trace-sampling-rate.md) | 最低限のデバッグ情報 | トレースがないと「なぜその回答になったか」を事後検証できません |
 
 ## 各層の詳細
 
@@ -74,7 +74,7 @@ LLMの出力をJSONスキーマなどで構造化します。下流のシステ�
 ## 省略してよいもの・追加を検討するもの
 
 - **省略可**: ガードレール（`[F2]` が低い間は出力検査を省略できます）、マルチエージェント構成（単一エージェントで十分です）、コスト最適化（リクエスト量が少ない間は不要です）
-- **追加検討**: 入力が構造化されていない場合は [#13 Natural Language Boundary Adapter](../glossary.md) を追加します。ストリーミング表示が必要なら [#7 Streaming Progress](../glossary.md) を足します
+- **追加検討**: 入力が構造化されていない場合は [#13 Natural Language Boundary Adapter](../foundations/forces/f5-input-trust.md) を追加します。ストリーミング表示が必要なら [#7 Streaming Progress](../decisions/tradeoffs-catalog/push-vs-pull.md) を足します
 
 ## 具体的なシナリオ
 

@@ -34,11 +34,11 @@ Multiple LLM providers are used according to purpose or cost. Having a fallback 
 
 ## Default (When in Doubt)
 
-Start with a single provider and move to multi-provider based on outage history or scaling requirements. Investing in a multi-provider abstraction layer at the early stage tends to be over-engineering. However, introducing just the abstraction layer early with [#45 Runtime Abstraction](../../glossary.md) makes migration easier later.
+Start with a single provider and move to multi-provider based on outage history or scaling requirements. Investing in a multi-provider abstraction layer at the early stage tends to be over-engineering. However, introducing just the abstraction layer early with [#45 Runtime Abstraction](../../decisions/tradeoffs-catalog/build-vs-buy.md) makes migration easier later.
 
 ## Hybrid Approach
 
-Using the approach from [#40 Fallback & Graceful Degradation](../../glossary.md), set up a two-tier configuration of primary + fallback. Rather than always running multi-provider, switch to the secondary only when failure is detected. This maintains availability while keeping operational complexity low.
+Using the approach from [#40 Fallback & Graceful Degradation](../../decisions/tradeoffs-catalog/fail-fast-vs-degradation.md), set up a two-tier configuration of primary + fallback. Rather than always running multi-provider, switch to the secondary only when failure is detected. This maintains availability while keeping operational complexity low.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#40 Fallback & Graceful Degradation](../../glossary.md) — Fallback strategy for primary failures
-- [#45 Agent Runtime Abstraction](../../glossary.md) — Abstraction layer to facilitate provider switching
+- [#40 Fallback & Graceful Degradation](../../decisions/tradeoffs-catalog/fail-fast-vs-degradation.md) — Fallback strategy for primary failures
+- [#45 Agent Runtime Abstraction](../../decisions/tradeoffs-catalog/build-vs-buy.md) — Abstraction layer to facilitate provider switching
 
 ## Related Dials
 

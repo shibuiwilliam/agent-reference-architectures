@@ -101,6 +101,6 @@ response = agent.run(
 
 ## 関連パターン
 
-- [#5 Time-Budgeted Agent Loop](../glossary.md) — 時間・回数・コストの3軸で上限を設けます
-- [#55 Deadline & Budget Cascade](../glossary.md) — 子タスクに予算を伝播します
-- [#1 Request-to-Job Gateway](../glossary.md) — リクエスト受付時に予算を割り当てます
+- [#5 Time-Budgeted Agent Loop](../decisions/dials/budget-cap.md) — 時間・回数・コストの3軸で上限を設けます
+- [#55 Deadline & Budget Cascade](../decisions/dials/budget-cap.md) — 子タスクに予算を伝播します
+- [#1 Request-to-Job Gateway](../decisions/tradeoffs-catalog/sync-vs-async.md) — リクエスト受付時に予算を割り当てます

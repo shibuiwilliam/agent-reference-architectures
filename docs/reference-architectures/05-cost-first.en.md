@@ -48,12 +48,12 @@ flowchart LR
 
 | Layer | Pattern | Role | Why It's Needed |
 |---|---------|------|-----------|
-| Routing | [#37 Semantic Gateway & Cost-Aware Router](../glossary.md) | Difficulty-based model routing | Processing all requests with a high-performance model causes linear cost growth |
-| Cache | [#38 Semantic Result Cache](../glossary.md) | Similar query reuse | When the same types of questions repeat, there's no need to call the LLM |
-| Prompt | [#39 Prompt Cache Optimized Context](../glossary.md) | Prefix sharing for cache | Cache common portions of system prompts and context to reduce input token charges |
-| Effort Allocation | [#56 Adaptive Effort](../glossary.md) | Difficulty-based compute adjustment | Running long Chain-of-Thought for easy questions is wasteful |
-| Budget | [#5 Time-Budgeted Agent Loop](../glossary.md) | Per-request caps | Without budgets, a runaway request can consume the entire monthly budget |
-| Fallback | [#40 Fallback & Graceful Degradation](../glossary.md) | Degradation during failures | Prevent all requests from failing when the high-performance model goes down |
+| Routing | [#37 Semantic Gateway & Cost-Aware Router](../decisions/dials/model-tier-routing.md) | Difficulty-based model routing | Processing all requests with a high-performance model causes linear cost growth |
+| Cache | [#38 Semantic Result Cache](../decisions/dials/cache-similarity.md) | Similar query reuse | When the same types of questions repeat, there's no need to call the LLM |
+| Prompt | [#39 Prompt Cache Optimized Context](../foundations/forces/f7-cost-sensitivity.md) | Prefix sharing for cache | Cache common portions of system prompts and context to reduce input token charges |
+| Effort Allocation | [#56 Adaptive Effort](../foundations/forces/f7-cost-sensitivity.md) | Difficulty-based compute adjustment | Running long Chain-of-Thought for easy questions is wasteful |
+| Budget | [#5 Time-Budgeted Agent Loop](../decisions/dials/budget-cap.md) | Per-request caps | Without budgets, a runaway request can consume the entire monthly budget |
+| Fallback | [#40 Fallback & Graceful Degradation](../decisions/tradeoffs-catalog/fail-fast-vs-degradation.md) | Degradation during failures | Prevent all requests from failing when the high-performance model goes down |
 
 ## Layer Details
 
@@ -84,7 +84,7 @@ During high-performance model API outages or rate limit exhaustion, falls back t
 ## What Can Be Omitted / What to Consider Adding
 
 - **Can omit**: At low request volumes (under a few thousand per month), Semantic Cache and Prompt Cache Optimized Context have limited impact. The routing layer alone can be deployed first
-- **Consider adding**: If `[F2]` increases, layer [Side-Effect-First Configuration](02-side-effect-first.md) safety layers. If `[F9]` increases, ease provider switching with [#45 Agent Runtime Abstraction](../glossary.md)
+- **Consider adding**: If `[F2]` increases, layer [Side-Effect-First Configuration](02-side-effect-first.md) safety layers. If `[F9]` increases, ease provider switching with [#45 Agent Runtime Abstraction](../decisions/tradeoffs-catalog/build-vs-buy.md)
 
 ## Concrete Scenario
 
@@ -100,8 +100,8 @@ With this configuration, monthly costs can be reduced by 60-70% compared to proc
 
 - If `[F2]` increases -> Add [Side-Effect-First Configuration](02-side-effect-first.md) safety layers (when evolving from knowledge search to action execution)
 - If `[F8]` increases -> Evaluate whether cost reduction is impacting quality with [Continuous Improvement Configuration](06-continuous-improvement.md)
-- If `[F9]` increases -> Strengthen multi-provider operations with [#45 Agent Runtime Abstraction](../glossary.md) and [#46 Model Behavior Compatibility Layer](../glossary.md)
-- If cache hit rate drops -> Optimize context structure with [#24 Context Pack / Assembly](../glossary.md)
+- If `[F9]` increases -> Strengthen multi-provider operations with [#45 Agent Runtime Abstraction](../decisions/tradeoffs-catalog/build-vs-buy.md) and [#46 Model Behavior Compatibility Layer](../decisions/tradeoffs-catalog/single-vs-multi-provider.md)
+- If cache hit rate drops -> Optimize context structure with [#24 Context Pack / Assembly](../decisions/tradeoffs-catalog/rag-vs-finetuning.md)
 
 ## Related Configurations
 

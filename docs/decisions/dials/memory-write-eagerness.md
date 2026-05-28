@@ -50,7 +50,7 @@ tags:
 
 ## 関連パターン
 
-- [#25 Memory Write Gate](../../glossary.md) — 長期メモリへの書き込みを承認制にするゲートパターン
+- [#25 Memory Write Gate](../../decisions/dials/memory-write-eagerness.md) — 長期メモリへの書き込みを承認制にするゲートパターン
 
 <!-- BEGIN:GEN:patterns -->
 

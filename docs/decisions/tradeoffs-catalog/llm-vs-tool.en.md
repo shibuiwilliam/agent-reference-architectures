@@ -36,7 +36,7 @@ Delegate arithmetic, date calculations, strict searches, and structured data loo
 
 ## Hybrid Approach
 
-Using the approach of [#15 Inverted Structured Output](../../glossary.md), have the LLM generate the "what to do" judgment (intermediate structured output) and delegate actual execution to code or tools. This is the standard configuration combining the LLM's flexible reasoning with tools' accurate execution.
+Using the approach of [#15 Inverted Structured Output](../../decisions/tradeoffs-catalog/llm-vs-tool.md), have the LLM generate the "what to do" judgment (intermediate structured output) and delegate actual execution to code or tools. This is the standard configuration combining the LLM's flexible reasoning with tools' accurate execution.
 
 ## Decision Flowchart
 
@@ -50,8 +50,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#15 Inverted Structured Output](../../glossary.md) — Have the LLM output only the judgment, execution is done by code
-- [#17 Tool / MCP Gateway](../../glossary.md) — Aggregates tool connections and centralizes authorization and auditing
+- [#15 Inverted Structured Output](../../decisions/tradeoffs-catalog/llm-vs-tool.md) — Have the LLM output only the judgment, execution is done by code
+- [#17 Tool / MCP Gateway](../../decisions/tradeoffs-catalog/llm-vs-tool.md) — Aggregates tool connections and centralizes authorization and auditing
 
 ## Related Dials
 

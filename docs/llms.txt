@@ -16,9 +16,7 @@
 - [通し例](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/worked-examples/): 3システムの一気通貫例
 - [パラメータ化](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/parameterization/): パターンのパラメータ化の考え方
 
-## パターン早見表（語彙集・59 Patterns）
-
-- [パターン早見表](https://shibuiwilliam.github.io/agent-reference-architectures/glossary/): 全59パターンの索引（意思決定の結果として現れる具体構造）
+## パターン（59 Patterns）
 
 - [#1 Request-to-Job Gateway｜非同期受付ゲートウェイ](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/tradeoffs-catalog/sync-vs-async/): 1リクエストを非同期ジョブとして受け付ける [F4, F1]
 - [#2 Durable Agent Session｜耐久エージェントセッション](https://shibuiwilliam.github.io/agent-reference-architectures/decisions/tradeoffs-catalog/in-context-vs-external/): 状態を永続化し中断・再開に耐える [F1]

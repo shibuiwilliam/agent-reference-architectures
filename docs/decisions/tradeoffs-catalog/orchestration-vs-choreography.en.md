@@ -38,7 +38,7 @@ Start with centralized orchestration. Being able to see the entire flow in one p
 
 ## Hybrid Approach
 
-[#3 Workflow Backbone + Agent Node](../../glossary.md) is the representative example. The skeleton (step order, conditional branching) is held by the orchestrator, while each node's internals are decided autonomously by agents. This achieves both controllability and flexibility.
+[#3 Workflow Backbone + Agent Node](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) is the representative example. The skeleton (step order, conditional branching) is held by the orchestrator, while each node's internals are decided autonomously by agents. This achieves both controllability and flexibility.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#3 Workflow Backbone + Agent Node](../../glossary.md) — Hybrid: orchestration for the skeleton, autonomy for nodes
-- [#12 Blackboard](../../glossary.md) — A form of loosely-coupled choreography via shared blackboard
+- [#3 Workflow Backbone + Agent Node](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) — Hybrid: orchestration for the skeleton, autonomy for nodes
+- [#12 Blackboard](../../decisions/tradeoffs-catalog/orchestration-vs-choreography.md) — A form of loosely-coupled choreography via shared blackboard
 
 ## Related Dials
 

@@ -50,4 +50,4 @@ The context window limit is reached, causing API errors or forced truncation. Wh
 
 ## Related Patterns
 
-- [#23 Layered Memory](../../glossary.md) -- Hierarchization of short-term, long-term, and shared memory with compression strategies
+- [#23 Layered Memory](../../decisions/tradeoffs-catalog/in-context-vs-external.md) -- Hierarchization of short-term, long-term, and shared memory with compression strategies

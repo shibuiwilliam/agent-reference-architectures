@@ -112,6 +112,6 @@ response = llm.chat(
 
 ## 関連パターン
 
-- [#24 Context Pack / Assembly](../glossary.md) — 関連度の高い情報のみを選択的に組み立てます
-- [#23 Layered Memory](../glossary.md) — メモリを階層化してアクセスパターンを最適化します
-- [#25 Memory Write Gate](../glossary.md) — 記憶する情報自体を選別します
+- [#24 Context Pack / Assembly](../decisions/tradeoffs-catalog/rag-vs-finetuning.md) — 関連度の高い情報のみを選択的に組み立てます
+- [#23 Layered Memory](../decisions/tradeoffs-catalog/in-context-vs-external.md) — メモリを階層化してアクセスパターンを最適化します
+- [#25 Memory Write Gate](../decisions/dials/memory-write-eagerness.md) — 記憶する情報自体を選別します

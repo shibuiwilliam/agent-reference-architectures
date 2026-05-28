@@ -53,7 +53,7 @@ LLMの出力は確率的であり、1回の生成が最適解である保証は�
 
 ## 関連パターン
 
-- [#10 Agent Ensemble & Debate](../../glossary.md) — 複数エージェントで生成・討論し最良を選ぶ構成パターン
+- [#10 Agent Ensemble & Debate](../../decisions/tradeoffs-catalog/same-vs-different-model.md) — 複数エージェントで生成・討論し最良を選ぶ構成パターン
 
 <!-- BEGIN:GEN:patterns -->
 

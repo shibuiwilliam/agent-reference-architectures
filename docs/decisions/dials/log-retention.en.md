@@ -53,4 +53,4 @@ Storage costs become enormous. Logs including LLM input/output run several KB to
 
 ## Related Patterns
 
-- [#54 Tiered Observability](../../glossary.md) -- Tier observability data into Hot/Cold to balance cost and availability
+- [#54 Tiered Observability](../../decisions/dials/trace-sampling-rate.md) -- Tier observability data into Hot/Cold to balance cost and availability

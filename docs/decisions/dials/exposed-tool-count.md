@@ -51,7 +51,7 @@ LLMはツール定義をコンテキストとして受け取るため、ツー�
 
 ## 関連パターン
 
-- [#18 Least-Privilege Tool Binding](../../glossary.md) — セッションごとに最小権限のツールセットを束縛する
+- [#18 Least-Privilege Tool Binding](../../decisions/dials/exposed-tool-count.md) — セッションごとに最小権限のツールセットを束縛する
 
 <!-- BEGIN:GEN:patterns -->
 

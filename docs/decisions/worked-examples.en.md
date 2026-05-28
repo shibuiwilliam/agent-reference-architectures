@@ -66,11 +66,11 @@ flowchart LR
 
 [Minimal Configuration](../reference-architectures/01-mvp.md) + Cache layer:
 
-- [#58 Sync Facade](../glossary.md) — Sync/async hybrid
-- [#24 Context Pack / Assembly](../glossary.md) — RAG
-- [#14 Structured Output Contract](../glossary.md) — Output structuring
-- [#38 Semantic Result Cache](../glossary.md) — Similar query reuse
-- [#32 Agent Trace](../glossary.md) — Minimal observability
+- [#58 Sync Facade](../decisions/tradeoffs-catalog/sync-vs-async.md) — Sync/async hybrid
+- [#24 Context Pack / Assembly](../decisions/tradeoffs-catalog/rag-vs-finetuning.md) — RAG
+- [#14 Structured Output Contract](../decisions/tradeoffs-catalog/structured-vs-freeform.md) — Output structuring
+- [#38 Semantic Result Cache](../decisions/dials/cache-similarity.md) — Similar query reuse
+- [#32 Agent Trace](../decisions/dials/trace-sampling-rate.md) — Minimal observability
 
 ### Re-evaluation Conditions
 
@@ -132,14 +132,14 @@ flowchart LR
 
 [Side-Effect-First Configuration](../reference-architectures/02-side-effect-first.md):
 
-- [#1 Request-to-Job Gateway](../glossary.md) — Async reception
-- [#3 Workflow Backbone](../glossary.md) — Deterministic flow
-- [#4 Agent Saga](../glossary.md) — Compensating transactions
-- [#15 Inverted Structured Output](../glossary.md) — LLM handles judgment only
-- [#19 Dry-Run First](../glossary.md) — Simulated execution
-- [#28 Verifier Agent](../glossary.md) — Different-model verification
-- [#31 Human Approval](../glossary.md) — Pre-payment approval
-- [#32 Agent Trace](../glossary.md) + [#33 Version Pinning](../glossary.md) — Audit trail
+- [#1 Request-to-Job Gateway](../decisions/tradeoffs-catalog/sync-vs-async.md) — Async reception
+- [#3 Workflow Backbone](../decisions/tradeoffs-catalog/workflow-vs-agent.md) — Deterministic flow
+- [#4 Agent Saga](../decisions/dials/checkpoint-frequency.md) — Compensating transactions
+- [#15 Inverted Structured Output](../decisions/tradeoffs-catalog/llm-vs-tool.md) — LLM handles judgment only
+- [#19 Dry-Run First](../foundations/forces/f1-reversibility.md) — Simulated execution
+- [#28 Verifier Agent](../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — Different-model verification
+- [#31 Human Approval](../decisions/dials/autonomy-level.md) — Pre-payment approval
+- [#32 Agent Trace](../decisions/dials/trace-sampling-rate.md) + [#33 Version Pinning](../decisions/dials/prompt-storage.md) — Audit trail
 
 ### Re-evaluation Conditions
 
@@ -203,14 +203,14 @@ flowchart LR
 
 [Cost-First Configuration](../reference-architectures/05-cost-first.md) + [Untrusted Input Configuration](../reference-architectures/03-untrusted-input.md):
 
-- [#37 Semantic Gateway](../glossary.md) — Difficulty-based routing
-- [#38 Semantic Result Cache](../glossary.md) — FAQ similar query reuse
-- [#56 Adaptive Effort](../glossary.md) — Computation adjustment
-- [#40 Fallback](../glossary.md) — Degradation on failure
-- [#13 NL Boundary Adapter](../glossary.md) — Input structuring
-- [#42 Data Boundary Firewall](../glossary.md) — PII inspection
-- [#29 Guardrail Sidecar](../glossary.md) — Output inspection
-- [#7 Streaming Progress](../glossary.md) — Incremental response
+- [#37 Semantic Gateway](../decisions/dials/model-tier-routing.md) — Difficulty-based routing
+- [#38 Semantic Result Cache](../decisions/dials/cache-similarity.md) — FAQ similar query reuse
+- [#56 Adaptive Effort](../foundations/forces/f7-cost-sensitivity.md) — Computation adjustment
+- [#40 Fallback](../decisions/tradeoffs-catalog/fail-fast-vs-degradation.md) — Degradation on failure
+- [#13 NL Boundary Adapter](../foundations/forces/f5-input-trust.md) — Input structuring
+- [#42 Data Boundary Firewall](../foundations/forces/f5-input-trust.md) — PII inspection
+- [#29 Guardrail Sidecar](../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — Output inspection
+- [#7 Streaming Progress](../decisions/tradeoffs-catalog/push-vs-pull.md) — Incremental response
 
 ### Re-evaluation Conditions
 

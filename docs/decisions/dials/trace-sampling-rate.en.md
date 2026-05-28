@@ -53,5 +53,5 @@ Storage costs become enormous. Traces including full LLM input/output can be sev
 
 ## Related Patterns
 
-- [#32 Agent Trace](../../glossary.md) -- Foundation for recording all agent steps as traces
-- [#54 Tiered Observability](../../glossary.md) -- Pattern for tiering observability data into Hot/Cold
+- [#32 Agent Trace](../../decisions/dials/trace-sampling-rate.md) -- Foundation for recording all agent steps as traces
+- [#54 Tiered Observability](../../decisions/dials/trace-sampling-rate.md) -- Pattern for tiering observability data into Hot/Cold

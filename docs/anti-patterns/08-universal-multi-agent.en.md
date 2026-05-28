@@ -103,6 +103,6 @@ else:
 
 ## Related Patterns
 
-- [#59 Workflow-Agent Spectrum Selector](../glossary.md) — Assess autonomy requirements per subtask
-- [#3 Workflow Backbone + Agent Node](../glossary.md) — Hybrid of workflow and agent
-- [#11 Deterministic Core, Probabilistic Edge](../glossary.md) — Separation of deterministic backbone and probabilistic edges
+- [#59 Workflow-Agent Spectrum Selector](../decisions/tradeoffs-catalog/workflow-vs-agent.md) — Assess autonomy requirements per subtask
+- [#3 Workflow Backbone + Agent Node](../decisions/tradeoffs-catalog/workflow-vs-agent.md) — Hybrid of workflow and agent
+- [#11 Deterministic Core, Probabilistic Edge](../decisions/tradeoffs-catalog/prompt-vs-code.md) — Separation of deterministic backbone and probabilistic edges

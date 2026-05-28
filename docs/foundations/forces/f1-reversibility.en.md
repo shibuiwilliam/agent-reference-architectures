@@ -54,8 +54,8 @@ Situations where operations can be easily redone. Typical examples include write
 
 ## Related Patterns
 
-- [#4 Agent Saga](../../glossary.md) -- Roll back irreversible side-effect chains with compensating transactions
-- [#19 Dry-Run First Tool Execution](../../glossary.md) -- Simulate side effects first, then execute after approval
-- [#31 Human Approval Checkpoint](../../glossary.md) -- Obtain human approval before high-risk operations
-- [#57 Autonomy Ladder](../../glossary.md) -- Gradually promote autonomy based on track record
-- [#16 Ambiguity Negotiation](../../glossary.md) -- Confirm before executing irreversible operations on ambiguous instructions
+- [#4 Agent Saga](../../decisions/dials/checkpoint-frequency.md) -- Roll back irreversible side-effect chains with compensating transactions
+- [#19 Dry-Run First Tool Execution](../../foundations/forces/f1-reversibility.md) -- Simulate side effects first, then execute after approval
+- [#31 Human Approval Checkpoint](../../decisions/dials/autonomy-level.md) -- Obtain human approval before high-risk operations
+- [#57 Autonomy Ladder](../../decisions/dials/autonomy-level.md) -- Gradually promote autonomy based on track record
+- [#16 Ambiguity Negotiation](../../foundations/forces/f1-reversibility.md) -- Confirm before executing irreversible operations on ambiguous instructions

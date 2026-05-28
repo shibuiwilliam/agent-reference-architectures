@@ -38,7 +38,7 @@ High-risk (financial transactions, healthcare, legal documents, external API cal
 
 ## Hybrid Approach
 
-A two-stage approach: execute lightweight rule-based verification (format, prohibited phrases, length) inline, and defer heavy semantic verification (factual consistency, reasoning validity) to post-verification. [#29 Guardrail Sidecar](../../glossary.md) can be used for inline, and [#28 Verifier Agent](../../glossary.md) for post-verification-oriented checking.
+A two-stage approach: execute lightweight rule-based verification (format, prohibited phrases, length) inline, and defer heavy semantic verification (factual consistency, reasoning validity) to post-verification. [#29 Guardrail Sidecar](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) can be used for inline, and [#28 Verifier Agent](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) for post-verification-oriented checking.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#28 Verifier Agent / Critic](../../glossary.md) — Pre-shipment inspection by an independent verification agent
-- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) — Sidecar-style inline verification with self-correction
+- [#28 Verifier Agent / Critic](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — Pre-shipment inspection by an independent verification agent
+- [#29 Guardrail Sidecar + Self-Correction](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — Sidecar-style inline verification with self-correction
 
 ## Related Dials
 

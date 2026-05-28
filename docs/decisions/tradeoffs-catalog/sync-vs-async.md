@@ -38,7 +38,7 @@ tags:
 
 ## ハイブリッドアプローチ
 
-[#58 Sync Facade over Async Core](../../glossary.md) が代表的なハイブリッド戦略。内部は常に非同期で処理し、閾値時間内に完了すれば同期レスポンスとして返します。超えた場合はジョブIDに切り替えます。クライアントは短いタスクでは同期の簡潔さを享受しつつ、長時間タスクでも途切れません。
+[#58 Sync Facade over Async Core](../../decisions/tradeoffs-catalog/sync-vs-async.md) が代表的なハイブリッド戦略。内部は常に非同期で処理し、閾値時間内に完了すれば同期レスポンスとして返します。超えた場合はジョブIDに切り替えます。クライアントは短いタスクでは同期の簡潔さを享受しつつ、長時間タスクでも途切れません。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#1 Request-to-Job Gateway](../../glossary.md) — 非同期受付の基本実装パターン
-- [#58 Sync Facade over Async Core](../../glossary.md) — 同期と非同期を自動切替するハイブリッド
+- [#1 Request-to-Job Gateway](../../decisions/tradeoffs-catalog/sync-vs-async.md) — 非同期受付の基本実装パターン
+- [#58 Sync Facade over Async Core](../../decisions/tradeoffs-catalog/sync-vs-async.md) — 同期と非同期を自動切替するハイブリッド
 
 ## 関連ダイヤル
 

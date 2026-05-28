@@ -52,7 +52,7 @@ kが小さいと関連情報を見逃してしまい、不正確な回答やハ�
 
 ## 関連パターン
 
-- [#24 Context Pack / Assembly](../../glossary.md) — 検索結果を含むコンテキストの組み立てパターン
+- [#24 Context Pack / Assembly](../../decisions/tradeoffs-catalog/rag-vs-finetuning.md) — 検索結果を含むコンテキストの組み立てパターン
 
 <!-- BEGIN:GEN:patterns -->
 

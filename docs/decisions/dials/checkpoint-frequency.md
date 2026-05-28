@@ -50,7 +50,7 @@ tags:
 
 ## 関連パターン
 
-- [#2 Durable Agent Session](../../glossary.md) — チェックポイントによる中断・再開の基盤パターン
+- [#2 Durable Agent Session](../../decisions/tradeoffs-catalog/in-context-vs-external.md) — チェックポイントによる中断・再開の基盤パターン
 
 <!-- BEGIN:GEN:patterns -->
 

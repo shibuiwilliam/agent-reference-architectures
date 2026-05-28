@@ -54,11 +54,11 @@ tags:
 
 ## 関連パターン
 
-- [#4 Agent Saga](../../glossary.md) — 不可逆な副作用連鎖を補償トランザクションで巻き戻す
-- [#19 Dry-Run First Tool Execution](../../glossary.md) — 副作用をまず模擬実行し、承認後に本実行する
-- [#31 Human Approval Checkpoint](../../glossary.md) — 高リスク操作の前に人間の承認を得る
-- [#57 Autonomy Ladder](../../glossary.md) — 実績に応じて自律性を段階的に昇格させる
-- [#16 Ambiguity Negotiation](../../glossary.md) — 曖昧な指示で不可逆操作を実行しないよう確認を挟む
+- [#4 Agent Saga](../../decisions/dials/checkpoint-frequency.md) — 不可逆な副作用連鎖を補償トランザクションで巻き戻す
+- [#19 Dry-Run First Tool Execution](../../foundations/forces/f1-reversibility.md) — 副作用をまず模擬実行し、承認後に本実行する
+- [#31 Human Approval Checkpoint](../../decisions/dials/autonomy-level.md) — 高リスク操作の前に人間の承認を得る
+- [#57 Autonomy Ladder](../../decisions/dials/autonomy-level.md) — 実績に応じて自律性を段階的に昇格させる
+- [#16 Ambiguity Negotiation](../../foundations/forces/f1-reversibility.md) — 曖昧な指示で不可逆操作を実行しないよう確認を挟む
 
 <!-- BEGIN:GEN:patterns -->
 

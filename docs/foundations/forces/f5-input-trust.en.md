@@ -53,8 +53,8 @@ Situations receiving natural language input from anonymous users. Examples inclu
 
 ## Related Patterns
 
-- [#42 Data Boundary Firewall](../../glossary.md) -- Inspect and mask PII and sensitive information at I/O boundaries
-- [#44 Dual-LLM Privilege Separation](../../glossary.md) -- Separate input processing and privileged operations into different LLMs
-- [#43 Confused-Deputy Damage Limitation](../../glossary.md) -- Limit the blast radius even when tricked
-- [#18 Least-Privilege Tool Binding](../../glossary.md) -- Bind minimum privileges per session
-- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) -- Inspect I/O and detect/correct violations
+- [#42 Data Boundary Firewall](../../foundations/forces/f5-input-trust.md) -- Inspect and mask PII and sensitive information at I/O boundaries
+- [#44 Dual-LLM Privilege Separation](../../foundations/forces/f5-input-trust.md) -- Separate input processing and privileged operations into different LLMs
+- [#43 Confused-Deputy Damage Limitation](../../foundations/forces/f5-input-trust.md) -- Limit the blast radius even when tricked
+- [#18 Least-Privilege Tool Binding](../../decisions/dials/exposed-tool-count.md) -- Bind minimum privileges per session
+- [#29 Guardrail Sidecar + Self-Correction](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) -- Inspect I/O and detect/correct violations

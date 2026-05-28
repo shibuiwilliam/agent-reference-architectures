@@ -54,8 +54,8 @@ Situations where a single request is tied to contracts or decisions worth millio
 
 ## Related Patterns
 
-- [#10 Agent Ensemble & Debate](../../glossary.md) -- Strengthen high-value decisions through multi-agent deliberation
-- [#37 Semantic Gateway & Cost-Aware Router](../../glossary.md) -- Dynamically select models by difficulty and value
-- [#56 Adaptive Effort](../../glossary.md) -- Scale compute effort up or down by difficulty
-- [#5 Time-Budgeted Agent Loop](../../glossary.md) -- Control loop iterations with a budget proportional to request value
-- [#55 Deadline & Budget Cascade](../../glossary.md) -- Propagate budgets to subtasks
+- [#10 Agent Ensemble & Debate](../../decisions/tradeoffs-catalog/same-vs-different-model.md) -- Strengthen high-value decisions through multi-agent deliberation
+- [#37 Semantic Gateway & Cost-Aware Router](../../decisions/dials/model-tier-routing.md) -- Dynamically select models by difficulty and value
+- [#56 Adaptive Effort](../../foundations/forces/f7-cost-sensitivity.md) -- Scale compute effort up or down by difficulty
+- [#5 Time-Budgeted Agent Loop](../../decisions/dials/budget-cap.md) -- Control loop iterations with a budget proportional to request value
+- [#55 Deadline & Budget Cascade](../../decisions/dials/budget-cap.md) -- Propagate budgets to subtasks

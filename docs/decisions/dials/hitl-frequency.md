@@ -50,7 +50,7 @@ tags:
 
 ## 関連パターン
 
-- [#31 Human Approval Checkpoint](../../glossary.md) — 高リスク操作前に人間承認を挟むチェックポイントの実装
+- [#31 Human Approval Checkpoint](../../decisions/dials/autonomy-level.md) — 高リスク操作前に人間承認を挟むチェックポイントの実装
 
 <!-- BEGIN:GEN:patterns -->
 

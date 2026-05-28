@@ -38,7 +38,7 @@ tags:
 
 ## ハイブリッドアプローチ
 
-[#59 Spectrum Selector](../../glossary.md) のように、サブタスク単位でシングル/マルチを動的に選定する方法があります。ルーティングやトリアージの段階で難易度を判定し、簡単なタスクはシングル、複雑なものだけマルチへ振ります。
+[#59 Spectrum Selector](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) のように、サブタスク単位でシングル/マルチを動的に選定する方法があります。ルーティングやトリアージの段階で難易度を判定し、簡単なタスクはシングル、複雑なものだけマルチへ振ります。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#9 Supervisor & Specialist Agents](../../glossary.md) — 統括役と専門役によるマルチエージェント構成
-- [#59 Workflow-Agent Spectrum Selector](../../glossary.md) — サブタスク毎にシングル/マルチを選定するメタパターン
+- [#9 Supervisor & Specialist Agents](../../decisions/tradeoffs-catalog/single-vs-multi-agent.md) — 統括役と専門役によるマルチエージェント構成
+- [#59 Workflow-Agent Spectrum Selector](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) — サブタスク毎にシングル/マルチを選定するメタパターン
 
 ## 関連ダイヤル
 

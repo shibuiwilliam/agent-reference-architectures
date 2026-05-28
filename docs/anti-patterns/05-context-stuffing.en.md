@@ -112,6 +112,6 @@ response = llm.chat(
 
 ## Related Patterns
 
-- [#24 Context Pack / Assembly](../glossary.md) — Selectively assemble only highly relevant information
-- [#23 Layered Memory](../glossary.md) — Layer memory to optimize access patterns
-- [#25 Memory Write Gate](../glossary.md) — Filter what information to store in the first place
+- [#24 Context Pack / Assembly](../decisions/tradeoffs-catalog/rag-vs-finetuning.md) — Selectively assemble only highly relevant information
+- [#23 Layered Memory](../decisions/tradeoffs-catalog/in-context-vs-external.md) — Layer memory to optimize access patterns
+- [#25 Memory Write Gate](../decisions/dials/memory-write-eagerness.md) — Filter what information to store in the first place

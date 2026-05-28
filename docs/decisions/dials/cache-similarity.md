@@ -51,7 +51,7 @@ LLM呼び出しはコストもレイテンシも大きいため、キャッシ�
 
 ## 関連パターン
 
-- [#38 Semantic Result Cache](../../glossary.md) — 意味的類似度ベースのキャッシュ実装パターン
+- [#38 Semantic Result Cache](../../decisions/dials/cache-similarity.md) — 意味的類似度ベースのキャッシュ実装パターン
 
 <!-- BEGIN:GEN:patterns -->
 

@@ -34,9 +34,9 @@ tags:
 
 ## 防波堤となるパターン
 
-- [#33 Version Pinning](../../glossary.md) — プロンプト・モデル・ツールのバージョンを固定し、意図しない変更を防ぐ
-- [#35 Production Replay](../../glossary.md) — 本番ログを新モデルで再生し、旧モデルとの差異を検出する
-- [#36 Shadow / Canary Deployment](../../glossary.md) — モデル更新を段階的に投入し、問題があれば自動ロールバックする
+- [#33 Version Pinning](../../decisions/dials/prompt-storage.md) — プロンプト・モデル・ツールのバージョンを固定し、意図しない変更を防ぐ
+- [#35 Production Replay](../../foundations/forces/f8-accountability.md) — 本番ログを新モデルで再生し、旧モデルとの差異を検出する
+- [#36 Shadow / Canary Deployment](../../foundations/forces/f9-provider-reliability.md) — モデル更新を段階的に投入し、問題があれば自動ロールバックする
 
 ## 関連する設計判断
 

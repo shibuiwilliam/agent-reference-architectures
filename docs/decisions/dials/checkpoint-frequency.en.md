@@ -50,4 +50,4 @@ Checkpoint serialization and writing adds to each step's latency. For high-frequ
 
 ## Related Patterns
 
-- [#2 Durable Agent Session](../../glossary.md) -- Foundation pattern for checkpoint-based pause and resume
+- [#2 Durable Agent Session](../../decisions/tradeoffs-catalog/in-context-vs-external.md) -- Foundation pattern for checkpoint-based pause and resume

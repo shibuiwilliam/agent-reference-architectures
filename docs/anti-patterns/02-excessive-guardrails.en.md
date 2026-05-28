@@ -105,6 +105,6 @@ else:
 
 ## Related Patterns
 
-- [#30 Policy-as-Code Guardrail](../glossary.md) — Codify guardrails and make them testable
-- [#29 Guardrail Sidecar + Self-Correction](../glossary.md) — Respond with self-correction instead of blocking
-- [#57 Autonomy Ladder](../glossary.md) — Control progressively based on risk level
+- [#30 Policy-as-Code Guardrail](../decisions/tradeoffs-catalog/prompt-vs-code.md) — Codify guardrails and make them testable
+- [#29 Guardrail Sidecar + Self-Correction](../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — Respond with self-correction instead of blocking
+- [#57 Autonomy Ladder](../decisions/dials/autonomy-level.md) — Control progressively based on risk level

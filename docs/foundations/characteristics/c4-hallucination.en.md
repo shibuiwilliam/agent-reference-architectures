@@ -34,8 +34,8 @@ A legal agent cites a non-existent precedent and produces contract review commen
 
 ## Safeguard Patterns
 
-- [#27 Evidence-First Answer](../../glossary.md) -- Retrieve and cite evidence before answering to suppress groundless generation
-- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) -- Inspect output and self-correct or block when factual accuracy is in doubt
+- [#27 Evidence-First Answer](../../decisions/tradeoffs-catalog/rag-vs-finetuning.md) -- Retrieve and cite evidence before answering to suppress groundless generation
+- [#29 Guardrail Sidecar + Self-Correction](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) -- Inspect output and self-correct or block when factual accuracy is in doubt
 
 ## Related Design Decisions
 

@@ -25,7 +25,7 @@ title: Dial x Tradeoff Interactions
 | **Choose Sync** | Timeout ceiling | Constrained to 5–10 seconds |
 | | Self-correction loop count | 1 or fewer (latency constraint) |
 
-→ [#1 Request-to-Job Gateway](../glossary.md), [#58 Sync Facade](../glossary.md)
+→ [#1 Request-to-Job Gateway](../decisions/tradeoffs-catalog/sync-vs-async.md), [#58 Sync Facade](../decisions/tradeoffs-catalog/sync-vs-async.md)
 
 ### What Multi-Agent Changes
 
@@ -36,7 +36,7 @@ title: Dial x Tradeoff Interactions
 | | Exposed tool count | Need to limit per agent |
 | | Orchestration vs. Choreography | A new either-or decision arises |
 
-→ [#9 Supervisor & Specialist](../glossary.md), [#55 Deadline & Budget Cascade](../glossary.md)
+→ [#9 Supervisor & Specialist](../decisions/tradeoffs-catalog/single-vs-multi-agent.md), [#55 Deadline & Budget Cascade](../decisions/dials/budget-cap.md)
 
 ### What Inline Verification Changes
 
@@ -48,7 +48,7 @@ title: Dial x Tradeoff Interactions
 | **Choose Post-hoc Verification** | Log retention period | Need to retain data for verification |
 | | Retry count | Retry strategy changes on verification failure |
 
-→ [#28 Verifier Agent](../glossary.md), [#29 Guardrail Sidecar](../glossary.md)
+→ [#28 Verifier Agent](../decisions/tradeoffs-catalog/inline-vs-post-verification.md), [#29 Guardrail Sidecar](../decisions/tradeoffs-catalog/inline-vs-post-verification.md)
 
 ### What Plan-First Changes
 
@@ -60,7 +60,7 @@ title: Dial x Tradeoff Interactions
 | **Choose ReAct** | Self-correction loop count | Correction needed at each step; count increases |
 | | Timeout | Exploratory nature makes prediction difficult; add margin |
 
-→ [#8 Planner-Executor-Reviewer](../glossary.md), [#50 Editable Plan](../glossary.md)
+→ [#8 Planner-Executor-Reviewer](../decisions/tradeoffs-catalog/plan-vs-react.md), [#50 Editable Plan](../decisions/tradeoffs-catalog/plan-vs-react.md)
 
 ### What Cost Optimization Choices Cascade
 
@@ -71,7 +71,7 @@ title: Dial x Tradeoff Interactions
 | | Temperature | Lower temperature for smaller models (stability-focused) |
 | **Introduce Caching** | Memory TTL | Need alignment between cache TTL and long-term memory TTL |
 
-→ [#37 Semantic Gateway](../glossary.md), [#38 Semantic Result Cache](../glossary.md)
+→ [#37 Semantic Gateway](../decisions/dials/model-tier-routing.md), [#38 Semantic Result Cache](../decisions/dials/cache-similarity.md)
 
 ## How to Handle Interactions
 

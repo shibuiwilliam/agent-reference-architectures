@@ -54,8 +54,8 @@ Situations where the procedure itself cannot be determined in advance and must b
 
 ## Related Patterns
 
-- [#3 Workflow Backbone + Agent Node](../../glossary.md) -- Workflow as the backbone, delegating only decision-requiring nodes to agents
-- [#59 Workflow-Agent Spectrum Selector](../../glossary.md) -- Select the determinism vs. autonomy balance per subtask
-- [#12 Blackboard](../../glossary.md) -- Multiple agents coordinate via a shared blackboard for exploratory tasks
-- [#50 Editable Plan](../../glossary.md) -- Humans edit the agent's plan before execution
-- [#9 Supervisor & Specialist Agents](../../glossary.md) -- Dynamically delegate high-variability tasks to specialist agents
+- [#3 Workflow Backbone + Agent Node](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) -- Workflow as the backbone, delegating only decision-requiring nodes to agents
+- [#59 Workflow-Agent Spectrum Selector](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) -- Select the determinism vs. autonomy balance per subtask
+- [#12 Blackboard](../../decisions/tradeoffs-catalog/orchestration-vs-choreography.md) -- Multiple agents coordinate via a shared blackboard for exploratory tasks
+- [#50 Editable Plan](../../decisions/tradeoffs-catalog/plan-vs-react.md) -- Humans edit the agent's plan before execution
+- [#9 Supervisor & Specialist Agents](../../decisions/tradeoffs-catalog/single-vs-multi-agent.md) -- Dynamically delegate high-variability tasks to specialist agents

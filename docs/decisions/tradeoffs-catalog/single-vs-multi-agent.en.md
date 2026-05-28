@@ -38,7 +38,7 @@ Do not split if a single agent is sufficient. Multi-agent should be considered o
 
 ## Hybrid Approach
 
-As with [#59 Spectrum Selector](../../glossary.md), there is an approach that dynamically selects single/multi on a per-subtask basis. At the routing or triage stage, difficulty is assessed, and simple tasks are handled by a single agent while only complex ones are routed to multi-agent.
+As with [#59 Spectrum Selector](../../decisions/tradeoffs-catalog/workflow-vs-agent.md), there is an approach that dynamically selects single/multi on a per-subtask basis. At the routing or triage stage, difficulty is assessed, and simple tasks are handled by a single agent while only complex ones are routed to multi-agent.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#9 Supervisor & Specialist Agents](../../glossary.md) — Multi-agent configuration with a supervisor and specialist roles
-- [#59 Workflow-Agent Spectrum Selector](../../glossary.md) — A meta-pattern that selects single/multi per subtask
+- [#9 Supervisor & Specialist Agents](../../decisions/tradeoffs-catalog/single-vs-multi-agent.md) — Multi-agent configuration with a supervisor and specialist roles
+- [#59 Workflow-Agent Spectrum Selector](../../decisions/tradeoffs-catalog/workflow-vs-agent.md) — A meta-pattern that selects single/multi per subtask
 
 ## Related Dials
 

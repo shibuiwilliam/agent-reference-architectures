@@ -105,6 +105,6 @@ else:
 
 ## 関連パターン
 
-- [#30 Policy-as-Code Guardrail](../glossary.md) — ガードレールをコード化し、テスト可能にします
-- [#29 Guardrail Sidecar + Self-Correction](../glossary.md) — ブロックではなく自己修正で対応します
-- [#57 Autonomy Ladder](../glossary.md) — リスクに応じて段階的に制御します
+- [#30 Policy-as-Code Guardrail](../decisions/tradeoffs-catalog/prompt-vs-code.md) — ガードレールをコード化し、テスト可能にします
+- [#29 Guardrail Sidecar + Self-Correction](../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — ブロックではなく自己修正で対応します
+- [#57 Autonomy Ladder](../decisions/dials/autonomy-level.md) — リスクに応じて段階的に制御します

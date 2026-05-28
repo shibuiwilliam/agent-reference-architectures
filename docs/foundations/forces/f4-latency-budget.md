@@ -54,11 +54,11 @@ tags:
 
 ## 関連パターン
 
-- [#1 Request-to-Job Gateway](../../glossary.md) — 予算を超えるリクエストを非同期ジョブとして受け付ける
-- [#7 Streaming Progress](../../glossary.md) — 処理中の進捗を逐次ストリーミングし体感待ち時間を短縮する
-- [#58 Sync Facade over Async Core](../../glossary.md) — 短ければ同期、超えたら非同期へ昇格する
-- [#38 Semantic Result Cache](../../glossary.md) — 意味的に近い過去の結果を再利用しレイテンシを削減する
-- [#39 Prompt Cache Optimized Context](../../glossary.md) — 共通プレフィックスでプロンプトキャッシュを効かせる
+- [#1 Request-to-Job Gateway](../../decisions/tradeoffs-catalog/sync-vs-async.md) — 予算を超えるリクエストを非同期ジョブとして受け付ける
+- [#7 Streaming Progress](../../decisions/tradeoffs-catalog/push-vs-pull.md) — 処理中の進捗を逐次ストリーミングし体感待ち時間を短縮する
+- [#58 Sync Facade over Async Core](../../decisions/tradeoffs-catalog/sync-vs-async.md) — 短ければ同期、超えたら非同期へ昇格する
+- [#38 Semantic Result Cache](../../decisions/dials/cache-similarity.md) — 意味的に近い過去の結果を再利用しレイテンシを削減する
+- [#39 Prompt Cache Optimized Context](../../foundations/forces/f7-cost-sensitivity.md) — 共通プレフィックスでプロンプトキャッシュを効かせる
 
 <!-- BEGIN:GEN:patterns -->
 

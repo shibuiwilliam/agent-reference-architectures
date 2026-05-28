@@ -115,7 +115,7 @@ response = output_filter.redact_pii(response, user.role)
 
 ## Related Patterns
 
-- [#44 Dual-LLM Privilege Separation](../glossary.md) — Separate isolated LLM and privileged LLM
-- [#18 Least-Privilege Tool Binding](../glossary.md) — Minimize tool permissions
-- [#20 Sandboxed Tool Runtime](../glossary.md) — Isolate tool execution in a sandbox
-- [#42 Data Boundary Firewall](../glossary.md) — Control data access boundaries
+- [#44 Dual-LLM Privilege Separation](../foundations/forces/f5-input-trust.md) — Separate isolated LLM and privileged LLM
+- [#18 Least-Privilege Tool Binding](../decisions/dials/exposed-tool-count.md) — Minimize tool permissions
+- [#20 Sandboxed Tool Runtime](../foundations/forces/f5-input-trust.md) — Isolate tool execution in a sandbox
+- [#42 Data Boundary Firewall](../foundations/forces/f5-input-trust.md) — Control data access boundaries

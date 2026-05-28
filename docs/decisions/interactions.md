@@ -25,7 +25,7 @@ title: ダイヤル×二者択一の相互作用
 | **同期を選ぶ** | タイムアウト上限 | 5〜10秒に制約 |
 | | 自己修正ループ回数 | 1回以下（レイテンシ制約） |
 
-→ [#1 Request-to-Job Gateway](../glossary.md), [#58 Sync Facade](../glossary.md)
+→ [#1 Request-to-Job Gateway](../decisions/tradeoffs-catalog/sync-vs-async.md), [#58 Sync Facade](../decisions/tradeoffs-catalog/sync-vs-async.md)
 
 ### マルチエージェントの選択が変えるもの
 
@@ -36,7 +36,7 @@ title: ダイヤル×二者択一の相互作用
 | | 露出ツール数 | エージェント毎に絞る必要 |
 | | 中央集権↔コレオグラフィ | 新たな二者択一が発生 |
 
-→ [#9 Supervisor & Specialist](../glossary.md), [#55 Deadline & Budget Cascade](../glossary.md)
+→ [#9 Supervisor & Specialist](../decisions/tradeoffs-catalog/single-vs-multi-agent.md), [#55 Deadline & Budget Cascade](../decisions/dials/budget-cap.md)
 
 ### インライン検証の選択が変えるもの
 
@@ -48,7 +48,7 @@ title: ダイヤル×二者択一の相互作用
 | **事後検証を選ぶ** | ログ保持期間 | 検証用データの保持が必要 |
 | | リトライ回数 | 検証失敗時のリトライ戦略が変わる |
 
-→ [#28 Verifier Agent](../glossary.md), [#29 Guardrail Sidecar](../glossary.md)
+→ [#28 Verifier Agent](../decisions/tradeoffs-catalog/inline-vs-post-verification.md), [#29 Guardrail Sidecar](../decisions/tradeoffs-catalog/inline-vs-post-verification.md)
 
 ### Plan先行の選択が変えるもの
 
@@ -60,7 +60,7 @@ title: ダイヤル×二者択一の相互作用
 | **ReActを選ぶ** | 自己修正ループ回数 | 各ステップでの修正が必要。回数増 |
 | | タイムアウト | 探索的なため予測困難。余裕を持たせる |
 
-→ [#8 Planner-Executor-Reviewer](../glossary.md), [#50 Editable Plan](../glossary.md)
+→ [#8 Planner-Executor-Reviewer](../decisions/tradeoffs-catalog/plan-vs-react.md), [#50 Editable Plan](../decisions/tradeoffs-catalog/plan-vs-react.md)
 
 ### コスト最適化の選択が連鎖するもの
 
@@ -71,7 +71,7 @@ title: ダイヤル×二者択一の相互作用
 | | 温度 | 小モデル向けは低温度（安定重視） |
 | **キャッシュを入れる** | メモリTTL | キャッシュTTLと長期メモリTTLの整合が必要 |
 
-→ [#37 Semantic Gateway](../glossary.md), [#38 Semantic Result Cache](../glossary.md)
+→ [#37 Semantic Gateway](../decisions/dials/model-tier-routing.md), [#38 Semantic Result Cache](../decisions/dials/cache-similarity.md)
 
 ## 相互作用の扱い方
 

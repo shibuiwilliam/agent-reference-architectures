@@ -53,11 +53,11 @@ LLMベースのエージェントは自然言語を理解するがゆえに、�
 
 ## 関連パターン
 
-- [#42 Data Boundary Firewall](../../glossary.md) — 入出力でPII・機密情報を検査・マスクする
-- [#44 Dual-LLM Privilege Separation](../../glossary.md) — 入力処理と特権操作を別LLMに分離する
-- [#43 Confused-Deputy Damage Limitation](../../glossary.md) — 騙されても被害半径を制限する
-- [#18 Least-Privilege Tool Binding](../../glossary.md) — セッション毎に最小権限を束縛する
-- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) — 入出力を検査し不正を検出・修正する
+- [#42 Data Boundary Firewall](../../foundations/forces/f5-input-trust.md) — 入出力でPII・機密情報を検査・マスクする
+- [#44 Dual-LLM Privilege Separation](../../foundations/forces/f5-input-trust.md) — 入力処理と特権操作を別LLMに分離する
+- [#43 Confused-Deputy Damage Limitation](../../foundations/forces/f5-input-trust.md) — 騙されても被害半径を制限する
+- [#18 Least-Privilege Tool Binding](../../decisions/dials/exposed-tool-count.md) — セッション毎に最小権限を束縛する
+- [#29 Guardrail Sidecar + Self-Correction](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — 入出力を検査し不正を検出・修正する
 
 <!-- BEGIN:GEN:patterns -->
 

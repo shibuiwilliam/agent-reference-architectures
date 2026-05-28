@@ -103,6 +103,6 @@ else:
 
 ## 関連パターン
 
-- [#59 Workflow-Agent Spectrum Selector](../glossary.md) — サブタスクごとに自律性の必要度を判定します
-- [#3 Workflow Backbone + Agent Node](../glossary.md) — ワークフローとエージェントのハイブリッド
-- [#11 Deterministic Core, Probabilistic Edge](../glossary.md) — 決定論的な骨格と確率的な末端の分離
+- [#59 Workflow-Agent Spectrum Selector](../decisions/tradeoffs-catalog/workflow-vs-agent.md) — サブタスクごとに自律性の必要度を判定します
+- [#3 Workflow Backbone + Agent Node](../decisions/tradeoffs-catalog/workflow-vs-agent.md) — ワークフローとエージェントのハイブリッド
+- [#11 Deterministic Core, Probabilistic Edge](../decisions/tradeoffs-catalog/prompt-vs-code.md) — 決定論的な骨格と確率的な末端の分離

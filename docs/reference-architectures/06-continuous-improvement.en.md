@@ -49,12 +49,12 @@ flowchart LR
 
 | Layer | Pattern | Role | Why It's Needed |
 |---|---------|------|-----------|
-| Pinning | [#33 Version Pinning](../glossary.md) | Reproducibility assurance | Without fixed model, prompt, and data versions, "when quality changed" can't be identified |
-| Evaluation | [#34 Evaluation CI/CD](../glossary.md) | Automated regression detection per change | Manual testing can't comprehensively verify change impact |
-| Replay | [#35 Production Replay](../glossary.md) | Old/new comparison | Synthetic tests can't reproduce production traffic diversity |
-| Deployment | [#36 Shadow / Canary Deployment](../glossary.md) | Staged rollout | Switching all traffic at once creates too large a blast radius when issues arise |
-| Change Management | [#53 Agent Change Management](../glossary.md) | Change process discipline | Without records of who changed what, when, and why, root cause tracking for quality degradation is impossible |
-| Observability | [#54 Tiered Observability](../glossary.md) | Cost-efficient observability | Retaining all traces at full volume causes storage cost explosion |
+| Pinning | [#33 Version Pinning](../decisions/dials/prompt-storage.md) | Reproducibility assurance | Without fixed model, prompt, and data versions, "when quality changed" can't be identified |
+| Evaluation | [#34 Evaluation CI/CD](../foundations/forces/f8-accountability.md) | Automated regression detection per change | Manual testing can't comprehensively verify change impact |
+| Replay | [#35 Production Replay](../foundations/forces/f8-accountability.md) | Old/new comparison | Synthetic tests can't reproduce production traffic diversity |
+| Deployment | [#36 Shadow / Canary Deployment](../foundations/forces/f9-provider-reliability.md) | Staged rollout | Switching all traffic at once creates too large a blast radius when issues arise |
+| Change Management | [#53 Agent Change Management](../foundations/forces/f8-accountability.md) | Change process discipline | Without records of who changed what, when, and why, root cause tracking for quality degradation is impossible |
+| Observability | [#54 Tiered Observability](../decisions/dials/trace-sampling-rate.md) | Cost-efficient observability | Retaining all traces at full volume causes storage cost explosion |
 
 ## Layer Details
 
@@ -85,7 +85,7 @@ Trace storage uses hot (recent, full volume) and cold (historical, sampled) tier
 ## What Can Be Omitted / What to Consider Adding
 
 - **Can omit**: At the prototype stage or with few users, simple Blue/Green deployment suffices over Shadow/Canary Deployment. Production Replay is also less effective until sufficient production traffic accumulates
-- **Consider adding**: If `[F2]` is high, incorporate [#28 Verifier Agent / Critic](../glossary.md) into the evaluation pipeline. If cost observability is important, integrate [#37 Semantic Gateway](../glossary.md) metrics into Tiered Observability
+- **Consider adding**: If `[F2]` is high, incorporate [#28 Verifier Agent / Critic](../decisions/tradeoffs-catalog/inline-vs-post-verification.md) into the evaluation pipeline. If cost observability is important, integrate [#37 Semantic Gateway](../decisions/dials/model-tier-routing.md) metrics into Tiered Observability
 
 ## Concrete Scenario
 
@@ -103,8 +103,8 @@ Agent Change Management records all changes and auto-generates reports for regul
 
 - If `[F2]` increases -> Incorporate [Factuality-First Configuration](04-factuality-first.md) Verifier Agent and Evidence-First into the evaluation pipeline
 - If `[F7]` increases -> Optimize observability costs themselves using [Cost-First Configuration](05-cost-first.md) techniques
-- As the team grows -> Define cross-organization quality standards with [#52 Agent Constitution](../glossary.md)
-- To increase autonomy -> Link [#57 Autonomy Ladder](../glossary.md) with Evaluation CI/CD to auto-adjust autonomy based on quality scores
+- As the team grows -> Define cross-organization quality standards with [#52 Agent Constitution](../foundations/forces/f8-accountability.md)
+- To increase autonomy -> Link [#57 Autonomy Ladder](../decisions/dials/autonomy-level.md) with Evaluation CI/CD to auto-adjust autonomy based on quality scores
 
 ## Related Configurations
 

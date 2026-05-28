@@ -51,4 +51,4 @@ Output randomness increases, leading to more hallucinations and context-divergen
 
 ## Related Patterns
 
-- [#33 Version Pinning](../../glossary.md) -- Pin prompts, models, and parameters to ensure reproducibility
+- [#33 Version Pinning](../../decisions/dials/prompt-storage.md) -- Pin prompts, models, and parameters to ensure reproducibility

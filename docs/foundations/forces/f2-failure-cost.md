@@ -56,11 +56,11 @@ tags:
 
 ## 関連パターン
 
-- [#28 Verifier Agent / Critic](../../glossary.md) — 独立した検証器で出荷前検査を行う
-- [#31 Human Approval Checkpoint](../../glossary.md) — 高リスク操作の前に人間承認を挟む
-- [#30 Policy-as-Code Guardrail](../../glossary.md) — 制約をコード化して機械的に判定する
-- [#10 Agent Ensemble & Debate](../../glossary.md) — 複数エージェントの合議で頑健性を高める
-- [#8 Planner-Executor-Reviewer](../../glossary.md) — 計画・実行・検証を分離し、各段階で品質を担保する
+- [#28 Verifier Agent / Critic](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — 独立した検証器で出荷前検査を行う
+- [#31 Human Approval Checkpoint](../../decisions/dials/autonomy-level.md) — 高リスク操作の前に人間承認を挟む
+- [#30 Policy-as-Code Guardrail](../../decisions/tradeoffs-catalog/prompt-vs-code.md) — 制約をコード化して機械的に判定する
+- [#10 Agent Ensemble & Debate](../../decisions/tradeoffs-catalog/same-vs-different-model.md) — 複数エージェントの合議で頑健性を高める
+- [#8 Planner-Executor-Reviewer](../../decisions/tradeoffs-catalog/plan-vs-react.md) — 計画・実行・検証を分離し、各段階で品質を担保する
 
 <!-- BEGIN:GEN:patterns -->
 

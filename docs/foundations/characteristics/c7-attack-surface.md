@@ -34,9 +34,9 @@ tags:
 
 ## 防波堤となるパターン
 
-- [#42 Data Boundary Firewall](../../glossary.md) — 入出力でPII・機密情報を検査・マスクし、漏洩を防ぐ
-- [#43 Confused-Deputy Damage Limitation](../../glossary.md) — エージェントが騙されても被害半径を制限する
-- [#44 Dual-LLM Privilege Separation](../../glossary.md) — 隔離LLMと特権LLMを分離し、信頼できない入力がツール実行に直結しない構造にする
+- [#42 Data Boundary Firewall](../../foundations/forces/f5-input-trust.md) — 入出力でPII・機密情報を検査・マスクし、漏洩を防ぐ
+- [#43 Confused-Deputy Damage Limitation](../../foundations/forces/f5-input-trust.md) — エージェントが騙されても被害半径を制限する
+- [#44 Dual-LLM Privilege Separation](../../foundations/forces/f5-input-trust.md) — 隔離LLMと特権LLMを分離し、信頼できない入力がツール実行に直結しない構造にする
 
 ## 関連する設計判断
 

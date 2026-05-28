@@ -1,7 +1,7 @@
 # Decision Core — AI Agent Architecture Patterns
 
 > This file contains the decision-making data needed for architecture proposals.
-> Pattern details are in `catalog.json` and `glossary.md`.
+> Pattern details are in `catalog.json`.
 
 ## Forces (F1–F9)
 

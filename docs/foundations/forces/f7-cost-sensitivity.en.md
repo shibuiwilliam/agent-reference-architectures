@@ -56,8 +56,8 @@ Situations with high request volumes and strict cost caps. B2C service LLM respo
 
 ## Related Patterns
 
-- [#38 Semantic Result Cache](../../glossary.md) -- Reuse semantically similar results to reduce API calls
-- [#56 Adaptive Effort](../../glossary.md) -- Scale compute effort up or down by difficulty
-- [#37 Semantic Gateway & Cost-Aware Router](../../glossary.md) -- Dynamically select models with cost awareness
-- [#5 Time-Budgeted Agent Loop](../../glossary.md) -- Budget time, iterations, and cost to prevent loop runaway
-- [#55 Deadline & Budget Cascade](../../glossary.md) -- Propagate budget caps down the call tree
+- [#38 Semantic Result Cache](../../decisions/dials/cache-similarity.md) -- Reuse semantically similar results to reduce API calls
+- [#56 Adaptive Effort](../../foundations/forces/f7-cost-sensitivity.md) -- Scale compute effort up or down by difficulty
+- [#37 Semantic Gateway & Cost-Aware Router](../../decisions/dials/model-tier-routing.md) -- Dynamically select models with cost awareness
+- [#5 Time-Budgeted Agent Loop](../../decisions/dials/budget-cap.md) -- Budget time, iterations, and cost to prevent loop runaway
+- [#55 Deadline & Budget Cascade](../../decisions/dials/budget-cap.md) -- Propagate budget caps down the call tree

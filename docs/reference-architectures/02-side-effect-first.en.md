@@ -50,13 +50,13 @@ flowchart LR
 
 | Layer | Pattern | Role | Why It's Needed |
 |---|---------|------|-----------|
-| Intake | [#1 Request-to-Job Gateway](../glossary.md) | Async intake | Processing can take minutes to hours including approval wait |
-| Backbone | [#3 Workflow Backbone + Agent Node](../glossary.md) | Deterministic flow control | Side-effect execution order can't be left to LLM whims |
-| Compensation | [#4 Agent Saga](../glossary.md) | Rollback on failure | Without compensation for already-executed operations on mid-process failure, data becomes inconsistent |
-| Approval | [#31 Human Approval Checkpoint](../glossary.md) | Human approval before high-risk operations | Letting machines alone execute irreversible operations is too risky |
-| Tool | [#19 Dry-Run First Tool Execution](../glossary.md) | Simulated execution of side effects | Without previewing "what will happen" before execution, approvers can't make informed decisions |
-| Output | [#15 Inverted Structured Output](../glossary.md) | LLM decides only, code executes | If the LLM directly calls APIs, parameter errors can't be prevented |
-| Observability | [#32 Agent Trace](../glossary.md) | Full operation tracking | Without audit trails of what was executed, root cause identification during incidents is impossible |
+| Intake | [#1 Request-to-Job Gateway](../decisions/tradeoffs-catalog/sync-vs-async.md) | Async intake | Processing can take minutes to hours including approval wait |
+| Backbone | [#3 Workflow Backbone + Agent Node](../decisions/tradeoffs-catalog/workflow-vs-agent.md) | Deterministic flow control | Side-effect execution order can't be left to LLM whims |
+| Compensation | [#4 Agent Saga](../decisions/dials/checkpoint-frequency.md) | Rollback on failure | Without compensation for already-executed operations on mid-process failure, data becomes inconsistent |
+| Approval | [#31 Human Approval Checkpoint](../decisions/dials/autonomy-level.md) | Human approval before high-risk operations | Letting machines alone execute irreversible operations is too risky |
+| Tool | [#19 Dry-Run First Tool Execution](../foundations/forces/f1-reversibility.md) | Simulated execution of side effects | Without previewing "what will happen" before execution, approvers can't make informed decisions |
+| Output | [#15 Inverted Structured Output](../decisions/tradeoffs-catalog/llm-vs-tool.md) | LLM decides only, code executes | If the LLM directly calls APIs, parameter errors can't be prevented |
+| Observability | [#32 Agent Trace](../decisions/dials/trace-sampling-rate.md) | Full operation tracking | Without audit trails of what was executed, root cause identification during incidents is impossible |
 
 ## Layer Details
 
@@ -91,7 +91,7 @@ All LLM calls, tool executions, approval decisions, and Saga compensations are r
 ## What Can Be Omitted / What to Consider Adding
 
 - **Can omit**: If all operations are low-risk, Human Approval Checkpoint can be relaxed to threshold-based. Agent Saga can also be omitted if only idempotent operations are involved
-- **Consider adding**: If `[F5]` is low, layer [Untrusted Input Configuration](03-untrusted-input.md) security layers. If `[F8]` increases, ensure reproducibility with [#33 Version Pinning](../glossary.md)
+- **Consider adding**: If `[F5]` is low, layer [Untrusted Input Configuration](03-untrusted-input.md) security layers. If `[F8]` increases, ensure reproducibility with [#33 Version Pinning](../decisions/dials/prompt-storage.md)
 
 ## Concrete Scenario
 
@@ -106,7 +106,7 @@ Dry-Run First previews "Refund amount: 12,800 yen, refund to: credit card ending
 - If `[F5]` decreases -> Add [Untrusted Input Configuration](03-untrusted-input.md) Data Boundary Firewall, Dual-LLM separation
 - If `[F7]` increases -> Use [Cost-First Configuration](05-cost-first.md) routing to direct low-risk operations to lightweight models
 - If `[F8]` increases -> Introduce [Continuous Improvement Configuration](06-continuous-improvement.md) Evaluation CI/CD for regression detection
-- To increase autonomy -> Gradually omit approval with [#57 Autonomy Ladder](../glossary.md)
+- To increase autonomy -> Gradually omit approval with [#57 Autonomy Ladder](../decisions/dials/autonomy-level.md)
 
 ## Related Configurations
 

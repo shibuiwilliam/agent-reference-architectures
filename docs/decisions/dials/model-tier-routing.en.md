@@ -52,4 +52,4 @@ Requests that truly need the high-performance model are sent to the smaller mode
 
 ## Related Patterns
 
-- [#37 Semantic Gateway / Cost-Aware Router](../../glossary.md) -- Implementation pattern for model tier routing
+- [#37 Semantic Gateway / Cost-Aware Router](../../decisions/dials/model-tier-routing.md) -- Implementation pattern for model tier routing

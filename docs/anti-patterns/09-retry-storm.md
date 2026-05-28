@@ -118,6 +118,6 @@ async def chat(self, prompt):
 
 ## 関連パターン
 
-- [#40 Fallback & Graceful Degradation](../glossary.md) — リトライが失敗した場合の縮退運転
-- [#5 Time-Budgeted Agent Loop](../glossary.md) — リトライを含めた全体の予算管理
-- [#37 Semantic Gateway & Cost-Aware Router](../glossary.md) — 別プロバイダへの動的ルーティング
+- [#40 Fallback & Graceful Degradation](../decisions/tradeoffs-catalog/fail-fast-vs-degradation.md) — リトライが失敗した場合の縮退運転
+- [#5 Time-Budgeted Agent Loop](../decisions/dials/budget-cap.md) — リトライを含めた全体の予算管理
+- [#37 Semantic Gateway & Cost-Aware Router](../decisions/dials/model-tier-routing.md) — 別プロバイダへの動的ルーティング

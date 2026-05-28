@@ -34,9 +34,9 @@ Costs that were 10,000 yen per month during development jump to 1,000,000 yen pe
 
 ## Safeguard Patterns
 
-- [#38 Semantic Result Cache](../../glossary.md) -- Reuse semantically similar past results to reduce LLM calls altogether
-- [#39 Prompt Cache Optimized Context](../../glossary.md) -- Reduce input token cost through common prefix caching
-- [#56 Adaptive Effort](../../glossary.md) -- Scale compute effort up or down by task difficulty to optimize cost efficiency
+- [#38 Semantic Result Cache](../../decisions/dials/cache-similarity.md) -- Reuse semantically similar past results to reduce LLM calls altogether
+- [#39 Prompt Cache Optimized Context](../../foundations/forces/f7-cost-sensitivity.md) -- Reduce input token cost through common prefix caching
+- [#56 Adaptive Effort](../../foundations/forces/f7-cost-sensitivity.md) -- Scale compute effort up or down by task difficulty to optimize cost efficiency
 
 ## Related Design Decisions
 

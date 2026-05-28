@@ -34,9 +34,9 @@ The most painful situation in production is "a test that passed yesterday fails 
 
 ## Safeguard Patterns
 
-- [#14 Structured Output Contract](../../glossary.md) -- Constrain output with a schema to reduce structural variability
-- [#28 Verifier Agent / Critic](../../glossary.md) -- Inspect output quality with an independent verifier before shipment
-- [#34 Evaluation CI/CD](../../glossary.md) -- Automatically run statistical quality evaluations per change to detect regressions
+- [#14 Structured Output Contract](../../decisions/tradeoffs-catalog/structured-vs-freeform.md) -- Constrain output with a schema to reduce structural variability
+- [#28 Verifier Agent / Critic](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) -- Inspect output quality with an independent verifier before shipment
+- [#34 Evaluation CI/CD](../../foundations/forces/f8-accountability.md) -- Automatically run statistical quality evaluations per change to detect regressions
 
 ## Related Design Decisions
 

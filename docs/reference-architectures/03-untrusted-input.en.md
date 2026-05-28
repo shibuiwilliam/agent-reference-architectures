@@ -48,12 +48,12 @@ flowchart LR
 
 | Layer | Pattern | Role | Why It's Needed |
 |---|---------|------|-----------|
-| Boundary | [#13 Natural Language Boundary Adapter](../glossary.md) | Input structuring | Passing natural language directly to the LLM blurs the boundary between instructions and input, making injection easier |
-| Inspection | [#42 Data Boundary Firewall](../glossary.md) | PII/injection inspection | Without pre-detecting and removing PII or malicious prompts from input, leakage and malfunction occur downstream |
-| Separation | [#44 Dual-LLM Privilege Separation](../glossary.md) | Isolated LLM and privileged LLM separation | Without separating the LLM handling user input from the LLM with tool execution privileges, injection can directly manipulate tools |
-| Permissions | [#18 Least-Privilege Tool Binding](../glossary.md) | Least privilege | Granting full access to all tools allows unlimited damage |
-| Blast Radius | [#43 Confused-Deputy Damage Limitation](../glossary.md) | Blast radius limitation | Even with minimum privileges, damage can occur within the remaining permission scope. Set caps on operation rates, affected record counts, and amounts |
-| Guardrail | [#29 Guardrail Sidecar + Self-Correction](../glossary.md) | Output inspection | Both input and output need inspection. Attackers have techniques to extract information through output |
+| Boundary | [#13 Natural Language Boundary Adapter](../foundations/forces/f5-input-trust.md) | Input structuring | Passing natural language directly to the LLM blurs the boundary between instructions and input, making injection easier |
+| Inspection | [#42 Data Boundary Firewall](../foundations/forces/f5-input-trust.md) | PII/injection inspection | Without pre-detecting and removing PII or malicious prompts from input, leakage and malfunction occur downstream |
+| Separation | [#44 Dual-LLM Privilege Separation](../foundations/forces/f5-input-trust.md) | Isolated LLM and privileged LLM separation | Without separating the LLM handling user input from the LLM with tool execution privileges, injection can directly manipulate tools |
+| Permissions | [#18 Least-Privilege Tool Binding](../decisions/dials/exposed-tool-count.md) | Least privilege | Granting full access to all tools allows unlimited damage |
+| Blast Radius | [#43 Confused-Deputy Damage Limitation](../foundations/forces/f5-input-trust.md) | Blast radius limitation | Even with minimum privileges, damage can occur within the remaining permission scope. Set caps on operation rates, affected record counts, and amounts |
+| Guardrail | [#29 Guardrail Sidecar + Self-Correction](../decisions/tradeoffs-catalog/inline-vs-post-verification.md) | Output inspection | Both input and output need inspection. Attackers have techniques to extract information through output |
 
 ## Layer Details
 
@@ -84,7 +84,7 @@ Inspects LLM output for sensitive information leakage, inappropriate content, an
 ## What Can Be Omitted / What to Consider Adding
 
 - **Can omit**: If the input source is limited to authenticated internal users only, Dual-LLM separation can be simplified (though complete omission is not recommended)
-- **Consider adding**: In multi-tenant environments, add [#41 Tenant-Isolated Agent Runtime](../glossary.md) for tenant isolation. When side effects are involved, layer [Side-Effect-First Configuration](02-side-effect-first.md) Saga and approval layers
+- **Consider adding**: In multi-tenant environments, add [#41 Tenant-Isolated Agent Runtime](../foundations/forces/f5-input-trust.md) for tenant isolation. When side effects are involved, layer [Side-Effect-First Configuration](02-side-effect-first.md) Saga and approval layers
 
 ## Concrete Scenario
 
@@ -99,7 +99,7 @@ The structured intent passes to the Dual-LLM isolated LLM. The isolated LLM dete
 - If `[F2]` increases -> Add [Side-Effect-First Configuration](02-side-effect-first.md) Human Approval and Agent Saga
 - If `[F7]` increases -> Reuse inspected queries with [Cost-First Configuration](05-cost-first.md) Semantic Cache
 - If `[F8]` increases -> Automate security-related regression tests with [Continuous Improvement Configuration](06-continuous-improvement.md)
-- As attack patterns evolve -> Manage rules as code with [#30 Policy-as-Code Guardrail](../glossary.md) for rapid updates
+- As attack patterns evolve -> Manage rules as code with [#30 Policy-as-Code Guardrail](../decisions/tradeoffs-catalog/prompt-vs-code.md) for rapid updates
 
 ## Related Configurations
 

@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#28 Verifier Agent / Critic](../../glossary.md) — Design pattern for an independent verification agent
-- [#44 Dual-LLM Privilege Separation](../../glossary.md) — Using different LLMs from a security perspective
+- [#28 Verifier Agent / Critic](../../decisions/tradeoffs-catalog/inline-vs-post-verification.md) — Design pattern for an independent verification agent
+- [#44 Dual-LLM Privilege Separation](../../foundations/forces/f5-input-trust.md) — Using different LLMs from a security perspective
 
 ## Related Dials
 

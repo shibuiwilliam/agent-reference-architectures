@@ -38,7 +38,7 @@ AIエージェントは、プロトタイプならすぐ動きます。しかし
 1. `_agent/README.md` を読む — エントリポイント・決定アルゴリズム・制約
 2. `_agent/decision-core.md` を読む — フォース F1–F9 を評価し、ルールを照合
 3. `_agent/pattern-cards.json` から候補パターンの構造化サマリを取得
-4. 詳細が必要なパターンは `glossary.md` または `catalog.json` を参照
+4. 詳細が必要なパターンは各意思決定ページまたは `catalog.json` を参照
 5. `_agent/proposal-template.md` に従って提案を出力
 
 → 詳しくは **[`_agent/README.md`](https://github.com/shibuiwilliam/agent-reference-architectures/blob/main/_agent/README.md)** へ
