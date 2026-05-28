@@ -52,4 +52,4 @@ Tokens are wasted on structurally unsolvable problems (model capability limits o
 
 ## Related Patterns
 
-- [#29 Guardrail Sidecar + Self-Correction](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) -- Implementation pattern for self-correction loops
+- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) -- Implementation pattern for self-correction loops

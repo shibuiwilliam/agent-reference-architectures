@@ -38,7 +38,7 @@ LLMがツールの選択・実行順序・終了条件を動的に判断しま�
 
 ## ハイブリッドアプローチ
 
-[#59 Spectrum Selector](../../patterns/01-execution/59-workflow-agent-spectrum-selector.md) はサブタスク毎にワークフローかエージェントかを動的に選定します。[#3 Workflow Backbone](../../patterns/01-execution/03-workflow-backbone-agent-node.md) は骨格をワークフローで固め、判断が必要なノードだけをエージェントに委ねります。両者とも「決定論でカバーできる範囲を最大化し、自律は必要最小限に」という戦略を取ります。
+[#59 Spectrum Selector](../../glossary.md) はサブタスク毎にワークフローかエージェントかを動的に選定します。[#3 Workflow Backbone](../../glossary.md) は骨格をワークフローで固め、判断が必要なノードだけをエージェントに委ねります。両者とも「決定論でカバーできる範囲を最大化し、自律は必要最小限に」という戦略を取ります。
 
 ## 判断フローチャート
 
@@ -52,9 +52,9 @@ flowchart TD
 
 ## 関連パターン
 
-- [#3 Workflow Backbone + Agent Node](../../patterns/01-execution/03-workflow-backbone-agent-node.md) — 決定論骨格にエージェントノードを組み込むハイブリッド
-- [#11 Deterministic Core, Probabilistic Edge](../../patterns/02-composition/11-deterministic-core-probabilistic-edge.md) — 中核を決定論で固め周辺だけAIにする設計原則
-- [#59 Workflow-Agent Spectrum Selector](../../patterns/01-execution/59-workflow-agent-spectrum-selector.md) — サブタスク単位で選定するメタパターン
+- [#3 Workflow Backbone + Agent Node](../../glossary.md) — 決定論骨格にエージェントノードを組み込むハイブリッド
+- [#11 Deterministic Core, Probabilistic Edge](../../glossary.md) — 中核を決定論で固め周辺だけAIにする設計原則
+- [#59 Workflow-Agent Spectrum Selector](../../glossary.md) — サブタスク単位で選定するメタパターン
 
 ## 関連ダイヤル
 

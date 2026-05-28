@@ -118,6 +118,6 @@ async def chat(self, prompt):
 
 ## Related Patterns
 
-- [#40 Fallback & Graceful Degradation](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — Graceful degradation when retries fail
-- [#5 Time-Budgeted Agent Loop](../patterns/01-execution/05-time-budgeted-agent-loop.md) — Overall budget management including retries
-- [#37 Semantic Gateway & Cost-Aware Router](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — Dynamic routing to alternative providers
+- [#40 Fallback & Graceful Degradation](../glossary.md) — Graceful degradation when retries fail
+- [#5 Time-Budgeted Agent Loop](../glossary.md) — Overall budget management including retries
+- [#37 Semantic Gateway & Cost-Aware Router](../glossary.md) — Dynamic routing to alternative providers

@@ -52,7 +52,7 @@ tags:
 
 ## 関連パターン
 
-- [#37 Semantic Gateway / Cost-Aware Router](../../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — モデル階層ルーティングの実装パターン
+- [#37 Semantic Gateway / Cost-Aware Router](../../glossary.md) — モデル階層ルーティングの実装パターン
 
 <!-- BEGIN:GEN:patterns -->
 

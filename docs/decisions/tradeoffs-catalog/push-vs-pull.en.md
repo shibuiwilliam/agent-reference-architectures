@@ -38,7 +38,7 @@ Default to push. AI agent processing often takes seconds to minutes, and users w
 
 ## Hybrid Approach
 
-Use push as the primary mechanism while providing a polling endpoint as a fallback for when connections drop or Webhook delivery fails. [#7 Streaming Progress](../../patterns/01-execution/07-streaming-progress.md) is the implementation pattern for push-based progress delivery, and it is common to co-locate a polling status API.
+Use push as the primary mechanism while providing a polling endpoint as a fallback for when connections drop or Webhook delivery fails. [#7 Streaming Progress](../../glossary.md) is the implementation pattern for push-based progress delivery, and it is common to co-locate a polling status API.
 
 ## Decision Flowchart
 
@@ -52,7 +52,7 @@ flowchart TD
 
 ## Related Patterns
 
-- [#7 Streaming Progress](../../patterns/01-execution/07-streaming-progress.md) — Design pattern for push-based progress streaming
+- [#7 Streaming Progress](../../glossary.md) — Design pattern for push-based progress streaming
 
 ## Related Dials
 

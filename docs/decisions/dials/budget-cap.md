@@ -52,8 +52,8 @@ tags:
 
 ## 関連パターン
 
-- [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — 時間・回数・コストを予算化してループを制御する
-- [#55 Deadline & Budget Cascade](../../patterns/01-execution/55-deadline-budget-cascade.md) — 予算を呼び出しツリー全体に伝播する
+- [#5 Time-Budgeted Agent Loop](../../glossary.md) — 時間・回数・コストを予算化してループを制御する
+- [#55 Deadline & Budget Cascade](../../glossary.md) — 予算を呼び出しツリー全体に伝播する
 
 <!-- BEGIN:GEN:patterns -->
 

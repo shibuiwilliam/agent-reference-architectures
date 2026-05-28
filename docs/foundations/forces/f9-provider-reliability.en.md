@@ -53,8 +53,8 @@ Situations where availability and vendor lock-in are major concerns. Mission-cri
 
 ## Related Patterns
 
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) -- Continue with staged degradation on failure
-- [#45 Agent Runtime Abstraction](../../patterns/10-deployment/45-agent-runtime-abstraction.md) -- Abstract the execution platform to be provider-agnostic
-- [#46 Model Behavior Compatibility Layer](../../patterns/10-deployment/46-model-behavior-compatibility-layer.md) -- A compatibility layer that absorbs behavioral differences between models
-- [#36 Shadow / Canary Deployment](../../patterns/07-observability/36-shadow-canary-deployment.md) -- Gradually verify switching to new providers/models
-- [#53 Agent Change Management](../../patterns/12-governance/53-agent-change-management.md) -- Change management processes including provider changes
+- [#40 Fallback & Graceful Degradation](../../glossary.md) -- Continue with staged degradation on failure
+- [#45 Agent Runtime Abstraction](../../glossary.md) -- Abstract the execution platform to be provider-agnostic
+- [#46 Model Behavior Compatibility Layer](../../glossary.md) -- A compatibility layer that absorbs behavioral differences between models
+- [#36 Shadow / Canary Deployment](../../glossary.md) -- Gradually verify switching to new providers/models
+- [#53 Agent Change Management](../../glossary.md) -- Change management processes including provider changes

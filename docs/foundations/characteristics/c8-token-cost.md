@@ -34,9 +34,9 @@ tags:
 
 ## 防波堤となるパターン
 
-- [#38 Semantic Result Cache](../../patterns/08-cost-scaling/38-semantic-result-cache.md) — 意味的に近い過去の結果を再利用し、LLM呼び出し自体を削減する
-- [#39 Prompt Cache Optimized Context](../../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md) — 共通プレフィックスのキャッシュで入力トークンコストを削減する
-- [#56 Adaptive Effort](../../patterns/08-cost-scaling/56-adaptive-effort.md) — タスクの難易度に応じて投入する計算量を増減し、コスト効率を最適化する
+- [#38 Semantic Result Cache](../../glossary.md) — 意味的に近い過去の結果を再利用し、LLM呼び出し自体を削減する
+- [#39 Prompt Cache Optimized Context](../../glossary.md) — 共通プレフィックスのキャッシュで入力トークンコストを削減する
+- [#56 Adaptive Effort](../../glossary.md) — タスクの難易度に応じて投入する計算量を増減し、コスト効率を最適化する
 
 ## 関連する設計判断
 

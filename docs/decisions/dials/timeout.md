@@ -50,8 +50,8 @@ LLMの推論やツール呼び出しが完了する前にリクエストが打�
 
 ## 関連パターン
 
-- [#1 Request-to-Job Gateway](../../patterns/01-execution/01-request-to-job-gateway.md) — 同期タイムアウトを超えるリクエストを非同期ジョブへ切り替える入口
-- [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — タイムアウトをエージェントループ内の予算として内在化する
+- [#1 Request-to-Job Gateway](../../glossary.md) — 同期タイムアウトを超えるリクエストを非同期ジョブへ切り替える入口
+- [#5 Time-Budgeted Agent Loop](../../glossary.md) — タイムアウトをエージェントループ内の予算として内在化する
 
 <!-- BEGIN:GEN:patterns -->
 

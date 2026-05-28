@@ -34,11 +34,11 @@ tags:
 
 ## デフォルト（迷ったら）
 
-差別化要素（コアのエージェントロジック、ドメイン固有の判断）はビルド。汎用機能（認証、ロギング、モニタリング、基盤ランタイム）はバイ。判断に迷ったら [#45 Runtime Abstraction](../../patterns/10-deployment/45-agent-runtime-abstraction.md) で抽象化層を挟み、後からの切替を可能にしておきます。
+差別化要素（コアのエージェントロジック、ドメイン固有の判断）はビルド。汎用機能（認証、ロギング、モニタリング、基盤ランタイム）はバイ。判断に迷ったら [#45 Runtime Abstraction](../../glossary.md) で抽象化層を挟み、後からの切替を可能にしておきます。
 
 ## ハイブリッドアプローチ
 
-コアロジックを自社構築し、周辺機能は既製品を利用する「コア自前＋周辺バイ」が一般的。[#48 Strangler Fig](../../patterns/10-deployment/48-strangler-fig.md) のように、既製品で素早く立ち上げ、差別化が必要になった部分から段階的に自社実装へ置き換える戦略も有効。
+コアロジックを自社構築し、周辺機能は既製品を利用する「コア自前＋周辺バイ」が一般的。[#48 Strangler Fig](../../glossary.md) のように、既製品で素早く立ち上げ、差別化が必要になった部分から段階的に自社実装へ置き換える戦略も有効。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#45 Agent Runtime Abstraction](../../patterns/10-deployment/45-agent-runtime-abstraction.md) — ビルド/バイの切替を容易にする抽象化層
-- [#48 Strangler Fig](../../patterns/10-deployment/48-strangler-fig.md) — 既製品から自社構築へ段階的に置き換える
+- [#45 Agent Runtime Abstraction](../../glossary.md) — ビルド/バイの切替を容易にする抽象化層
+- [#48 Strangler Fig](../../glossary.md) — 既製品から自社構築へ段階的に置き換える
 
 ## 関連ダイヤル
 

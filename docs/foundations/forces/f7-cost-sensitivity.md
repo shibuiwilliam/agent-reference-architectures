@@ -56,11 +56,11 @@ tags:
 
 ## 関連パターン
 
-- [#38 Semantic Result Cache](../../patterns/08-cost-scaling/38-semantic-result-cache.md) — 意味的に近い結果を再利用してAPI呼び出しを削減する
-- [#56 Adaptive Effort](../../patterns/08-cost-scaling/56-adaptive-effort.md) — 難易度に応じて投入計算量を増減する
-- [#37 Semantic Gateway & Cost-Aware Router](../../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — コストを考慮してモデルを動的に選択する
-- [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — 時間・回数・コストを予算化してループの暴走を防ぐ
-- [#55 Deadline & Budget Cascade](../../patterns/01-execution/55-deadline-budget-cascade.md) — 予算上限を呼び出しツリーへ伝播する
+- [#38 Semantic Result Cache](../../glossary.md) — 意味的に近い結果を再利用してAPI呼び出しを削減する
+- [#56 Adaptive Effort](../../glossary.md) — 難易度に応じて投入計算量を増減する
+- [#37 Semantic Gateway & Cost-Aware Router](../../glossary.md) — コストを考慮してモデルを動的に選択する
+- [#5 Time-Budgeted Agent Loop](../../glossary.md) — 時間・回数・コストを予算化してループの暴走を防ぐ
+- [#55 Deadline & Budget Cascade](../../glossary.md) — 予算上限を呼び出しツリーへ伝播する
 
 <!-- BEGIN:GEN:patterns -->
 

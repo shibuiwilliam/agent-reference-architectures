@@ -38,7 +38,7 @@ Low-value requests (autocomplete, suggestions, etc.) use fail-fast. High-value r
 
 ## Hybrid Approach
 
-As shown by [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md), set fail-fast timeouts at each level of the degradation staircase. Set time limits for each fallback destination, and ultimately fail-fast if all levels fail. The discipline of not attempting infinite degradation is important.
+As shown by [#40 Fallback & Graceful Degradation](../../glossary.md), set fail-fast timeouts at each level of the degradation staircase. Set time limits for each fallback destination, and ultimately fail-fast if all levels fail. The discipline of not attempting infinite degradation is important.
 
 ## Decision Flowchart
 
@@ -52,7 +52,7 @@ flowchart TD
 
 ## Related Patterns
 
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — Design pattern for staged fallback
+- [#40 Fallback & Graceful Degradation](../../glossary.md) — Design pattern for staged fallback
 
 ## Related Dials
 

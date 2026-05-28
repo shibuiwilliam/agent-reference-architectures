@@ -38,7 +38,7 @@ ECサイトの購買アシスタントがLLM障害でダウンしたとき、「
 
 ## ハイブリッドアプローチ
 
-[#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) が示すように、縮退階段の各段にfail-fastのタイムアウトを設けます。各フォールバック先にも制限時間を設け、全段が失敗した場合は最終的にfail-fastします。無限に縮退を試みない規律が重要。
+[#40 Fallback & Graceful Degradation](../../glossary.md) が示すように、縮退階段の各段にfail-fastのタイムアウトを設けます。各フォールバック先にも制限時間を設け、全段が失敗した場合は最終的にfail-fastします。無限に縮退を試みない規律が重要。
 
 ## 判断フローチャート
 
@@ -52,7 +52,7 @@ flowchart TD
 
 ## 関連パターン
 
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — 段階的フォールバックの設計パターン
+- [#40 Fallback & Graceful Degradation](../../glossary.md) — 段階的フォールバックの設計パターン
 
 ## 関連ダイヤル
 

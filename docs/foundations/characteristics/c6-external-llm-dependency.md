@@ -34,9 +34,9 @@ tags:
 
 ## 防波堤となるパターン
 
-- [#37 Semantic Gateway & Cost-Aware Router](../../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — 難易度に応じてモデルを動的に選択し、コストと品質を最適化する
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — プロバイダ障害時に代替モデルや縮退モードへ切り替える
-- [#45 Agent Runtime Abstraction](../../patterns/10-deployment/45-agent-runtime-abstraction.md) — 実行基盤を抽象化し、プロバイダを差し替え可能にする
+- [#37 Semantic Gateway & Cost-Aware Router](../../glossary.md) — 難易度に応じてモデルを動的に選択し、コストと品質を最適化する
+- [#40 Fallback & Graceful Degradation](../../glossary.md) — プロバイダ障害時に代替モデルや縮退モードへ切り替える
+- [#45 Agent Runtime Abstraction](../../glossary.md) — 実行基盤を抽象化し、プロバイダを差し替え可能にする
 
 ## 関連する設計判断
 

@@ -36,7 +36,7 @@ LLMが内部知識と推論能力で直接回答します。ツール呼び出�
 
 ## ハイブリッドアプローチ
 
-[#15 Inverted Structured Output](../../patterns/03-io-contract/15-inverted-structured-output.md) の考え方で、LLMには「何をすべきか」の判断（中間構造化出力）を生成させ、実際の実行はコードやツールに委ねります。LLMの柔軟な推論とツールの正確な実行を組み合わせる標準的な構成。
+[#15 Inverted Structured Output](../../glossary.md) の考え方で、LLMには「何をすべきか」の判断（中間構造化出力）を生成させ、実際の実行はコードやツールに委ねります。LLMの柔軟な推論とツールの正確な実行を組み合わせる標準的な構成。
 
 ## 判断フローチャート
 
@@ -50,8 +50,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#15 Inverted Structured Output](../../patterns/03-io-contract/15-inverted-structured-output.md) — LLMに判断だけ出力させ、実行はコード側で行う
-- [#17 Tool / MCP Gateway](../../patterns/04-tools-mcp/17-tool-mcp-gateway.md) — ツール接続を集約し認可・監査を一元化する
+- [#15 Inverted Structured Output](../../glossary.md) — LLMに判断だけ出力させ、実行はコード側で行う
+- [#17 Tool / MCP Gateway](../../glossary.md) — ツール接続を集約し認可・監査を一元化する
 
 ## 関連ダイヤル
 

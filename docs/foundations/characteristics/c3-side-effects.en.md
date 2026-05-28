@@ -34,9 +34,9 @@ An agent sends an email to a hallucinated recipient. It references a non-existen
 
 ## Safeguard Patterns
 
-- [#4 Agent Saga](../../patterns/01-execution/04-agent-saga.md) -- Embed compensating transactions into side-effect chains to roll back on partial failure
-- [#19 Dry-Run First](../../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) -- Simulate execution to confirm the blast radius before proceeding, then execute after approval
-- [#31 Human Approval Checkpoint](../../patterns/06-reliability/31-human-approval-checkpoint.md) -- Require human approval before high-risk side effects
+- [#4 Agent Saga](../../glossary.md) -- Embed compensating transactions into side-effect chains to roll back on partial failure
+- [#19 Dry-Run First](../../glossary.md) -- Simulate execution to confirm the blast radius before proceeding, then execute after approval
+- [#31 Human Approval Checkpoint](../../glossary.md) -- Require human approval before high-risk side effects
 
 ## Related Design Decisions
 

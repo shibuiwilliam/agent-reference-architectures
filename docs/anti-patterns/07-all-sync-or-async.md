@@ -107,6 +107,6 @@ async def handle(request):
 
 ## 関連パターン
 
-- [#58 Sync Facade over Async Core](../patterns/01-execution/58-sync-facade-over-async-core.md) — 同期/非同期のハイブリッド構成
-- [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) — リクエスト受付とジョブ管理の分離
-- [#7 Streaming Progress](../patterns/01-execution/07-streaming-progress.md) — 非同期処理の途中経過通知
+- [#58 Sync Facade over Async Core](../glossary.md) — 同期/非同期のハイブリッド構成
+- [#1 Request-to-Job Gateway](../glossary.md) — リクエスト受付とジョブ管理の分離
+- [#7 Streaming Progress](../glossary.md) — 非同期処理の途中経過通知

@@ -105,6 +105,6 @@ for request in all_requests:
 
 ## Related Patterns
 
-- [#54 Tiered (Hot/Cold) Observability](../patterns/07-observability/54-tiered-observability.md) — Hot/Cold separation architecture
-- [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) — Trace design
-- [#34 Evaluation CI/CD](../patterns/07-observability/34-evaluation-ci-cd.md) — Integrate evaluation into CI/CD
+- [#54 Tiered (Hot/Cold) Observability](../glossary.md) — Hot/Cold separation architecture
+- [#32 Agent Trace](../glossary.md) — Trace design
+- [#34 Evaluation CI/CD](../glossary.md) — Integrate evaluation into CI/CD

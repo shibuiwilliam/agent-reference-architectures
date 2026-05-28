@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#24 Context Pack / Assembly](../../patterns/05-memory-context/24-context-pack-assembly.md) — Design pattern for context assembly in RAG
-- [#27 Evidence-First Answer](../../patterns/06-reliability/27-evidence-first-answer.md) — Making evidence explicit in combination with RAG
+- [#24 Context Pack / Assembly](../../glossary.md) — Design pattern for context assembly in RAG
+- [#27 Evidence-First Answer](../../glossary.md) — Making evidence explicit in combination with RAG
 
 ## Related Dials
 

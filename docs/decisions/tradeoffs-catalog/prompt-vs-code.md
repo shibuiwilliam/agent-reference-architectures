@@ -38,7 +38,7 @@ tags:
 
 ## ハイブリッドアプローチ
 
-フロー制御・バリデーション・権限管理はコードで固め、各ノードでの判断や文章生成はプロンプトに委ねる構成が一般的。[#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) は制約をコード化しつつ、LLMの出力を事後検査する実例。[#11 Deterministic Core](../../patterns/02-composition/11-deterministic-core-probabilistic-edge.md) も同じ思想。
+フロー制御・バリデーション・権限管理はコードで固め、各ノードでの判断や文章生成はプロンプトに委ねる構成が一般的。[#30 Policy-as-Code Guardrail](../../glossary.md) は制約をコード化しつつ、LLMの出力を事後検査する実例。[#11 Deterministic Core](../../glossary.md) も同じ思想。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) — 制約をコード化して判定する
-- [#11 Deterministic Core, Probabilistic Edge](../../patterns/02-composition/11-deterministic-core-probabilistic-edge.md) — 中核をコード、周辺をプロンプトで制御する設計原則
+- [#30 Policy-as-Code Guardrail](../../glossary.md) — 制約をコード化して判定する
+- [#11 Deterministic Core, Probabilistic Edge](../../glossary.md) — 中核をコード、周辺をプロンプトで制御する設計原則
 
 ## 関連ダイヤル
 

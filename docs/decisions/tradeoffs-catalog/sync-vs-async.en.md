@@ -38,7 +38,7 @@ Start with synchronous if completion within a few seconds is expected. Synchrono
 
 ## Hybrid Approach
 
-[#58 Sync Facade over Async Core](../../patterns/01-execution/58-sync-facade-over-async-core.md) is the representative hybrid strategy. Internally, processing is always asynchronous, and if it completes within the threshold time, it is returned as a synchronous response. If it exceeds the threshold, it switches to a job ID. Clients enjoy the simplicity of synchronous for short tasks while ensuring long-running tasks are not interrupted.
+[#58 Sync Facade over Async Core](../../glossary.md) is the representative hybrid strategy. Internally, processing is always asynchronous, and if it completes within the threshold time, it is returned as a synchronous response. If it exceeds the threshold, it switches to a job ID. Clients enjoy the simplicity of synchronous for short tasks while ensuring long-running tasks are not interrupted.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#1 Request-to-Job Gateway](../../patterns/01-execution/01-request-to-job-gateway.md) — The basic implementation pattern for asynchronous request acceptance
-- [#58 Sync Facade over Async Core](../../patterns/01-execution/58-sync-facade-over-async-core.md) — A hybrid that automatically switches between synchronous and asynchronous
+- [#1 Request-to-Job Gateway](../../glossary.md) — The basic implementation pattern for asynchronous request acceptance
+- [#58 Sync Facade over Async Core](../../glossary.md) — A hybrid that automatically switches between synchronous and asynchronous
 
 ## Related Dials
 

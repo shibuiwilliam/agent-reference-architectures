@@ -47,12 +47,12 @@ flowchart LR
 
 | 層 | パターン | 役割 | なぜ必要か |
 |---|---------|------|-----------|
-| 根拠 | [#27 Evidence-First Answer](../patterns/06-reliability/27-evidence-first-answer.md) | 回答前に根拠取得 | 根拠なしの回答はハルシネーションの温床になります |
-| 検証 | [#28 Verifier Agent / Critic](../patterns/06-reliability/28-verifier-agent-critic.md) | 独立した事実検証 | 生成エージェントが自分の誤りに気づくことは期待できません |
-| 合議 | [#10 Agent Ensemble & Debate](../patterns/02-composition/10-agent-ensemble-debate.md) | 複数モデルの合議 | 単一モデルのバイアスを相互チェックで緩和します |
-| 契約 | [#14 Structured Output Contract](../patterns/03-io-contract/14-structured-output-contract.md) | 出力の構造化・引用付き | 根拠と回答を構造的に分離しないと、引用の検証ができません |
-| ポリシー | [#30 Policy-as-Code Guardrail](../patterns/06-reliability/30-policy-as-code-guardrail.md) | 規制準拠の自動検査 | 人手での準拠確認はスケールしません |
-| 観測 | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) + [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) | 完全な監査証跡 | 「あの回答はなぜ生成されたか」を後から再現できる必要があります |
+| 根拠 | [#27 Evidence-First Answer](../glossary.md) | 回答前に根拠取得 | 根拠なしの回答はハルシネーションの温床になります |
+| 検証 | [#28 Verifier Agent / Critic](../glossary.md) | 独立した事実検証 | 生成エージェントが自分の誤りに気づくことは期待できません |
+| 合議 | [#10 Agent Ensemble & Debate](../glossary.md) | 複数モデルの合議 | 単一モデルのバイアスを相互チェックで緩和します |
+| 契約 | [#14 Structured Output Contract](../glossary.md) | 出力の構造化・引用付き | 根拠と回答を構造的に分離しないと、引用の検証ができません |
+| ポリシー | [#30 Policy-as-Code Guardrail](../glossary.md) | 規制準拠の自動検査 | 人手での準拠確認はスケールしません |
+| 観測 | [#32 Agent Trace](../glossary.md) + [#33 Version Pinning](../glossary.md) | 完全な監査証跡 | 「あの回答はなぜ生成されたか」を後から再現できる必要があります |
 
 ## 各層の詳細
 
@@ -83,7 +83,7 @@ LLMに回答を生成させる前に、まず関連する根拠（ドキュメ�
 ## 省略してよいもの・追加を検討するもの
 
 - **省略可**: `[F3]` が低い（大量・低単価のリクエスト）場合、合議層のコストが見合いません。Verifier Agentのみで十分なケースもあります
-- **追加検討**: 不特定ユーザーからの入力を受ける場合は[信頼できない入力構成](03-untrusted-input.md)のセキュリティ層を重ねます。高リスクな回答には [#31 Human Approval Checkpoint](../patterns/06-reliability/31-human-approval-checkpoint.md) で専門家レビューを挟みます
+- **追加検討**: 不特定ユーザーからの入力を受ける場合は[信頼できない入力構成](03-untrusted-input.md)のセキュリティ層を重ねます。高リスクな回答には [#31 Human Approval Checkpoint](../glossary.md) で専門家レビューを挟みます
 
 ## 具体的なシナリオ
 

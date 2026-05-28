@@ -54,9 +54,9 @@ Medical, financial, legal, government procurement, and other domains where compl
 
 ## Related Patterns
 
-- [#32 Agent Trace](../../patterns/07-observability/32-agent-trace.md) -- Log every step as an append-only record for replay and audit
-- [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) -- Codify constraints for mechanical evaluation
-- [#33 Version Pinning](../../patterns/07-observability/33-version-pinning.md) -- Pin prompt, model, and tool versions to ensure reproducibility
-- [#34 Evaluation CI/CD](../../patterns/07-observability/34-evaluation-ci-cd.md) -- Automated evaluation per change to detect regressions
-- [#27 Evidence-First Answer](../../patterns/06-reliability/27-evidence-first-answer.md) -- Retrieve and cite evidence before answering to make decision rationale explicit
-- [#52 Agent Constitution](../../patterns/12-governance/52-agent-constitution.md) -- Systematically deploy behavioral principles
+- [#32 Agent Trace](../../glossary.md) -- Log every step as an append-only record for replay and audit
+- [#30 Policy-as-Code Guardrail](../../glossary.md) -- Codify constraints for mechanical evaluation
+- [#33 Version Pinning](../../glossary.md) -- Pin prompt, model, and tool versions to ensure reproducibility
+- [#34 Evaluation CI/CD](../../glossary.md) -- Automated evaluation per change to detect regressions
+- [#27 Evidence-First Answer](../../glossary.md) -- Retrieve and cite evidence before answering to make decision rationale explicit
+- [#52 Agent Constitution](../../glossary.md) -- Systematically deploy behavioral principles

@@ -34,8 +34,8 @@ LLMは学習データのパターンから次のトークンを予測する仕�
 
 ## 防波堤となるパターン
 
-- [#27 Evidence-First Answer](../../patterns/06-reliability/27-evidence-first-answer.md) — 回答前に根拠を取得・引用し、根拠なき生成を抑制する
-- [#29 Guardrail Sidecar + Self-Correction](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) — 出力を検査し、事実性に疑いがある場合は自己修正やブロックを行う
+- [#27 Evidence-First Answer](../../glossary.md) — 回答前に根拠を取得・引用し、根拠なき生成を抑制する
+- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) — 出力を検査し、事実性に疑いがある場合は自己修正やブロックを行う
 
 ## 関連する設計判断
 

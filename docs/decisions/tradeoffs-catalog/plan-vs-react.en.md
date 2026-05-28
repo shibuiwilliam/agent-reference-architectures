@@ -38,7 +38,7 @@ Choose plan-first for tasks with significant side effects (external API calls, d
 
 ## Hybrid Approach
 
-A two-stage approach: create a plan, then execute each step with ReAct. [#8 Planner-Executor-Reviewer](../../patterns/02-composition/08-planner-executor-reviewer.md) is a typical example of this hybrid. An operational model where humans edit the plan via [#50 Editable Plan](../../patterns/11-ux/50-editable-plan.md) before transitioning to ReAct execution is also effective.
+A two-stage approach: create a plan, then execute each step with ReAct. [#8 Planner-Executor-Reviewer](../../glossary.md) is a typical example of this hybrid. An operational model where humans edit the plan via [#50 Editable Plan](../../glossary.md) before transitioning to ReAct execution is also effective.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#8 Planner-Executor-Reviewer](../../patterns/02-composition/08-planner-executor-reviewer.md) — Configuration separating planning, execution, and verification
-- [#50 Editable Plan](../../patterns/11-ux/50-editable-plan.md) — UX pattern allowing humans to edit the plan before execution
+- [#8 Planner-Executor-Reviewer](../../glossary.md) — Configuration separating planning, execution, and verification
+- [#50 Editable Plan](../../glossary.md) — UX pattern allowing humans to edit the plan before execution
 
 ## Related Dials
 

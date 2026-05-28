@@ -52,7 +52,7 @@ kが小さいと関連情報を見逃し、不正確な回答やハルシネー�
 
 ## 関連パターン
 
-- [#24 Context Pack / Assembly](../../patterns/05-memory-context/24-context-pack-assembly.md) — 検索結果を含むコンテキストの組み立てパターン
+- [#24 Context Pack / Assembly](../../glossary.md) — 検索結果を含むコンテキストの組み立てパターン
 
 <!-- BEGIN:GEN:patterns -->
 

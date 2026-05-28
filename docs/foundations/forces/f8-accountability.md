@@ -54,12 +54,12 @@ tags:
 
 ## 関連パターン
 
-- [#32 Agent Trace](../../patterns/07-observability/32-agent-trace.md) — 全ステップを追記ログ化し、再生・監査を可能にする
-- [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) — 制約をコード化して機械的に判定する
-- [#33 Version Pinning](../../patterns/07-observability/33-version-pinning.md) — プロンプト・モデル・ツールのバージョンを固定し再現性を確保する
-- [#34 Evaluation CI/CD](../../patterns/07-observability/34-evaluation-ci-cd.md) — 変更毎に自動評価で回帰を検知する
-- [#27 Evidence-First Answer](../../patterns/06-reliability/27-evidence-first-answer.md) — 回答前に根拠を取得・引用し、判断根拠を明示する
-- [#52 Agent Constitution](../../patterns/12-governance/52-agent-constitution.md) — 行動原則を体系的に展開する
+- [#32 Agent Trace](../../glossary.md) — 全ステップを追記ログ化し、再生・監査を可能にする
+- [#30 Policy-as-Code Guardrail](../../glossary.md) — 制約をコード化して機械的に判定する
+- [#33 Version Pinning](../../glossary.md) — プロンプト・モデル・ツールのバージョンを固定し再現性を確保する
+- [#34 Evaluation CI/CD](../../glossary.md) — 変更毎に自動評価で回帰を検知する
+- [#27 Evidence-First Answer](../../glossary.md) — 回答前に根拠を取得・引用し、判断根拠を明示する
+- [#52 Agent Constitution](../../glossary.md) — 行動原則を体系的に展開する
 
 <!-- BEGIN:GEN:patterns -->
 

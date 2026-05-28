@@ -51,4 +51,4 @@ Stale results are returned for queries with subtly different meanings. Users exp
 
 ## Related Patterns
 
-- [#38 Semantic Result Cache](../../patterns/08-cost-scaling/38-semantic-result-cache.md) -- Implementation pattern for semantic-similarity-based caching
+- [#38 Semantic Result Cache](../../glossary.md) -- Implementation pattern for semantic-similarity-based caching

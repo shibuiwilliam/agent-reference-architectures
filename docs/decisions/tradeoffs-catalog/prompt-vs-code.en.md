@@ -38,7 +38,7 @@ Default to code control. Testability and version control are ensured from the ea
 
 ## Hybrid Approach
 
-A common configuration fixes flow control, validation, and permission management in code while delegating judgment and text generation at each node to prompts. [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) is a practical example of codifying constraints while post-inspecting LLM output. [#11 Deterministic Core](../../patterns/02-composition/11-deterministic-core-probabilistic-edge.md) follows the same philosophy.
+A common configuration fixes flow control, validation, and permission management in code while delegating judgment and text generation at each node to prompts. [#30 Policy-as-Code Guardrail](../../glossary.md) is a practical example of codifying constraints while post-inspecting LLM output. [#11 Deterministic Core](../../glossary.md) follows the same philosophy.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) — Codifying constraints for judgment
-- [#11 Deterministic Core, Probabilistic Edge](../../patterns/02-composition/11-deterministic-core-probabilistic-edge.md) — Design principle controlling the core with code and the edges with prompts
+- [#30 Policy-as-Code Guardrail](../../glossary.md) — Codifying constraints for judgment
+- [#11 Deterministic Core, Probabilistic Edge](../../glossary.md) — Design principle controlling the core with code and the edges with prompts
 
 ## Related Dials
 

@@ -53,11 +53,11 @@ LLMベースのエージェントは自然言語を理解するがゆえに、�
 
 ## 関連パターン
 
-- [#42 Data Boundary Firewall](../../patterns/09-security/42-data-boundary-firewall.md) — 入出力でPII・機密情報を検査・マスクする
-- [#44 Dual-LLM Privilege Separation](../../patterns/09-security/44-dual-llm-privilege-separation.md) — 入力処理と特権操作を別LLMに分離する
-- [#43 Confused-Deputy Damage Limitation](../../patterns/09-security/43-confused-deputy-damage-limitation.md) — 騙されても被害半径を制限する
-- [#18 Least-Privilege Tool Binding](../../patterns/04-tools-mcp/18-least-privilege-tool-binding.md) — セッション毎に最小権限を束縛する
-- [#29 Guardrail Sidecar + Self-Correction](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) — 入出力を検査し不正を検出・修正する
+- [#42 Data Boundary Firewall](../../glossary.md) — 入出力でPII・機密情報を検査・マスクする
+- [#44 Dual-LLM Privilege Separation](../../glossary.md) — 入力処理と特権操作を別LLMに分離する
+- [#43 Confused-Deputy Damage Limitation](../../glossary.md) — 騙されても被害半径を制限する
+- [#18 Least-Privilege Tool Binding](../../glossary.md) — セッション毎に最小権限を束縛する
+- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) — 入出力を検査し不正を検出・修正する
 
 <!-- BEGIN:GEN:patterns -->
 

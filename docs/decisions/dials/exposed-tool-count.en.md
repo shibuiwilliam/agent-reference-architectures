@@ -51,4 +51,4 @@ Misselection between similar tools becomes frequent. For example, "send email" a
 
 ## Related Patterns
 
-- [#18 Least-Privilege Tool Binding](../../patterns/04-tools-mcp/18-least-privilege-tool-binding.md) -- Binding minimum-privilege tool sets per session
+- [#18 Least-Privilege Tool Binding](../../glossary.md) -- Binding minimum-privilege tool sets per session

@@ -38,7 +38,7 @@ LLMが自然言語で自由に回答します。説明、要約、創作、対�
 
 ## ハイブリッドアプローチ
 
-判断・アクション・メタデータは構造化フィールドで出力し、ユーザー向けの説明文は自由形式フィールドに収める「構造化の殻＋自由形式の中身」が汎用的。[#14 Structured Output Contract](../../patterns/03-io-contract/14-structured-output-contract.md) でスキーマを定義し、その中に `explanation: str` のような自由テキスト欄を設けるパターンが典型。
+判断・アクション・メタデータは構造化フィールドで出力し、ユーザー向けの説明文は自由形式フィールドに収める「構造化の殻＋自由形式の中身」が汎用的。[#14 Structured Output Contract](../../glossary.md) でスキーマを定義し、その中に `explanation: str` のような自由テキスト欄を設けるパターンが典型。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#14 Structured Output Contract](../../patterns/03-io-contract/14-structured-output-contract.md) — 出力をスキーマで契約化する設計パターン
-- [#15 Inverted Structured Output](../../patterns/03-io-contract/15-inverted-structured-output.md) — 最終出力でなく中間判断を構造化する
+- [#14 Structured Output Contract](../../glossary.md) — 出力をスキーマで契約化する設計パターン
+- [#15 Inverted Structured Output](../../glossary.md) — 最終出力でなく中間判断を構造化する
 
 ## 関連ダイヤル
 

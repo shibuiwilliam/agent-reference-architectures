@@ -107,6 +107,6 @@ async def handle(request):
 
 ## Related Patterns
 
-- [#58 Sync Facade over Async Core](../patterns/01-execution/58-sync-facade-over-async-core.md) — Sync/async hybrid architecture
-- [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) — Separation of request intake and job management
-- [#7 Streaming Progress](../patterns/01-execution/07-streaming-progress.md) — Progress notification for async processing
+- [#58 Sync Facade over Async Core](../glossary.md) — Sync/async hybrid architecture
+- [#1 Request-to-Job Gateway](../glossary.md) — Separation of request intake and job management
+- [#7 Streaming Progress](../glossary.md) — Progress notification for async processing

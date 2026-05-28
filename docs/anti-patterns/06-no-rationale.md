@@ -99,4 +99,4 @@ AGENT_CONFIG = {
 
 - [パターンのパラメータ化](../decisions/parameterization.md) — パラメータ管理の作法
 - [意思決定記録（ADR）](../decisions/adr-template.md) — 決定根拠の記録テンプレート
-- [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) — トレースに設定値を含めます
+- [#32 Agent Trace](../glossary.md) — トレースに設定値を含めます

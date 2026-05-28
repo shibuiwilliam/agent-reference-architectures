@@ -51,7 +51,7 @@ LLM呼び出しはコストとレイテンシの両方が大きいため、キ�
 
 ## 関連パターン
 
-- [#38 Semantic Result Cache](../../patterns/08-cost-scaling/38-semantic-result-cache.md) — 意味的類似度ベースのキャッシュ実装パターン
+- [#38 Semantic Result Cache](../../glossary.md) — 意味的類似度ベースのキャッシュ実装パターン
 
 <!-- BEGIN:GEN:patterns -->
 

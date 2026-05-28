@@ -52,4 +52,4 @@ The agent executes irreversible operations such as data deletion, fund transfers
 
 ## Related Patterns
 
-- [#57 Autonomy Ladder](../../patterns/06-reliability/57-autonomy-ladder.md) -- Implementation pattern for track-record-based gradual autonomy escalation
+- [#57 Autonomy Ladder](../../glossary.md) -- Implementation pattern for track-record-based gradual autonomy escalation

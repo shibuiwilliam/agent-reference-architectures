@@ -38,7 +38,7 @@ tags:
 
 ## ハイブリッドアプローチ
 
-計画を立てた上で、各ステップの実行はReActで行う二段構え。[#8 Planner-Executor-Reviewer](../../patterns/02-composition/08-planner-executor-reviewer.md) はこのハイブリッドの典型。[#50 Editable Plan](../../patterns/11-ux/50-editable-plan.md) で人間が計画を編集してからReAct実行に移る運用も有効。
+計画を立てた上で、各ステップの実行はReActで行う二段構え。[#8 Planner-Executor-Reviewer](../../glossary.md) はこのハイブリッドの典型。[#50 Editable Plan](../../glossary.md) で人間が計画を編集してからReAct実行に移る運用も有効。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#8 Planner-Executor-Reviewer](../../patterns/02-composition/08-planner-executor-reviewer.md) — 計画・実行・検証を分離した構成
-- [#50 Editable Plan](../../patterns/11-ux/50-editable-plan.md) — 実行前に人間が計画を編集できるUXパターン
+- [#8 Planner-Executor-Reviewer](../../glossary.md) — 計画・実行・検証を分離した構成
+- [#50 Editable Plan](../../glossary.md) — 実行前に人間が計画を編集できるUXパターン
 
 ## 関連ダイヤル
 

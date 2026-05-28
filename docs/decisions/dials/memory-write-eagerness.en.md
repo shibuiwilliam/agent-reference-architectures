@@ -50,4 +50,4 @@ Temporary information, noise, and contradictory information accumulate in memory
 
 ## Related Patterns
 
-- [#25 Memory Write Gate](../../patterns/05-memory-context/25-memory-write-gate.md) -- Gate pattern that makes long-term memory writes subject to approval
+- [#25 Memory Write Gate](../../glossary.md) -- Gate pattern that makes long-term memory writes subject to approval

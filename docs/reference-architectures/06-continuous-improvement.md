@@ -49,12 +49,12 @@ flowchart LR
 
 | 層 | パターン | 役割 | なぜ必要か |
 |---|---------|------|-----------|
-| 固定 | [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) | 再現可能性の確保 | モデル・プロンプト・データのバージョンが固定されていないと、「いつ品質が変わったか」を特定できません |
-| 評価 | [#34 Evaluation CI/CD](../patterns/07-observability/34-evaluation-ci-cd.md) | 変更毎の自動回帰検知 | 手動テストでは変更の影響を網羅的に検証できません |
-| リプレイ | [#35 Production Replay](../patterns/07-observability/35-production-replay.md) | 新旧比較 | 合成テストでは本番トラフィックの多様性を再現できません |
-| デプロイ | [#36 Shadow / Canary Deployment](../patterns/07-observability/36-shadow-canary-deployment.md) | 段階投入 | 全トラフィックを一括切り替えると、問題発生時の影響範囲が大きすぎます |
-| 変更管理 | [#53 Agent Change Management](../patterns/12-governance/53-agent-change-management.md) | 変更プロセスの規律化 | 誰が・いつ・なぜ変更したかの記録がないと、品質劣化の原因追跡ができません |
-| 観測 | [#54 Tiered Observability](../patterns/07-observability/54-tiered-observability.md) | コスト効率のよい観測 | 全トレースを全量保持するとストレージコストが爆発します |
+| 固定 | [#33 Version Pinning](../glossary.md) | 再現可能性の確保 | モデル・プロンプト・データのバージョンが固定されていないと、「いつ品質が変わったか」を特定できません |
+| 評価 | [#34 Evaluation CI/CD](../glossary.md) | 変更毎の自動回帰検知 | 手動テストでは変更の影響を網羅的に検証できません |
+| リプレイ | [#35 Production Replay](../glossary.md) | 新旧比較 | 合成テストでは本番トラフィックの多様性を再現できません |
+| デプロイ | [#36 Shadow / Canary Deployment](../glossary.md) | 段階投入 | 全トラフィックを一括切り替えると、問題発生時の影響範囲が大きすぎます |
+| 変更管理 | [#53 Agent Change Management](../glossary.md) | 変更プロセスの規律化 | 誰が・いつ・なぜ変更したかの記録がないと、品質劣化の原因追跡ができません |
+| 観測 | [#54 Tiered Observability](../glossary.md) | コスト効率のよい観測 | 全トレースを全量保持するとストレージコストが爆発します |
 
 ## 各層の詳細
 
@@ -85,7 +85,7 @@ flowchart LR
 ## 省略してよいもの・追加を検討するもの
 
 - **省略可**: プロトタイプ段階やユーザー数が少ない間は、Shadow/Canary DeploymentよりもシンプルなBlue/Greenで十分です。Production Replayも本番トラフィックが十分に溜まるまでは効果が薄いです
-- **追加検討**: `[F2]` が高い場合は [#28 Verifier Agent / Critic](../patterns/06-reliability/28-verifier-agent-critic.md) を評価パイプラインに組み込みます。コスト観測が重要なら [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) のメトリクスをTiered Observabilityに統合します
+- **追加検討**: `[F2]` が高い場合は [#28 Verifier Agent / Critic](../glossary.md) を評価パイプラインに組み込みます。コスト観測が重要なら [#37 Semantic Gateway](../glossary.md) のメトリクスをTiered Observabilityに統合します
 
 ## 具体的なシナリオ
 
@@ -103,8 +103,8 @@ Agent Change Managementが全ての変更を記録し、規制当局への報告
 
 - `[F2]` が高まったら → [事実性重視構成](04-factuality-first.md)のVerifier Agent、Evidence-Firstを評価パイプラインに組み込みます
 - `[F7]` が高まったら → [コスト重視構成](05-cost-first.md)の手法で観測コスト自体を最適化します
-- チームが拡大したら → [#52 Agent Constitution](../patterns/12-governance/52-agent-constitution.md) で組織横断の品質基準を定義します
-- 自律度を上げたい場合 → [#57 Autonomy Ladder](../patterns/06-reliability/57-autonomy-ladder.md) とEvaluation CI/CDを連動させ、品質スコアに応じて自律度を自動調整します
+- チームが拡大したら → [#52 Agent Constitution](../glossary.md) で組織横断の品質基準を定義します
+- 自律度を上げたい場合 → [#57 Autonomy Ladder](../glossary.md) とEvaluation CI/CDを連動させ、品質スコアに応じて自律度を自動調整します
 
 ## 関連する構成
 

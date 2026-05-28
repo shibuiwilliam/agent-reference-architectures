@@ -34,11 +34,11 @@ tags:
 
 ## デフォルト（迷ったら）
 
-単一プロバイダで始め、障害実績やスケール要件に応じてマルチ化します。初期段階でマルチプロバイダの抽象化層に投資するのはオーバーエンジニアリングになりやすいです。ただし [#45 Runtime Abstraction](../../patterns/10-deployment/45-agent-runtime-abstraction.md) で抽象化層だけは早期に入れておくと移行が楽になります。
+単一プロバイダで始め、障害実績やスケール要件に応じてマルチ化します。初期段階でマルチプロバイダの抽象化層に投資するのはオーバーエンジニアリングになりやすいです。ただし [#45 Runtime Abstraction](../../glossary.md) で抽象化層だけは早期に入れておくと移行が楽になります。
 
 ## ハイブリッドアプローチ
 
-[#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) の考え方で、プライマリ＋フォールバックの2層構成にします。常時マルチではなく、障害検知時のみセカンダリへ切り替えます。これにより運用の複雑さを抑えつつ可用性を確保できます。
+[#40 Fallback & Graceful Degradation](../../glossary.md) の考え方で、プライマリ＋フォールバックの2層構成にします。常時マルチではなく、障害検知時のみセカンダリへ切り替えます。これにより運用の複雑さを抑えつつ可用性を確保できます。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — プライマリ障害時のフォールバック戦略
-- [#45 Agent Runtime Abstraction](../../patterns/10-deployment/45-agent-runtime-abstraction.md) — プロバイダ切替を容易にする抽象化層
+- [#40 Fallback & Graceful Degradation](../../glossary.md) — プライマリ障害時のフォールバック戦略
+- [#45 Agent Runtime Abstraction](../../glossary.md) — プロバイダ切替を容易にする抽象化層
 
 ## 関連ダイヤル
 

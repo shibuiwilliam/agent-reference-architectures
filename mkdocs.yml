@@ -44,6 +44,80 @@ plugins:
       lang:
         - ja
         - en
+  - redirects:
+      redirect_maps:
+        "pattern-index.md": "glossary.md"
+        "patterns/01-execution/index.md": "glossary.md"
+        "patterns/01-execution/01-request-to-job-gateway.md": "decisions/tradeoffs-catalog/sync-vs-async.md"
+        "patterns/01-execution/02-durable-agent-session.md": "decisions/tradeoffs-catalog/in-context-vs-external.md"
+        "patterns/01-execution/03-workflow-backbone-agent-node.md": "decisions/tradeoffs-catalog/workflow-vs-agent.md"
+        "patterns/01-execution/04-agent-saga.md": "decisions/dials/checkpoint-frequency.md"
+        "patterns/01-execution/05-time-budgeted-agent-loop.md": "decisions/dials/budget-cap.md"
+        "patterns/01-execution/06-interruptible-agent.md": "foundations/forces/f4-latency-budget.md"
+        "patterns/01-execution/07-streaming-progress.md": "decisions/tradeoffs-catalog/push-vs-pull.md"
+        "patterns/01-execution/55-deadline-budget-cascade.md": "decisions/dials/budget-cap.md"
+        "patterns/01-execution/58-sync-facade-over-async-core.md": "decisions/tradeoffs-catalog/sync-vs-async.md"
+        "patterns/01-execution/59-workflow-agent-spectrum-selector.md": "decisions/tradeoffs-catalog/workflow-vs-agent.md"
+        "patterns/02-composition/index.md": "glossary.md"
+        "patterns/02-composition/08-planner-executor-reviewer.md": "decisions/tradeoffs-catalog/plan-vs-react.md"
+        "patterns/02-composition/09-supervisor-specialist-agents.md": "decisions/tradeoffs-catalog/single-vs-multi-agent.md"
+        "patterns/02-composition/10-agent-ensemble-debate.md": "decisions/tradeoffs-catalog/same-vs-different-model.md"
+        "patterns/02-composition/11-deterministic-core-probabilistic-edge.md": "decisions/tradeoffs-catalog/prompt-vs-code.md"
+        "patterns/02-composition/12-blackboard.md": "decisions/tradeoffs-catalog/orchestration-vs-choreography.md"
+        "patterns/03-io-contract/index.md": "glossary.md"
+        "patterns/03-io-contract/13-natural-language-boundary-adapter.md": "foundations/forces/f5-input-trust.md"
+        "patterns/03-io-contract/14-structured-output-contract.md": "decisions/tradeoffs-catalog/structured-vs-freeform.md"
+        "patterns/03-io-contract/15-inverted-structured-output.md": "decisions/tradeoffs-catalog/llm-vs-tool.md"
+        "patterns/03-io-contract/16-ambiguity-negotiation.md": "foundations/forces/f1-reversibility.md"
+        "patterns/04-tools-mcp/index.md": "glossary.md"
+        "patterns/04-tools-mcp/17-tool-mcp-gateway.md": "decisions/tradeoffs-catalog/llm-vs-tool.md"
+        "patterns/04-tools-mcp/18-least-privilege-tool-binding.md": "decisions/dials/exposed-tool-count.md"
+        "patterns/04-tools-mcp/19-dry-run-first-tool-execution.md": "foundations/forces/f1-reversibility.md"
+        "patterns/04-tools-mcp/20-sandboxed-tool-runtime.md": "foundations/forces/f5-input-trust.md"
+        "patterns/04-tools-mcp/21-mcp-adapter-isolation.md": "foundations/forces/f5-input-trust.md"
+        "patterns/04-tools-mcp/22-anti-corruption-layer.md": "foundations/forces/f8-accountability.md"
+        "patterns/05-memory-context/index.md": "glossary.md"
+        "patterns/05-memory-context/23-layered-memory.md": "decisions/tradeoffs-catalog/in-context-vs-external.md"
+        "patterns/05-memory-context/24-context-pack-assembly.md": "decisions/tradeoffs-catalog/rag-vs-finetuning.md"
+        "patterns/05-memory-context/25-memory-write-gate.md": "decisions/dials/memory-write-eagerness.md"
+        "patterns/05-memory-context/26-forgetting-and-expiration.md": "decisions/dials/memory-ttl.md"
+        "patterns/06-reliability/index.md": "glossary.md"
+        "patterns/06-reliability/27-evidence-first-answer.md": "decisions/tradeoffs-catalog/rag-vs-finetuning.md"
+        "patterns/06-reliability/28-verifier-agent-critic.md": "decisions/tradeoffs-catalog/inline-vs-post-verification.md"
+        "patterns/06-reliability/29-guardrail-sidecar-self-correction.md": "decisions/tradeoffs-catalog/inline-vs-post-verification.md"
+        "patterns/06-reliability/30-policy-as-code-guardrail.md": "decisions/tradeoffs-catalog/prompt-vs-code.md"
+        "patterns/06-reliability/31-human-approval-checkpoint.md": "decisions/dials/autonomy-level.md"
+        "patterns/06-reliability/57-autonomy-ladder.md": "decisions/dials/autonomy-level.md"
+        "patterns/07-observability/index.md": "glossary.md"
+        "patterns/07-observability/32-agent-trace.md": "decisions/dials/trace-sampling-rate.md"
+        "patterns/07-observability/33-version-pinning.md": "decisions/dials/prompt-storage.md"
+        "patterns/07-observability/34-evaluation-ci-cd.md": "foundations/forces/f8-accountability.md"
+        "patterns/07-observability/35-production-replay.md": "foundations/forces/f8-accountability.md"
+        "patterns/07-observability/36-shadow-canary-deployment.md": "foundations/forces/f9-provider-reliability.md"
+        "patterns/07-observability/54-tiered-observability.md": "decisions/dials/trace-sampling-rate.md"
+        "patterns/08-cost-scaling/index.md": "glossary.md"
+        "patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md": "decisions/dials/model-tier-routing.md"
+        "patterns/08-cost-scaling/38-semantic-result-cache.md": "decisions/dials/cache-similarity.md"
+        "patterns/08-cost-scaling/39-prompt-cache-optimized-context.md": "foundations/forces/f7-cost-sensitivity.md"
+        "patterns/08-cost-scaling/40-fallback-graceful-degradation.md": "decisions/tradeoffs-catalog/fail-fast-vs-degradation.md"
+        "patterns/08-cost-scaling/56-adaptive-effort.md": "foundations/forces/f7-cost-sensitivity.md"
+        "patterns/09-security/index.md": "glossary.md"
+        "patterns/09-security/41-tenant-isolated-agent-runtime.md": "foundations/forces/f5-input-trust.md"
+        "patterns/09-security/42-data-boundary-firewall.md": "foundations/forces/f5-input-trust.md"
+        "patterns/09-security/43-confused-deputy-damage-limitation.md": "foundations/forces/f5-input-trust.md"
+        "patterns/09-security/44-dual-llm-privilege-separation.md": "foundations/forces/f5-input-trust.md"
+        "patterns/10-deployment/index.md": "glossary.md"
+        "patterns/10-deployment/45-agent-runtime-abstraction.md": "decisions/tradeoffs-catalog/build-vs-buy.md"
+        "patterns/10-deployment/46-model-behavior-compatibility-layer.md": "decisions/tradeoffs-catalog/single-vs-multi-provider.md"
+        "patterns/10-deployment/47-agent-capability-registry.md": "foundations/forces/f8-accountability.md"
+        "patterns/10-deployment/48-strangler-fig.md": "foundations/forces/f2-failure-cost.md"
+        "patterns/11-ux/index.md": "glossary.md"
+        "patterns/11-ux/49-agent-workbench.md": "foundations/forces/f4-latency-budget.md"
+        "patterns/11-ux/50-editable-plan.md": "decisions/tradeoffs-catalog/plan-vs-react.md"
+        "patterns/11-ux/51-agent-to-human-escalation.md": "foundations/forces/f2-failure-cost.md"
+        "patterns/12-governance/index.md": "glossary.md"
+        "patterns/12-governance/52-agent-constitution.md": "foundations/forces/f8-accountability.md"
+        "patterns/12-governance/53-agent-change-management.md": "foundations/forces/f8-accountability.md"
   - i18n:
       docs_structure: suffix
       languages:
@@ -144,92 +218,8 @@ plugins:
                 - Architecture Decision Record (ADR): decisions/adr-template.md
                 - Worked Examples: decisions/worked-examples.md
                 - Pattern Parameterization: decisions/parameterization.md
-            - "Pattern Reference (Vocabulary)":
-                - "I. Execution, Session & Orchestration":
-                    - patterns/01-execution/index.md
-                    - "#1 Request-to-Job Gateway": patterns/01-execution/01-request-to-job-gateway.md
-                    - "#2 Durable Agent Session": patterns/01-execution/02-durable-agent-session.md
-                    - "#3 Workflow Backbone + Agent Node": patterns/01-execution/03-workflow-backbone-agent-node.md
-                    - "#4 Agent Saga": patterns/01-execution/04-agent-saga.md
-                    - "#5 Time-Budgeted Agent Loop": patterns/01-execution/05-time-budgeted-agent-loop.md
-                    - "#6 Interruptible Agent": patterns/01-execution/06-interruptible-agent.md
-                    - "#7 Streaming Progress": patterns/01-execution/07-streaming-progress.md
-                    - "#55 Deadline & Budget Cascade": patterns/01-execution/55-deadline-budget-cascade.md
-                    - "#58 Sync Facade over Async Core": patterns/01-execution/58-sync-facade-over-async-core.md
-                    - "#59 Workflow–Agent Spectrum Selector": patterns/01-execution/59-workflow-agent-spectrum-selector.md
-                - "II. Agent Composition & Delegation":
-                    - patterns/02-composition/index.md
-                    - "#8 Planner-Executor-Reviewer": patterns/02-composition/08-planner-executor-reviewer.md
-                    - "#9 Supervisor & Specialist Agents": patterns/02-composition/09-supervisor-specialist-agents.md
-                    - "#10 Agent Ensemble & Debate": patterns/02-composition/10-agent-ensemble-debate.md
-                    - "#11 Deterministic Core, Probabilistic Edge": patterns/02-composition/11-deterministic-core-probabilistic-edge.md
-                    - "#12 Blackboard": patterns/02-composition/12-blackboard.md
-                - "III. I/O & Contract":
-                    - patterns/03-io-contract/index.md
-                    - "#13 Natural Language Boundary Adapter": patterns/03-io-contract/13-natural-language-boundary-adapter.md
-                    - "#14 Structured Output Contract": patterns/03-io-contract/14-structured-output-contract.md
-                    - "#15 Inverted Structured Output": patterns/03-io-contract/15-inverted-structured-output.md
-                    - "#16 Ambiguity Negotiation": patterns/03-io-contract/16-ambiguity-negotiation.md
-                - "IV. Tools, MCP & External System Integration":
-                    - patterns/04-tools-mcp/index.md
-                    - "#17 Tool / MCP Gateway": patterns/04-tools-mcp/17-tool-mcp-gateway.md
-                    - "#18 Least-Privilege Tool Binding": patterns/04-tools-mcp/18-least-privilege-tool-binding.md
-                    - "#19 Dry-Run First Tool Execution": patterns/04-tools-mcp/19-dry-run-first-tool-execution.md
-                    - "#20 Sandboxed Tool Runtime": patterns/04-tools-mcp/20-sandboxed-tool-runtime.md
-                    - "#21 MCP Adapter Isolation": patterns/04-tools-mcp/21-mcp-adapter-isolation.md
-                    - "#22 Anti-Corruption Layer": patterns/04-tools-mcp/22-anti-corruption-layer.md
-                - "V. Memory & Context Management":
-                    - patterns/05-memory-context/index.md
-                    - "#23 Layered Memory": patterns/05-memory-context/23-layered-memory.md
-                    - "#24 Context Pack / Assembly": patterns/05-memory-context/24-context-pack-assembly.md
-                    - "#25 Memory Write Gate": patterns/05-memory-context/25-memory-write-gate.md
-                    - "#26 Forgetting and Expiration": patterns/05-memory-context/26-forgetting-and-expiration.md
-                - "VI. Reliability, Verification, Guardrails & Autonomy":
-                    - patterns/06-reliability/index.md
-                    - "#27 Evidence-First Answer": patterns/06-reliability/27-evidence-first-answer.md
-                    - "#28 Verifier Agent / Critic": patterns/06-reliability/28-verifier-agent-critic.md
-                    - "#29 Guardrail Sidecar + Self-Correction": patterns/06-reliability/29-guardrail-sidecar-self-correction.md
-                    - "#30 Policy-as-Code Guardrail": patterns/06-reliability/30-policy-as-code-guardrail.md
-                    - "#31 Human Approval Checkpoint": patterns/06-reliability/31-human-approval-checkpoint.md
-                    - "#57 Autonomy Ladder": patterns/06-reliability/57-autonomy-ladder.md
-                - "VII. Observability, Audit & Evaluation":
-                    - patterns/07-observability/index.md
-                    - "#32 Agent Trace": patterns/07-observability/32-agent-trace.md
-                    - "#54 Tiered (Hot/Cold) Observability": patterns/07-observability/54-tiered-observability.md
-                    - "#33 Version Pinning": patterns/07-observability/33-version-pinning.md
-                    - "#34 Evaluation CI/CD": patterns/07-observability/34-evaluation-ci-cd.md
-                    - "#35 Production Replay": patterns/07-observability/35-production-replay.md
-                    - "#36 Shadow / Canary Deployment": patterns/07-observability/36-shadow-canary-deployment.md
-                - "VIII. Cost, Performance & Scaling":
-                    - patterns/08-cost-scaling/index.md
-                    - "#37 Semantic Gateway & Cost-Aware Router": patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md
-                    - "#38 Semantic Result Cache": patterns/08-cost-scaling/38-semantic-result-cache.md
-                    - "#39 Prompt Cache Optimized Context": patterns/08-cost-scaling/39-prompt-cache-optimized-context.md
-                    - "#40 Fallback & Graceful Degradation": patterns/08-cost-scaling/40-fallback-graceful-degradation.md
-                    - "#56 Adaptive Effort": patterns/08-cost-scaling/56-adaptive-effort.md
-                - "IX. Security & Multi-Tenancy":
-                    - patterns/09-security/index.md
-                    - "#41 Tenant-Isolated Agent Runtime": patterns/09-security/41-tenant-isolated-agent-runtime.md
-                    - "#42 Data Boundary Firewall": patterns/09-security/42-data-boundary-firewall.md
-                    - "#43 Confused-Deputy Damage Limitation": patterns/09-security/43-confused-deputy-damage-limitation.md
-                    - "#44 Dual-LLM Privilege Separation": patterns/09-security/44-dual-llm-privilege-separation.md
-                - "X. Deployment, Vendor Abstraction & Migration":
-                    - patterns/10-deployment/index.md
-                    - "#45 Agent Runtime Abstraction": patterns/10-deployment/45-agent-runtime-abstraction.md
-                    - "#46 Model Behavior Compatibility Layer": patterns/10-deployment/46-model-behavior-compatibility-layer.md
-                    - "#47 Agent Capability Registry": patterns/10-deployment/47-agent-capability-registry.md
-                    - "#48 Strangler Fig": patterns/10-deployment/48-strangler-fig.md
-                - "XI. UI/UX & Human Collaboration":
-                    - patterns/11-ux/index.md
-                    - "#49 Agent Workbench": patterns/11-ux/49-agent-workbench.md
-                    - "#50 Editable Plan": patterns/11-ux/50-editable-plan.md
-                    - "#51 Agent-to-Human Escalation": patterns/11-ux/51-agent-to-human-escalation.md
-                - "XII. Organization, Governance & Lifecycle":
-                    - patterns/12-governance/index.md
-                    - "#52 Agent Constitution": patterns/12-governance/52-agent-constitution.md
-                    - "#53 Agent Change Management": patterns/12-governance/53-agent-change-management.md
             - "Composite & Anti-Patterns":
-                - Reference Architectures:
+                - "Decision Presets (Reference Architectures)":
                     - reference-architectures/index.md
                     - "MVP (Minimum Viable)": reference-architectures/01-mvp.md
                     - Side-Effect-First: reference-architectures/02-side-effect-first.md
@@ -237,7 +227,7 @@ plugins:
                     - Factuality-First: reference-architectures/04-factuality-first.md
                     - Cost-First: reference-architectures/05-cost-first.md
                     - Continuous Improvement: reference-architectures/06-continuous-improvement.md
-                - Anti-Patterns:
+                - "Decision Mistakes (Anti-Patterns)":
                     - anti-patterns/index.md
                     - "Infinite / Excessive Timeout": anti-patterns/01-infinite-timeout.md
                     - Excessive Guardrails: anti-patterns/02-excessive-guardrails.md
@@ -250,7 +240,7 @@ plugins:
                     - Retry Storm: anti-patterns/09-retry-storm.md
                     - Prompt as Security Boundary: anti-patterns/10-prompt-as-security.md
                     - LLM as Calculator: anti-patterns/11-llm-as-calculator.md
-                - Pattern Quick Reference: pattern-index.md
+                - "Pattern Glossary": glossary.md
             - Agent Integration:
                 - Coding Agent Guide: agent-guide.md
                 - Architecture Proposal Template: agent-proposal-template.md
@@ -352,92 +342,8 @@ nav:
       - 意思決定記録（ADR）: decisions/adr-template.md
       - 通し例: decisions/worked-examples.md
       - パターンのパラメータ化: decisions/parameterization.md
-  - パターン・リファレンス（語彙）:
-      - I. 実行・セッション・オーケストレーション:
-          - patterns/01-execution/index.md
-          - "#1 Request-to-Job Gateway": patterns/01-execution/01-request-to-job-gateway.md
-          - "#2 Durable Agent Session": patterns/01-execution/02-durable-agent-session.md
-          - "#3 Workflow Backbone + Agent Node": patterns/01-execution/03-workflow-backbone-agent-node.md
-          - "#4 Agent Saga": patterns/01-execution/04-agent-saga.md
-          - "#5 Time-Budgeted Agent Loop": patterns/01-execution/05-time-budgeted-agent-loop.md
-          - "#6 Interruptible Agent": patterns/01-execution/06-interruptible-agent.md
-          - "#7 Streaming Progress": patterns/01-execution/07-streaming-progress.md
-          - "#55 Deadline & Budget Cascade": patterns/01-execution/55-deadline-budget-cascade.md
-          - "#58 Sync Facade over Async Core": patterns/01-execution/58-sync-facade-over-async-core.md
-          - "#59 Workflow–Agent Spectrum Selector": patterns/01-execution/59-workflow-agent-spectrum-selector.md
-      - II. エージェント構成・分担:
-          - patterns/02-composition/index.md
-          - "#8 Planner-Executor-Reviewer": patterns/02-composition/08-planner-executor-reviewer.md
-          - "#9 Supervisor & Specialist Agents": patterns/02-composition/09-supervisor-specialist-agents.md
-          - "#10 Agent Ensemble & Debate": patterns/02-composition/10-agent-ensemble-debate.md
-          - "#11 Deterministic Core, Probabilistic Edge": patterns/02-composition/11-deterministic-core-probabilistic-edge.md
-          - "#12 Blackboard": patterns/02-composition/12-blackboard.md
-      - III. 入出力・契約化:
-          - patterns/03-io-contract/index.md
-          - "#13 Natural Language Boundary Adapter": patterns/03-io-contract/13-natural-language-boundary-adapter.md
-          - "#14 Structured Output Contract": patterns/03-io-contract/14-structured-output-contract.md
-          - "#15 Inverted Structured Output": patterns/03-io-contract/15-inverted-structured-output.md
-          - "#16 Ambiguity Negotiation": patterns/03-io-contract/16-ambiguity-negotiation.md
-      - IV. ツール・MCP・外部システム接続:
-          - patterns/04-tools-mcp/index.md
-          - "#17 Tool / MCP Gateway": patterns/04-tools-mcp/17-tool-mcp-gateway.md
-          - "#18 Least-Privilege Tool Binding": patterns/04-tools-mcp/18-least-privilege-tool-binding.md
-          - "#19 Dry-Run First Tool Execution": patterns/04-tools-mcp/19-dry-run-first-tool-execution.md
-          - "#20 Sandboxed Tool Runtime": patterns/04-tools-mcp/20-sandboxed-tool-runtime.md
-          - "#21 MCP Adapter Isolation": patterns/04-tools-mcp/21-mcp-adapter-isolation.md
-          - "#22 Anti-Corruption Layer": patterns/04-tools-mcp/22-anti-corruption-layer.md
-      - V. メモリ・コンテキスト管理:
-          - patterns/05-memory-context/index.md
-          - "#23 Layered Memory": patterns/05-memory-context/23-layered-memory.md
-          - "#24 Context Pack / Assembly": patterns/05-memory-context/24-context-pack-assembly.md
-          - "#25 Memory Write Gate": patterns/05-memory-context/25-memory-write-gate.md
-          - "#26 Forgetting and Expiration": patterns/05-memory-context/26-forgetting-and-expiration.md
-      - VI. 信頼性・検証・ガードレール・自律:
-          - patterns/06-reliability/index.md
-          - "#27 Evidence-First Answer": patterns/06-reliability/27-evidence-first-answer.md
-          - "#28 Verifier Agent / Critic": patterns/06-reliability/28-verifier-agent-critic.md
-          - "#29 Guardrail Sidecar + Self-Correction": patterns/06-reliability/29-guardrail-sidecar-self-correction.md
-          - "#30 Policy-as-Code Guardrail": patterns/06-reliability/30-policy-as-code-guardrail.md
-          - "#31 Human Approval Checkpoint": patterns/06-reliability/31-human-approval-checkpoint.md
-          - "#57 Autonomy Ladder": patterns/06-reliability/57-autonomy-ladder.md
-      - VII. 観測性・監査・評価:
-          - patterns/07-observability/index.md
-          - "#32 Agent Trace": patterns/07-observability/32-agent-trace.md
-          - "#54 Tiered (Hot/Cold) Observability": patterns/07-observability/54-tiered-observability.md
-          - "#33 Version Pinning": patterns/07-observability/33-version-pinning.md
-          - "#34 Evaluation CI/CD": patterns/07-observability/34-evaluation-ci-cd.md
-          - "#35 Production Replay": patterns/07-observability/35-production-replay.md
-          - "#36 Shadow / Canary Deployment": patterns/07-observability/36-shadow-canary-deployment.md
-      - VIII. コスト・性能・スケーリング:
-          - patterns/08-cost-scaling/index.md
-          - "#37 Semantic Gateway & Cost-Aware Router": patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md
-          - "#38 Semantic Result Cache": patterns/08-cost-scaling/38-semantic-result-cache.md
-          - "#39 Prompt Cache Optimized Context": patterns/08-cost-scaling/39-prompt-cache-optimized-context.md
-          - "#40 Fallback & Graceful Degradation": patterns/08-cost-scaling/40-fallback-graceful-degradation.md
-          - "#56 Adaptive Effort": patterns/08-cost-scaling/56-adaptive-effort.md
-      - IX. セキュリティ・マルチテナント:
-          - patterns/09-security/index.md
-          - "#41 Tenant-Isolated Agent Runtime": patterns/09-security/41-tenant-isolated-agent-runtime.md
-          - "#42 Data Boundary Firewall": patterns/09-security/42-data-boundary-firewall.md
-          - "#43 Confused-Deputy Damage Limitation": patterns/09-security/43-confused-deputy-damage-limitation.md
-          - "#44 Dual-LLM Privilege Separation": patterns/09-security/44-dual-llm-privilege-separation.md
-      - X. デプロイ・ベンダー抽象化・移行:
-          - patterns/10-deployment/index.md
-          - "#45 Agent Runtime Abstraction": patterns/10-deployment/45-agent-runtime-abstraction.md
-          - "#46 Model Behavior Compatibility Layer": patterns/10-deployment/46-model-behavior-compatibility-layer.md
-          - "#47 Agent Capability Registry": patterns/10-deployment/47-agent-capability-registry.md
-          - "#48 Strangler Fig": patterns/10-deployment/48-strangler-fig.md
-      - XI. UI/UX・人間協調:
-          - patterns/11-ux/index.md
-          - "#49 Agent Workbench": patterns/11-ux/49-agent-workbench.md
-          - "#50 Editable Plan": patterns/11-ux/50-editable-plan.md
-          - "#51 Agent-to-Human Escalation": patterns/11-ux/51-agent-to-human-escalation.md
-      - XII. 組織・ガバナンス・ライフサイクル:
-          - patterns/12-governance/index.md
-          - "#52 Agent Constitution": patterns/12-governance/52-agent-constitution.md
-          - "#53 Agent Change Management": patterns/12-governance/53-agent-change-management.md
   - 複合構成・アンチパターン:
-      - リファレンスアーキテクチャ:
+      - 意思決定プリセット（リファレンスアーキテクチャ）:
           - reference-architectures/index.md
           - 最小構成（MVP）: reference-architectures/01-mvp.md
           - 副作用重視構成: reference-architectures/02-side-effect-first.md
@@ -445,7 +351,7 @@ nav:
           - 事実性重視構成: reference-architectures/04-factuality-first.md
           - コスト重視構成: reference-architectures/05-cost-first.md
           - 継続改善運用構成: reference-architectures/06-continuous-improvement.md
-      - アンチパターン:
+      - 意思決定の誤り（アンチパターン）:
           - anti-patterns/index.md
           - 無限・過大タイムアウト: anti-patterns/01-infinite-timeout.md
           - 過剰ガードレール: anti-patterns/02-excessive-guardrails.md
@@ -458,7 +364,7 @@ nav:
           - リトライストーム: anti-patterns/09-retry-storm.md
           - プロンプトをセキュリティ境界にする: anti-patterns/10-prompt-as-security.md
           - LLMに算術や厳密検索をやらせる: anti-patterns/11-llm-as-calculator.md
-      - パターン早見表: pattern-index.md
+      - パターン早見表（語彙集）: glossary.md
   - エージェント統合:
       - コーディングエージェント向けガイド: agent-guide.md
       - アーキテクチャ提案テンプレート: agent-proposal-template.md

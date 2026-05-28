@@ -66,11 +66,11 @@ flowchart LR
 
 [Minimal Configuration](../reference-architectures/01-mvp.md) + Cache layer:
 
-- [#58 Sync Facade](../patterns/01-execution/58-sync-facade-over-async-core.md) — Sync/async hybrid
-- [#24 Context Pack / Assembly](../patterns/05-memory-context/24-context-pack-assembly.md) — RAG
-- [#14 Structured Output Contract](../patterns/03-io-contract/14-structured-output-contract.md) — Output structuring
-- [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) — Similar query reuse
-- [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) — Minimal observability
+- [#58 Sync Facade](../glossary.md) — Sync/async hybrid
+- [#24 Context Pack / Assembly](../glossary.md) — RAG
+- [#14 Structured Output Contract](../glossary.md) — Output structuring
+- [#38 Semantic Result Cache](../glossary.md) — Similar query reuse
+- [#32 Agent Trace](../glossary.md) — Minimal observability
 
 ### Re-evaluation Conditions
 
@@ -132,14 +132,14 @@ flowchart LR
 
 [Side-Effect-First Configuration](../reference-architectures/02-side-effect-first.md):
 
-- [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) — Async reception
-- [#3 Workflow Backbone](../patterns/01-execution/03-workflow-backbone-agent-node.md) — Deterministic flow
-- [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md) — Compensating transactions
-- [#15 Inverted Structured Output](../patterns/03-io-contract/15-inverted-structured-output.md) — LLM handles judgment only
-- [#19 Dry-Run First](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) — Simulated execution
-- [#28 Verifier Agent](../patterns/06-reliability/28-verifier-agent-critic.md) — Different-model verification
-- [#31 Human Approval](../patterns/06-reliability/31-human-approval-checkpoint.md) — Pre-payment approval
-- [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) + [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) — Audit trail
+- [#1 Request-to-Job Gateway](../glossary.md) — Async reception
+- [#3 Workflow Backbone](../glossary.md) — Deterministic flow
+- [#4 Agent Saga](../glossary.md) — Compensating transactions
+- [#15 Inverted Structured Output](../glossary.md) — LLM handles judgment only
+- [#19 Dry-Run First](../glossary.md) — Simulated execution
+- [#28 Verifier Agent](../glossary.md) — Different-model verification
+- [#31 Human Approval](../glossary.md) — Pre-payment approval
+- [#32 Agent Trace](../glossary.md) + [#33 Version Pinning](../glossary.md) — Audit trail
 
 ### Re-evaluation Conditions
 
@@ -203,14 +203,14 @@ flowchart LR
 
 [Cost-First Configuration](../reference-architectures/05-cost-first.md) + [Untrusted Input Configuration](../reference-architectures/03-untrusted-input.md):
 
-- [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — Difficulty-based routing
-- [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) — FAQ similar query reuse
-- [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) — Computation adjustment
-- [#40 Fallback](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — Degradation on failure
-- [#13 NL Boundary Adapter](../patterns/03-io-contract/13-natural-language-boundary-adapter.md) — Input structuring
-- [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md) — PII inspection
-- [#29 Guardrail Sidecar](../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) — Output inspection
-- [#7 Streaming Progress](../patterns/01-execution/07-streaming-progress.md) — Incremental response
+- [#37 Semantic Gateway](../glossary.md) — Difficulty-based routing
+- [#38 Semantic Result Cache](../glossary.md) — FAQ similar query reuse
+- [#56 Adaptive Effort](../glossary.md) — Computation adjustment
+- [#40 Fallback](../glossary.md) — Degradation on failure
+- [#13 NL Boundary Adapter](../glossary.md) — Input structuring
+- [#42 Data Boundary Firewall](../glossary.md) — PII inspection
+- [#29 Guardrail Sidecar](../glossary.md) — Output inspection
+- [#7 Streaming Progress](../glossary.md) — Incremental response
 
 ### Re-evaluation Conditions
 

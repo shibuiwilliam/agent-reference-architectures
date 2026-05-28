@@ -53,4 +53,4 @@ Costs inflate by N times, and latency also multiplies by N if not parallelized. 
 
 ## Related Patterns
 
-- [#10 Agent Ensemble & Debate](../../patterns/02-composition/10-agent-ensemble-debate.md) -- Composition pattern for generating, debating, and selecting the best across multiple agents
+- [#10 Agent Ensemble & Debate](../../glossary.md) -- Composition pattern for generating, debating, and selecting the best across multiple agents

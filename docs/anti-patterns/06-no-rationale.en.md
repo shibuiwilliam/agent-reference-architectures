@@ -99,4 +99,4 @@ AGENT_CONFIG = {
 
 - [Pattern Parameterization](../decisions/parameterization.md) — Best practices for parameter management
 - [Architecture Decision Record (ADR)](../decisions/adr-template.md) — Template for recording decision rationale
-- [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) — Include configuration values in traces
+- [#32 Agent Trace](../glossary.md) — Include configuration values in traces

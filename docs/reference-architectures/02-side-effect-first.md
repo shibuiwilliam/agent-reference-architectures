@@ -50,13 +50,13 @@ flowchart LR
 
 | 層 | パターン | 役割 | なぜ必要か |
 |---|---------|------|-----------|
-| 受付 | [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) | 非同期受付 | 承認待ちを含むため処理が長時間になります |
-| 骨格 | [#3 Workflow Backbone + Agent Node](../patterns/01-execution/03-workflow-backbone-agent-node.md) | 決定論的なフロー制御 | 副作用の実行順序をLLMの気まぐれに任せられません |
-| 補償 | [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md) | 失敗時の巻き戻し | 途中で失敗したとき、実行済みの操作を補償する手段がないとデータが不整合になります |
-| 承認 | [#31 Human Approval Checkpoint](../patterns/06-reliability/31-human-approval-checkpoint.md) | 高リスク操作前の人間承認 | 不可逆な操作を機械だけで実行させるのはリスクが高すぎます |
-| ツール | [#19 Dry-Run First Tool Execution](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) | 副作用の模擬実行 | 実行前に「何が起きるか」を確認できないと、承認者も判断できません |
-| 出力 | [#15 Inverted Structured Output](../patterns/03-io-contract/15-inverted-structured-output.md) | LLMは判断のみ、実行はコード | LLMが直接APIを叩く構成だと、パラメータの誤りを防げません |
-| 観測 | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) | 全操作の追跡 | 何を実行したかの監査証跡がないと、問題発生時に原因を特定できません |
+| 受付 | [#1 Request-to-Job Gateway](../glossary.md) | 非同期受付 | 承認待ちを含むため処理が長時間になります |
+| 骨格 | [#3 Workflow Backbone + Agent Node](../glossary.md) | 決定論的なフロー制御 | 副作用の実行順序をLLMの気まぐれに任せられません |
+| 補償 | [#4 Agent Saga](../glossary.md) | 失敗時の巻き戻し | 途中で失敗したとき、実行済みの操作を補償する手段がないとデータが不整合になります |
+| 承認 | [#31 Human Approval Checkpoint](../glossary.md) | 高リスク操作前の人間承認 | 不可逆な操作を機械だけで実行させるのはリスクが高すぎます |
+| ツール | [#19 Dry-Run First Tool Execution](../glossary.md) | 副作用の模擬実行 | 実行前に「何が起きるか」を確認できないと、承認者も判断できません |
+| 出力 | [#15 Inverted Structured Output](../glossary.md) | LLMは判断のみ、実行はコード | LLMが直接APIを叩く構成だと、パラメータの誤りを防げません |
+| 観測 | [#32 Agent Trace](../glossary.md) | 全操作の追跡 | 何を実行したかの監査証跡がないと、問題発生時に原因を特定できません |
 
 ## 各層の詳細
 
@@ -91,7 +91,7 @@ LLMが出力するのは「実行すべき操作の宣言」であり、実際�
 ## 省略してよいもの・追加を検討するもの
 
 - **省略可**: 全操作が低リスクの場合はHuman Approval Checkpointを閾値ベースに緩められます。補償が不要な冪等操作のみならAgent Sagaも省略可能です
-- **追加検討**: `[F5]` が低い場合は[信頼できない入力構成](03-untrusted-input.md)のセキュリティ層を重ねます。`[F8]` が高まったら [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) で再現性を確保します
+- **追加検討**: `[F5]` が低い場合は[信頼できない入力構成](03-untrusted-input.md)のセキュリティ層を重ねます。`[F8]` が高まったら [#33 Version Pinning](../glossary.md) で再現性を確保します
 
 ## 具体的なシナリオ
 
@@ -106,7 +106,7 @@ Dry-Run Firstが「返金額: 12,800円、返金先: クレジットカード末
 - `[F5]` が低下したら → [信頼できない入力構成](03-untrusted-input.md)のData Boundary Firewall、Dual-LLM分離を追加します
 - `[F7]` が高まったら → [コスト重視構成](05-cost-first.md)のルーティングで低リスク操作を軽量モデルに振り分けます
 - `[F8]` が高まったら → [継続改善運用構成](06-continuous-improvement.md)のEvaluation CI/CDで回帰検知を導入します
-- 自律度を上げたい場合 → [#57 Autonomy Ladder](../patterns/06-reliability/57-autonomy-ladder.md) で段階的に承認を省略します
+- 自律度を上げたい場合 → [#57 Autonomy Ladder](../glossary.md) で段階的に承認を省略します
 
 ## 関連する構成
 

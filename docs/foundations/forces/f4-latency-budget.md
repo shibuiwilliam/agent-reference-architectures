@@ -54,11 +54,11 @@ tags:
 
 ## 関連パターン
 
-- [#1 Request-to-Job Gateway](../../patterns/01-execution/01-request-to-job-gateway.md) — 予算を超えるリクエストを非同期ジョブとして受け付ける
-- [#7 Streaming Progress](../../patterns/01-execution/07-streaming-progress.md) — 処理中の進捗を逐次ストリーミングし体感待ち時間を短縮する
-- [#58 Sync Facade over Async Core](../../patterns/01-execution/58-sync-facade-over-async-core.md) — 短ければ同期、超えたら非同期へ昇格する
-- [#38 Semantic Result Cache](../../patterns/08-cost-scaling/38-semantic-result-cache.md) — 意味的に近い過去の結果を再利用しレイテンシを削減する
-- [#39 Prompt Cache Optimized Context](../../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md) — 共通プレフィックスでプロンプトキャッシュを効かせる
+- [#1 Request-to-Job Gateway](../../glossary.md) — 予算を超えるリクエストを非同期ジョブとして受け付ける
+- [#7 Streaming Progress](../../glossary.md) — 処理中の進捗を逐次ストリーミングし体感待ち時間を短縮する
+- [#58 Sync Facade over Async Core](../../glossary.md) — 短ければ同期、超えたら非同期へ昇格する
+- [#38 Semantic Result Cache](../../glossary.md) — 意味的に近い過去の結果を再利用しレイテンシを削減する
+- [#39 Prompt Cache Optimized Context](../../glossary.md) — 共通プレフィックスでプロンプトキャッシュを効かせる
 
 <!-- BEGIN:GEN:patterns -->
 

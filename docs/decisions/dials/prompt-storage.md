@@ -51,7 +51,7 @@ tags:
 
 ## 関連パターン
 
-- [#33 Version Pinning](../../patterns/07-observability/33-version-pinning.md) — プロンプト・モデル・ツールのバージョンを固定し再現性を確保する
+- [#33 Version Pinning](../../glossary.md) — プロンプト・モデル・ツールのバージョンを固定し再現性を確保する
 
 <!-- BEGIN:GEN:patterns -->
 

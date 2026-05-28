@@ -52,5 +52,5 @@ Cost explosions from bugs or malicious prompts cannot be prevented. Incidents wh
 
 ## Related Patterns
 
-- [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) -- Controls loops by budgeting time, iterations, and cost
-- [#55 Deadline & Budget Cascade](../../patterns/01-execution/55-deadline-budget-cascade.md) -- Propagates budgets across the entire call tree
+- [#5 Time-Budgeted Agent Loop](../../glossary.md) -- Controls loops by budgeting time, iterations, and cost
+- [#55 Deadline & Budget Cascade](../../glossary.md) -- Propagates budgets across the entire call tree

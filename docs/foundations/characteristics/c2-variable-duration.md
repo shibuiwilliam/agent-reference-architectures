@@ -34,9 +34,9 @@ tags:
 
 ## 防波堤となるパターン
 
-- [#1 Request-to-Job Gateway](../../patterns/01-execution/01-request-to-job-gateway.md) — 同期HTTPから切り離し、非同期ジョブとして実行する
-- [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — 時間・回数・コストに予算を設け、暴走を防止する
-- [#6 Interruptible Agent](../../patterns/01-execution/06-interruptible-agent.md) — 途中で停止・方針修正できる構造にする
+- [#1 Request-to-Job Gateway](../../glossary.md) — 同期HTTPから切り離し、非同期ジョブとして実行する
+- [#5 Time-Budgeted Agent Loop](../../glossary.md) — 時間・回数・コストに予算を設け、暴走を防止する
+- [#6 Interruptible Agent](../../glossary.md) — 途中で停止・方針修正できる構造にする
 
 ## 関連する設計判断
 

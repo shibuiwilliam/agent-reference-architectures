@@ -38,7 +38,7 @@ Use structured output when there is a downstream system (API, database, another 
 
 ## Hybrid Approach
 
-A versatile pattern is "structured shell + free-form content": output judgments, actions, and metadata as structured fields while placing user-facing explanation text in a free-form field. Define the schema with [#14 Structured Output Contract](../../patterns/03-io-contract/14-structured-output-contract.md) and include a free-text field like `explanation: str` within it — this is the typical pattern.
+A versatile pattern is "structured shell + free-form content": output judgments, actions, and metadata as structured fields while placing user-facing explanation text in a free-form field. Define the schema with [#14 Structured Output Contract](../../glossary.md) and include a free-text field like `explanation: str` within it — this is the typical pattern.
 
 ## Decision Flowchart
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## Related Patterns
 
-- [#14 Structured Output Contract](../../patterns/03-io-contract/14-structured-output-contract.md) — Design pattern for contracting output via schema
-- [#15 Inverted Structured Output](../../patterns/03-io-contract/15-inverted-structured-output.md) — Structuring intermediate judgments rather than final output
+- [#14 Structured Output Contract](../../glossary.md) — Design pattern for contracting output via schema
+- [#15 Inverted Structured Output](../../glossary.md) — Structuring intermediate judgments rather than final output
 
 ## Related Dials
 

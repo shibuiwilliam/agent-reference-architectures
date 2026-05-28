@@ -48,12 +48,12 @@ flowchart LR
 
 | 層 | パターン | 役割 | なぜ必要か |
 |---|---------|------|-----------|
-| ルーティング | [#37 Semantic Gateway & Cost-Aware Router](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) | 難易度別モデル振り分け | 全リクエストを高性能モデルで処理するとコストが線形に増えます |
-| キャッシュ | [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) | 類似クエリの再利用 | 同じような質問が繰り返される場合、LLMを呼ぶ必要がありません |
-| プロンプト | [#39 Prompt Cache Optimized Context](../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md) | prefix共有でキャッシュ | システムプロンプトやコンテキストの共通部分をキャッシュし、入力トークン料金を削減します |
-| 努力配分 | [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) | 難易度で計算量調整 | 簡単な質問に長いChain-of-Thoughtを走らせるのは無駄です |
-| 予算 | [#5 Time-Budgeted Agent Loop](../patterns/01-execution/05-time-budgeted-agent-loop.md) | リクエスト単位の上限 | 予算なしだと暴走したリクエストが全体の予算を食い潰します |
-| フォールバック | [#40 Fallback & Graceful Degradation](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) | 障害時の縮退 | 高性能モデルが障害のとき、全リクエストが失敗するのを防ぎます |
+| ルーティング | [#37 Semantic Gateway & Cost-Aware Router](../glossary.md) | 難易度別モデル振り分け | 全リクエストを高性能モデルで処理するとコストが線形に増えます |
+| キャッシュ | [#38 Semantic Result Cache](../glossary.md) | 類似クエリの再利用 | 同じような質問が繰り返される場合、LLMを呼ぶ必要がありません |
+| プロンプト | [#39 Prompt Cache Optimized Context](../glossary.md) | prefix共有でキャッシュ | システムプロンプトやコンテキストの共通部分をキャッシュし、入力トークン料金を削減します |
+| 努力配分 | [#56 Adaptive Effort](../glossary.md) | 難易度で計算量調整 | 簡単な質問に長いChain-of-Thoughtを走らせるのは無駄です |
+| 予算 | [#5 Time-Budgeted Agent Loop](../glossary.md) | リクエスト単位の上限 | 予算なしだと暴走したリクエストが全体の予算を食い潰します |
+| フォールバック | [#40 Fallback & Graceful Degradation](../glossary.md) | 障害時の縮退 | 高性能モデルが障害のとき、全リクエストが失敗するのを防ぎます |
 
 ## 各層の詳細
 
@@ -84,7 +84,7 @@ flowchart LR
 ## 省略してよいもの・追加を検討するもの
 
 - **省略可**: リクエスト量が少ない（月間数千件以下の）段階ではSemantic CacheやPrompt Cache Optimized Contextの効果が薄いです。ルーティング層だけ先行導入する手もあります
-- **追加検討**: `[F2]` が高まったら[副作用重視構成](02-side-effect-first.md)の安全層を重ねます。`[F9]` が高まったら [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md) でプロバイダ間の切り替えを容易にします
+- **追加検討**: `[F2]` が高まったら[副作用重視構成](02-side-effect-first.md)の安全層を重ねます。`[F9]` が高まったら [#45 Agent Runtime Abstraction](../glossary.md) でプロバイダ間の切り替えを容易にします
 
 ## 具体的なシナリオ
 
@@ -100,8 +100,8 @@ Semantic Gatewayがリクエストを受け取り、分類します。「社内�
 
 - `[F2]` が高まったら → [副作用重視構成](02-side-effect-first.md)の安全層を追加します（ナレッジ検索からアクション実行に発展する場合）
 - `[F8]` が高まったら → [継続改善運用構成](06-continuous-improvement.md)でコスト削減が品質に影響していないかを評価します
-- `[F9]` が高まったら → [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md) と [#46 Model Behavior Compatibility Layer](../patterns/10-deployment/46-model-behavior-compatibility-layer.md) でマルチプロバイダ運用を強化します
-- キャッシュヒット率が低下したら → [#24 Context Pack / Assembly](../patterns/05-memory-context/24-context-pack-assembly.md) でコンテキストの構造を最適化します
+- `[F9]` が高まったら → [#45 Agent Runtime Abstraction](../glossary.md) と [#46 Model Behavior Compatibility Layer](../glossary.md) でマルチプロバイダ運用を強化します
+- キャッシュヒット率が低下したら → [#24 Context Pack / Assembly](../glossary.md) でコンテキストの構造を最適化します
 
 ## 関連する構成
 

@@ -50,7 +50,7 @@ tags:
 
 ## 関連パターン
 
-- [#2 Durable Agent Session](../../patterns/01-execution/02-durable-agent-session.md) — チェックポイントによる中断・再開の基盤パターン
+- [#2 Durable Agent Session](../../glossary.md) — チェックポイントによる中断・再開の基盤パターン
 
 <!-- BEGIN:GEN:patterns -->
 

@@ -54,11 +54,11 @@ tags:
 
 ## 関連パターン
 
-- [#10 Agent Ensemble & Debate](../../patterns/02-composition/10-agent-ensemble-debate.md) — 高価値判断を複数エージェントの合議で頑健化する
-- [#37 Semantic Gateway & Cost-Aware Router](../../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — 難易度・価値でモデルを動的に選択する
-- [#56 Adaptive Effort](../../patterns/08-cost-scaling/56-adaptive-effort.md) — 難易度に応じて投入する計算量を増減する
-- [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) — リクエスト価値に応じた予算でループ回数を制御する
-- [#55 Deadline & Budget Cascade](../../patterns/01-execution/55-deadline-budget-cascade.md) — 予算をサブタスクへ伝播させる
+- [#10 Agent Ensemble & Debate](../../glossary.md) — 高価値判断を複数エージェントの合議で頑健化する
+- [#37 Semantic Gateway & Cost-Aware Router](../../glossary.md) — 難易度・価値でモデルを動的に選択する
+- [#56 Adaptive Effort](../../glossary.md) — 難易度に応じて投入する計算量を増減する
+- [#5 Time-Budgeted Agent Loop](../../glossary.md) — リクエスト価値に応じた予算でループ回数を制御する
+- [#55 Deadline & Budget Cascade](../../glossary.md) — 予算をサブタスクへ伝播させる
 
 <!-- BEGIN:GEN:patterns -->
 

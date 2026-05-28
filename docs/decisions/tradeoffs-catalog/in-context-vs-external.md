@@ -38,7 +38,7 @@ tags:
 
 ## ハイブリッドアプローチ
 
-[#23 Layered Memory](../../patterns/05-memory-context/23-layered-memory.md) が示すように、作業メモリ（in-context）・短期メモリ（セッションDB）・長期メモリ（永続ストア）の三層構成が有効。頻繁にアクセスする情報はin-contextに載せ、参照頻度が下がった情報は外部へ退避します。[#2 Durable Agent Session](../../patterns/01-execution/02-durable-agent-session.md) で中断・再開に耐える状態管理を実現します。
+[#23 Layered Memory](../../glossary.md) が示すように、作業メモリ（in-context）・短期メモリ（セッションDB）・長期メモリ（永続ストア）の三層構成が有効。頻繁にアクセスする情報はin-contextに載せ、参照頻度が下がった情報は外部へ退避します。[#2 Durable Agent Session](../../glossary.md) で中断・再開に耐える状態管理を実現します。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#23 Layered Memory](../../patterns/05-memory-context/23-layered-memory.md) — 記憶を短期・長期・共有に階層化する
-- [#2 Durable Agent Session](../../patterns/01-execution/02-durable-agent-session.md) — 外部状態で中断・再開可能なセッションを実現する
+- [#23 Layered Memory](../../glossary.md) — 記憶を短期・長期・共有に階層化する
+- [#2 Durable Agent Session](../../glossary.md) — 外部状態で中断・再開可能なセッションを実現する
 
 ## 関連ダイヤル
 

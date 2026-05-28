@@ -52,5 +52,5 @@ Normal outputs are frequently blocked, leading users to judge the system as "unu
 
 ## Related Patterns
 
-- [#29 Guardrail Sidecar + Self-Correction](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) -- Implementation of guardrail inspection and self-correction loops
-- [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) -- Managing and applying policies as code
+- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) -- Implementation of guardrail inspection and self-correction loops
+- [#30 Policy-as-Code Guardrail](../../glossary.md) -- Managing and applying policies as code

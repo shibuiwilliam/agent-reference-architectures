@@ -50,7 +50,7 @@ LLM APIは429（レート制限）や503（過負荷）を頻繁に返します�
 
 ## 関連パターン
 
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — リトライ上限到達後の代替経路を提供する
+- [#40 Fallback & Graceful Degradation](../../glossary.md) — リトライ上限到達後の代替経路を提供する
 
 <!-- BEGIN:GEN:patterns -->
 

@@ -85,4 +85,4 @@ Dials related to logging, tracing, and prompt management. Balances audit/debuggi
 3. Cross-reference with the "Determining Factor" column in the tables above and set the guideline value as a starting point
 4. Continuously adjust based on production metrics (error rate, cost, latency)
 
-Dial values are not "set once and forget." It is important to review them periodically following the process in [#53 Agent Change Management](../patterns/12-governance/53-agent-change-management.md).
+Dial values are not "set once and forget." It is important to review them periodically following the process in [#53 Agent Change Management](../glossary.md).

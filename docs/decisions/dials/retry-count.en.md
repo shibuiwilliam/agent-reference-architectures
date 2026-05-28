@@ -50,4 +50,4 @@ During prolonged outages, requests pile up, inflating cost (re-consumed tokens) 
 
 ## Related Patterns
 
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) -- Provides alternative pathways after retry limits are reached
+- [#40 Fallback & Graceful Degradation](../../glossary.md) -- Provides alternative pathways after retry limits are reached

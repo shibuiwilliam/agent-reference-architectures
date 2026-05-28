@@ -53,7 +53,7 @@ tags:
 
 ## 関連パターン
 
-- [#54 Tiered Observability](../../patterns/07-observability/54-tiered-observability.md) — 観測データをHot/Coldに階層化し、コストと可用性を両立する
+- [#54 Tiered Observability](../../glossary.md) — 観測データをHot/Coldに階層化し、コストと可用性を両立する
 
 <!-- BEGIN:GEN:patterns -->
 

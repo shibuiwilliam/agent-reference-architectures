@@ -50,4 +50,4 @@ Irreversible operations and high-stakes decisions are executed without any check
 
 ## Related Patterns
 
-- [#31 Human Approval Checkpoint](../../patterns/06-reliability/31-human-approval-checkpoint.md) -- Implementation of checkpoints that insert human approval before high-risk operations
+- [#31 Human Approval Checkpoint](../../glossary.md) -- Implementation of checkpoints that insert human approval before high-risk operations

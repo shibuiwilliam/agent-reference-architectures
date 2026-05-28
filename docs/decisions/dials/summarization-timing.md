@@ -50,7 +50,7 @@ LLMのコンテキスト窓は有限であり、長いエージェントセッ�
 
 ## 関連パターン
 
-- [#23 Layered Memory](../../patterns/05-memory-context/23-layered-memory.md) — 短期・長期・共有メモリの階層化と圧縮戦略
+- [#23 Layered Memory](../../glossary.md) — 短期・長期・共有メモリの階層化と圧縮戦略
 
 <!-- BEGIN:GEN:patterns -->
 

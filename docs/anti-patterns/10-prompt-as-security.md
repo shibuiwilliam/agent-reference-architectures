@@ -115,7 +115,7 @@ response = output_filter.redact_pii(response, user.role)
 
 ## 関連パターン
 
-- [#44 Dual-LLM Privilege Separation](../patterns/09-security/44-dual-llm-privilege-separation.md) — 隔離LLMと特権LLMを分離します
-- [#18 Least-Privilege Tool Binding](../patterns/04-tools-mcp/18-least-privilege-tool-binding.md) — ツールの権限を最小化します
-- [#20 Sandboxed Tool Runtime](../patterns/04-tools-mcp/20-sandboxed-tool-runtime.md) — ツール実行をサンドボックスで隔離します
-- [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md) — データアクセスの境界を制御します
+- [#44 Dual-LLM Privilege Separation](../glossary.md) — 隔離LLMと特権LLMを分離します
+- [#18 Least-Privilege Tool Binding](../glossary.md) — ツールの権限を最小化します
+- [#20 Sandboxed Tool Runtime](../glossary.md) — ツール実行をサンドボックスで隔離します
+- [#42 Data Boundary Firewall](../glossary.md) — データアクセスの境界を制御します

@@ -53,11 +53,11 @@ LLMプロバイダは従来のクラウドサービスと比べて障害頻度�
 
 ## 関連パターン
 
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — 障害時に段階的に縮退して継続する
-- [#45 Agent Runtime Abstraction](../../patterns/10-deployment/45-agent-runtime-abstraction.md) — 実行基盤をプロバイダ非依存に抽象化する
-- [#46 Model Behavior Compatibility Layer](../../patterns/10-deployment/46-model-behavior-compatibility-layer.md) — モデル間の挙動差を吸収する互換レイヤー
-- [#36 Shadow / Canary Deployment](../../patterns/07-observability/36-shadow-canary-deployment.md) — 新プロバイダ・新モデルへの切り替えを段階的に検証する
-- [#53 Agent Change Management](../../patterns/12-governance/53-agent-change-management.md) — プロバイダ変更を含む変更管理プロセス
+- [#40 Fallback & Graceful Degradation](../../glossary.md) — 障害時に段階的に縮退して継続する
+- [#45 Agent Runtime Abstraction](../../glossary.md) — 実行基盤をプロバイダ非依存に抽象化する
+- [#46 Model Behavior Compatibility Layer](../../glossary.md) — モデル間の挙動差を吸収する互換レイヤー
+- [#36 Shadow / Canary Deployment](../../glossary.md) — 新プロバイダ・新モデルへの切り替えを段階的に検証する
+- [#53 Agent Change Management](../../glossary.md) — プロバイダ変更を含む変更管理プロセス
 
 <!-- BEGIN:GEN:patterns -->
 

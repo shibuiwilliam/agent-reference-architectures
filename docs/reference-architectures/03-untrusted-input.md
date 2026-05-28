@@ -48,12 +48,12 @@ flowchart LR
 
 | 層 | パターン | 役割 | なぜ必要か |
 |---|---------|------|-----------|
-| 境界 | [#13 Natural Language Boundary Adapter](../patterns/03-io-contract/13-natural-language-boundary-adapter.md) | 入力の構造化 | 自然言語のままLLMに渡すと、指示と入力の境界が曖昧になりインジェクションが通りやすくなります |
-| 検査 | [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md) | PII/インジェクション検査 | 入力に含まれるPIIや悪意のあるプロンプトを事前に検出・除去しないと、下流で漏洩や誤動作が起きます |
-| 分離 | [#44 Dual-LLM Privilege Separation](../patterns/09-security/44-dual-llm-privilege-separation.md) | 隔離LLMと特権LLMの分離 | ユーザー入力を処理するLLMと、ツール実行権限を持つLLMを分離しないと、インジェクションで直接ツールが操作されます |
-| 権限 | [#18 Least-Privilege Tool Binding](../patterns/04-tools-mcp/18-least-privilege-tool-binding.md) | 最小権限 | 全ツールにフルアクセスを与えると、被害が際限なく広がります |
-| 被害限定 | [#43 Confused-Deputy Damage Limitation](../patterns/09-security/43-confused-deputy-damage-limitation.md) | 被害半径の制限 | 権限を最小化しても、残った権限の範囲で被害が出えます。操作レートや影響範囲に上限を設けます |
-| ガードレール | [#29 Guardrail Sidecar + Self-Correction](../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) | 出力検査 | 入力だけでなく出力にも検査が必要です。攻撃者が出力を通じて情報を抜き出す手法があります |
+| 境界 | [#13 Natural Language Boundary Adapter](../glossary.md) | 入力の構造化 | 自然言語のままLLMに渡すと、指示と入力の境界が曖昧になりインジェクションが通りやすくなります |
+| 検査 | [#42 Data Boundary Firewall](../glossary.md) | PII/インジェクション検査 | 入力に含まれるPIIや悪意のあるプロンプトを事前に検出・除去しないと、下流で漏洩や誤動作が起きます |
+| 分離 | [#44 Dual-LLM Privilege Separation](../glossary.md) | 隔離LLMと特権LLMの分離 | ユーザー入力を処理するLLMと、ツール実行権限を持つLLMを分離しないと、インジェクションで直接ツールが操作されます |
+| 権限 | [#18 Least-Privilege Tool Binding](../glossary.md) | 最小権限 | 全ツールにフルアクセスを与えると、被害が際限なく広がります |
+| 被害限定 | [#43 Confused-Deputy Damage Limitation](../glossary.md) | 被害半径の制限 | 権限を最小化しても、残った権限の範囲で被害が出えます。操作レートや影響範囲に上限を設けます |
+| ガードレール | [#29 Guardrail Sidecar + Self-Correction](../glossary.md) | 出力検査 | 入力だけでなく出力にも検査が必要です。攻撃者が出力を通じて情報を抜き出す手法があります |
 
 ## 各層の詳細
 
@@ -84,7 +84,7 @@ LLMの出力を検査し、機密情報の漏洩、不適切なコンテンツ�
 ## 省略してよいもの・追加を検討するもの
 
 - **省略可**: 入力元が限定的で、かつ認証済みの社内ユーザーのみの場合は、Dual-LLM分離を簡略化できます（ただし完全な省略は推奨しません）
-- **追加検討**: マルチテナント環境では [#41 Tenant-Isolated Agent Runtime](../patterns/09-security/41-tenant-isolated-agent-runtime.md) でテナント間の隔離を追加します。副作用を含む場合は[副作用重視構成](02-side-effect-first.md)のSaga・承認層を重ねます
+- **追加検討**: マルチテナント環境では [#41 Tenant-Isolated Agent Runtime](../glossary.md) でテナント間の隔離を追加します。副作用を含む場合は[副作用重視構成](02-side-effect-first.md)のSaga・承認層を重ねます
 
 ## 具体的なシナリオ
 
@@ -99,7 +99,7 @@ BtoCのSaaSが提供するAIチャットサポートを考えます。エンド�
 - `[F2]` が高まったら → [副作用重視構成](02-side-effect-first.md)のHuman Approval、Agent Sagaを追加します
 - `[F7]` が高まったら → [コスト重視構成](05-cost-first.md)のSemantic Cacheで検査済みクエリを再利用します
 - `[F8]` が高まったら → [継続改善運用構成](06-continuous-improvement.md)でセキュリティ関連の回帰テストを自動化します
-- 攻撃パターンが進化したら → [#30 Policy-as-Code Guardrail](../patterns/06-reliability/30-policy-as-code-guardrail.md) でルールをコード管理し、迅速に更新します
+- 攻撃パターンが進化したら → [#30 Policy-as-Code Guardrail](../glossary.md) でルールをコード管理し、迅速に更新します
 
 ## 関連する構成
 

@@ -48,12 +48,12 @@ flowchart LR
 
 | Layer | Pattern | Role | Why It's Needed |
 |---|---------|------|-----------|
-| Routing | [#37 Semantic Gateway & Cost-Aware Router](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) | Difficulty-based model routing | Processing all requests with a high-performance model causes linear cost growth |
-| Cache | [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) | Similar query reuse | When the same types of questions repeat, there's no need to call the LLM |
-| Prompt | [#39 Prompt Cache Optimized Context](../patterns/08-cost-scaling/39-prompt-cache-optimized-context.md) | Prefix sharing for cache | Cache common portions of system prompts and context to reduce input token charges |
-| Effort Allocation | [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) | Difficulty-based compute adjustment | Running long Chain-of-Thought for easy questions is wasteful |
-| Budget | [#5 Time-Budgeted Agent Loop](../patterns/01-execution/05-time-budgeted-agent-loop.md) | Per-request caps | Without budgets, a runaway request can consume the entire monthly budget |
-| Fallback | [#40 Fallback & Graceful Degradation](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) | Degradation during failures | Prevent all requests from failing when the high-performance model goes down |
+| Routing | [#37 Semantic Gateway & Cost-Aware Router](../glossary.md) | Difficulty-based model routing | Processing all requests with a high-performance model causes linear cost growth |
+| Cache | [#38 Semantic Result Cache](../glossary.md) | Similar query reuse | When the same types of questions repeat, there's no need to call the LLM |
+| Prompt | [#39 Prompt Cache Optimized Context](../glossary.md) | Prefix sharing for cache | Cache common portions of system prompts and context to reduce input token charges |
+| Effort Allocation | [#56 Adaptive Effort](../glossary.md) | Difficulty-based compute adjustment | Running long Chain-of-Thought for easy questions is wasteful |
+| Budget | [#5 Time-Budgeted Agent Loop](../glossary.md) | Per-request caps | Without budgets, a runaway request can consume the entire monthly budget |
+| Fallback | [#40 Fallback & Graceful Degradation](../glossary.md) | Degradation during failures | Prevent all requests from failing when the high-performance model goes down |
 
 ## Layer Details
 
@@ -84,7 +84,7 @@ During high-performance model API outages or rate limit exhaustion, falls back t
 ## What Can Be Omitted / What to Consider Adding
 
 - **Can omit**: At low request volumes (under a few thousand per month), Semantic Cache and Prompt Cache Optimized Context have limited impact. The routing layer alone can be deployed first
-- **Consider adding**: If `[F2]` increases, layer [Side-Effect-First Configuration](02-side-effect-first.md) safety layers. If `[F9]` increases, ease provider switching with [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md)
+- **Consider adding**: If `[F2]` increases, layer [Side-Effect-First Configuration](02-side-effect-first.md) safety layers. If `[F9]` increases, ease provider switching with [#45 Agent Runtime Abstraction](../glossary.md)
 
 ## Concrete Scenario
 
@@ -100,8 +100,8 @@ With this configuration, monthly costs can be reduced by 60-70% compared to proc
 
 - If `[F2]` increases -> Add [Side-Effect-First Configuration](02-side-effect-first.md) safety layers (when evolving from knowledge search to action execution)
 - If `[F8]` increases -> Evaluate whether cost reduction is impacting quality with [Continuous Improvement Configuration](06-continuous-improvement.md)
-- If `[F9]` increases -> Strengthen multi-provider operations with [#45 Agent Runtime Abstraction](../patterns/10-deployment/45-agent-runtime-abstraction.md) and [#46 Model Behavior Compatibility Layer](../patterns/10-deployment/46-model-behavior-compatibility-layer.md)
-- If cache hit rate drops -> Optimize context structure with [#24 Context Pack / Assembly](../patterns/05-memory-context/24-context-pack-assembly.md)
+- If `[F9]` increases -> Strengthen multi-provider operations with [#45 Agent Runtime Abstraction](../glossary.md) and [#46 Model Behavior Compatibility Layer](../glossary.md)
+- If cache hit rate drops -> Optimize context structure with [#24 Context Pack / Assembly](../glossary.md)
 
 ## Related Configurations
 

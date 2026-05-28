@@ -50,5 +50,5 @@ A single request occupies a connection for an extended period, reaching the conc
 
 ## Related Patterns
 
-- [#1 Request-to-Job Gateway](../../patterns/01-execution/01-request-to-job-gateway.md) -- Entry point for switching requests that exceed synchronous timeouts to asynchronous jobs
-- [#5 Time-Budgeted Agent Loop](../../patterns/01-execution/05-time-budgeted-agent-loop.md) -- Internalizes timeouts as budgets within the agent loop
+- [#1 Request-to-Job Gateway](../../glossary.md) -- Entry point for switching requests that exceed synchronous timeouts to asynchronous jobs
+- [#5 Time-Budgeted Agent Loop](../../glossary.md) -- Internalizes timeouts as budgets within the agent loop

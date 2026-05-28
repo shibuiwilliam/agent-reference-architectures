@@ -56,8 +56,8 @@ Situations where errors directly result in financial loss, legal liability, or s
 
 ## Related Patterns
 
-- [#28 Verifier Agent / Critic](../../patterns/06-reliability/28-verifier-agent-critic.md) -- Pre-shipment inspection with an independent verifier
-- [#31 Human Approval Checkpoint](../../patterns/06-reliability/31-human-approval-checkpoint.md) -- Require human approval before high-risk operations
-- [#30 Policy-as-Code Guardrail](../../patterns/06-reliability/30-policy-as-code-guardrail.md) -- Codify constraints for mechanical evaluation
-- [#10 Agent Ensemble & Debate](../../patterns/02-composition/10-agent-ensemble-debate.md) -- Improve robustness through multi-agent deliberation
-- [#8 Planner-Executor-Reviewer](../../patterns/02-composition/08-planner-executor-reviewer.md) -- Separate planning, execution, and review to ensure quality at each stage
+- [#28 Verifier Agent / Critic](../../glossary.md) -- Pre-shipment inspection with an independent verifier
+- [#31 Human Approval Checkpoint](../../glossary.md) -- Require human approval before high-risk operations
+- [#30 Policy-as-Code Guardrail](../../glossary.md) -- Codify constraints for mechanical evaluation
+- [#10 Agent Ensemble & Debate](../../glossary.md) -- Improve robustness through multi-agent deliberation
+- [#8 Planner-Executor-Reviewer](../../glossary.md) -- Separate planning, execution, and review to ensure quality at each stage

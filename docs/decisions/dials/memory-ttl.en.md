@@ -51,4 +51,4 @@ The agent acts based on changed facts (departed staff, deprecated APIs, updated 
 
 ## Related Patterns
 
-- [#26 Forgetting and Expiration](../../patterns/05-memory-context/26-forgetting-and-expiration.md) -- Implementation pattern for adding expiration and freshness to memory
+- [#26 Forgetting and Expiration](../../glossary.md) -- Implementation pattern for adding expiration and freshness to memory

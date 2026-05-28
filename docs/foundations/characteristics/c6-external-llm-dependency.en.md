@@ -34,9 +34,9 @@ On a Friday night, the LLM provider has an outage and all agents stop. However, 
 
 ## Safeguard Patterns
 
-- [#37 Semantic Gateway & Cost-Aware Router](../../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) -- Dynamically select models by difficulty to optimize cost and quality
-- [#40 Fallback & Graceful Degradation](../../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) -- Switch to alternative models or degraded mode during provider outages
-- [#45 Agent Runtime Abstraction](../../patterns/10-deployment/45-agent-runtime-abstraction.md) -- Abstract the execution platform to make providers swappable
+- [#37 Semantic Gateway & Cost-Aware Router](../../glossary.md) -- Dynamically select models by difficulty to optimize cost and quality
+- [#40 Fallback & Graceful Degradation](../../glossary.md) -- Switch to alternative models or degraded mode during provider outages
+- [#45 Agent Runtime Abstraction](../../glossary.md) -- Abstract the execution platform to make providers swappable
 
 ## Related Design Decisions
 

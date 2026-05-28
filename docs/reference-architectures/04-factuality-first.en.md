@@ -47,12 +47,12 @@ flowchart LR
 
 | Layer | Pattern | Role | Why It's Needed |
 |---|---------|------|-----------|
-| Evidence | [#27 Evidence-First Answer](../patterns/06-reliability/27-evidence-first-answer.md) | Retrieve evidence before answering | Answers without evidence are a breeding ground for hallucination |
-| Verification | [#28 Verifier Agent / Critic](../patterns/06-reliability/28-verifier-agent-critic.md) | Independent fact verification | The generating agent cannot be expected to catch its own errors |
-| Consensus | [#10 Agent Ensemble & Debate](../patterns/02-composition/10-agent-ensemble-debate.md) | Multi-model consensus | Mutual cross-checking mitigates single-model biases |
-| Contract | [#14 Structured Output Contract](../patterns/03-io-contract/14-structured-output-contract.md) | Structured output with citations | Without structurally separating evidence from answers, citations can't be verified |
-| Policy | [#30 Policy-as-Code Guardrail](../patterns/06-reliability/30-policy-as-code-guardrail.md) | Automated regulatory compliance check | Manual compliance verification doesn't scale |
-| Observability | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) + [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) | Complete audit trail | Being able to reproduce "why that answer was generated" after the fact is required |
+| Evidence | [#27 Evidence-First Answer](../glossary.md) | Retrieve evidence before answering | Answers without evidence are a breeding ground for hallucination |
+| Verification | [#28 Verifier Agent / Critic](../glossary.md) | Independent fact verification | The generating agent cannot be expected to catch its own errors |
+| Consensus | [#10 Agent Ensemble & Debate](../glossary.md) | Multi-model consensus | Mutual cross-checking mitigates single-model biases |
+| Contract | [#14 Structured Output Contract](../glossary.md) | Structured output with citations | Without structurally separating evidence from answers, citations can't be verified |
+| Policy | [#30 Policy-as-Code Guardrail](../glossary.md) | Automated regulatory compliance check | Manual compliance verification doesn't scale |
+| Observability | [#32 Agent Trace](../glossary.md) + [#33 Version Pinning](../glossary.md) | Complete audit trail | Being able to reproduce "why that answer was generated" after the fact is required |
 
 ## Layer Details
 
@@ -83,7 +83,7 @@ All LLM calls, evidence retrieval, verification results, and consensus processes
 ## What Can Be Omitted / What to Consider Adding
 
 - **Can omit**: When `[F3]` is low (high volume, low value per request), the consensus layer cost may not be justified. Verifier Agent alone may suffice
-- **Consider adding**: When accepting input from untrusted users, layer [Untrusted Input Configuration](03-untrusted-input.md) security layers. For high-risk answers, insert expert review with [#31 Human Approval Checkpoint](../patterns/06-reliability/31-human-approval-checkpoint.md)
+- **Consider adding**: When accepting input from untrusted users, layer [Untrusted Input Configuration](03-untrusted-input.md) security layers. For high-risk answers, insert expert review with [#31 Human Approval Checkpoint](../glossary.md)
 
 ## Concrete Scenario
 

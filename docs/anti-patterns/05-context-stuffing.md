@@ -112,6 +112,6 @@ response = llm.chat(
 
 ## 関連パターン
 
-- [#24 Context Pack / Assembly](../patterns/05-memory-context/24-context-pack-assembly.md) — 関連度の高い情報のみを選択的に組み立てます
-- [#23 Layered Memory](../patterns/05-memory-context/23-layered-memory.md) — メモリを階層化してアクセスパターンを最適化します
-- [#25 Memory Write Gate](../patterns/05-memory-context/25-memory-write-gate.md) — 記憶する情報自体を選別します
+- [#24 Context Pack / Assembly](../glossary.md) — 関連度の高い情報のみを選択的に組み立てます
+- [#23 Layered Memory](../glossary.md) — メモリを階層化してアクセスパターンを最適化します
+- [#25 Memory Write Gate](../glossary.md) — 記憶する情報自体を選別します

@@ -38,7 +38,7 @@ tags:
 
 ## ハイブリッドアプローチ
 
-[#3 Workflow Backbone + Agent Node](../../patterns/01-execution/03-workflow-backbone-agent-node.md) が代表例。骨格（ステップの順序・条件分岐）はオーケストレータが握り、各ノード内部はエージェントが自律的に判断します。制御可能性と柔軟性を両立させります。
+[#3 Workflow Backbone + Agent Node](../../glossary.md) が代表例。骨格（ステップの順序・条件分岐）はオーケストレータが握り、各ノード内部はエージェントが自律的に判断します。制御可能性と柔軟性を両立させります。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#3 Workflow Backbone + Agent Node](../../patterns/01-execution/03-workflow-backbone-agent-node.md) — 骨格はオーケストレーション、ノードは自律のハイブリッド
-- [#12 Blackboard](../../patterns/02-composition/12-blackboard.md) — 共有黒板による疎結合なコレオグラフィの一形態
+- [#3 Workflow Backbone + Agent Node](../../glossary.md) — 骨格はオーケストレーション、ノードは自律のハイブリッド
+- [#12 Blackboard](../../glossary.md) — 共有黒板による疎結合なコレオグラフィの一形態
 
 ## 関連ダイヤル
 

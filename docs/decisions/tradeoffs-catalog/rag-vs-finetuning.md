@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#24 Context Pack / Assembly](../../patterns/05-memory-context/24-context-pack-assembly.md) — RAGにおけるコンテキスト組立の設計パターン
-- [#27 Evidence-First Answer](../../patterns/06-reliability/27-evidence-first-answer.md) — RAGと組み合わせて根拠を明示する
+- [#24 Context Pack / Assembly](../../glossary.md) — RAGにおけるコンテキスト組立の設計パターン
+- [#27 Evidence-First Answer](../../glossary.md) — RAGと組み合わせて根拠を明示する
 
 ## 関連ダイヤル
 

@@ -50,13 +50,13 @@ flowchart LR
 
 | Layer | Pattern | Role | Why It's Needed |
 |---|---------|------|-----------|
-| Intake | [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) | Async intake | Processing can take minutes to hours including approval wait |
-| Backbone | [#3 Workflow Backbone + Agent Node](../patterns/01-execution/03-workflow-backbone-agent-node.md) | Deterministic flow control | Side-effect execution order can't be left to LLM whims |
-| Compensation | [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md) | Rollback on failure | Without compensation for already-executed operations on mid-process failure, data becomes inconsistent |
-| Approval | [#31 Human Approval Checkpoint](../patterns/06-reliability/31-human-approval-checkpoint.md) | Human approval before high-risk operations | Letting machines alone execute irreversible operations is too risky |
-| Tool | [#19 Dry-Run First Tool Execution](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) | Simulated execution of side effects | Without previewing "what will happen" before execution, approvers can't make informed decisions |
-| Output | [#15 Inverted Structured Output](../patterns/03-io-contract/15-inverted-structured-output.md) | LLM decides only, code executes | If the LLM directly calls APIs, parameter errors can't be prevented |
-| Observability | [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) | Full operation tracking | Without audit trails of what was executed, root cause identification during incidents is impossible |
+| Intake | [#1 Request-to-Job Gateway](../glossary.md) | Async intake | Processing can take minutes to hours including approval wait |
+| Backbone | [#3 Workflow Backbone + Agent Node](../glossary.md) | Deterministic flow control | Side-effect execution order can't be left to LLM whims |
+| Compensation | [#4 Agent Saga](../glossary.md) | Rollback on failure | Without compensation for already-executed operations on mid-process failure, data becomes inconsistent |
+| Approval | [#31 Human Approval Checkpoint](../glossary.md) | Human approval before high-risk operations | Letting machines alone execute irreversible operations is too risky |
+| Tool | [#19 Dry-Run First Tool Execution](../glossary.md) | Simulated execution of side effects | Without previewing "what will happen" before execution, approvers can't make informed decisions |
+| Output | [#15 Inverted Structured Output](../glossary.md) | LLM decides only, code executes | If the LLM directly calls APIs, parameter errors can't be prevented |
+| Observability | [#32 Agent Trace](../glossary.md) | Full operation tracking | Without audit trails of what was executed, root cause identification during incidents is impossible |
 
 ## Layer Details
 
@@ -91,7 +91,7 @@ All LLM calls, tool executions, approval decisions, and Saga compensations are r
 ## What Can Be Omitted / What to Consider Adding
 
 - **Can omit**: If all operations are low-risk, Human Approval Checkpoint can be relaxed to threshold-based. Agent Saga can also be omitted if only idempotent operations are involved
-- **Consider adding**: If `[F5]` is low, layer [Untrusted Input Configuration](03-untrusted-input.md) security layers. If `[F8]` increases, ensure reproducibility with [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md)
+- **Consider adding**: If `[F5]` is low, layer [Untrusted Input Configuration](03-untrusted-input.md) security layers. If `[F8]` increases, ensure reproducibility with [#33 Version Pinning](../glossary.md)
 
 ## Concrete Scenario
 
@@ -106,7 +106,7 @@ Dry-Run First previews "Refund amount: 12,800 yen, refund to: credit card ending
 - If `[F5]` decreases -> Add [Untrusted Input Configuration](03-untrusted-input.md) Data Boundary Firewall, Dual-LLM separation
 - If `[F7]` increases -> Use [Cost-First Configuration](05-cost-first.md) routing to direct low-risk operations to lightweight models
 - If `[F8]` increases -> Introduce [Continuous Improvement Configuration](06-continuous-improvement.md) Evaluation CI/CD for regression detection
-- To increase autonomy -> Gradually omit approval with [#57 Autonomy Ladder](../patterns/06-reliability/57-autonomy-ladder.md)
+- To increase autonomy -> Gradually omit approval with [#57 Autonomy Ladder](../glossary.md)
 
 ## Related Configurations
 

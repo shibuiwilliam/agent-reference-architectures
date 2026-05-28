@@ -51,7 +51,7 @@ tags:
 
 ## 関連パターン
 
-- [#26 Forgetting and Expiration](../../patterns/05-memory-context/26-forgetting-and-expiration.md) — 記憶に失効・鮮度を持たせる実装パターン
+- [#26 Forgetting and Expiration](../../glossary.md) — 記憶に失効・鮮度を持たせる実装パターン
 
 <!-- BEGIN:GEN:patterns -->
 

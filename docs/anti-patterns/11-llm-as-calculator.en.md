@@ -129,6 +129,6 @@ response = llm.chat(
 
 ## Related Patterns
 
-- [#15 Inverted Structured Output](../patterns/03-io-contract/15-inverted-structured-output.md) — Have the LLM generate structured output for "what to execute"
-- [#17 Tool / MCP Gateway](../patterns/04-tools-mcp/17-tool-mcp-gateway.md) — Tool call gateway
-- [#11 Deterministic Core, Probabilistic Edge](../patterns/02-composition/11-deterministic-core-probabilistic-edge.md) — Calculations belong in the deterministic core
+- [#15 Inverted Structured Output](../glossary.md) — Have the LLM generate structured output for "what to execute"
+- [#17 Tool / MCP Gateway](../glossary.md) — Tool call gateway
+- [#11 Deterministic Core, Probabilistic Edge](../glossary.md) — Calculations belong in the deterministic core

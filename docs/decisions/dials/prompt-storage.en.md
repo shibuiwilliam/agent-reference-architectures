@@ -51,4 +51,4 @@ Even minor prompt modifications trigger a large number of file changes, increasi
 
 ## Related Patterns
 
-- [#33 Version Pinning](../../patterns/07-observability/33-version-pinning.md) -- Pin prompt, model, and tool versions to ensure reproducibility
+- [#33 Version Pinning](../../glossary.md) -- Pin prompt, model, and tool versions to ensure reproducibility

@@ -21,7 +21,7 @@ We call this approach "pattern parameterization."
 
 ### Example 1: Checkpoint Frequency for #2 Durable Agent Session
 
-[#2 Durable Agent Session](../patterns/01-execution/02-durable-agent-session.md) is a pattern for persisting state, but "how frequently to take checkpoints" needs to be tuned as a parameter.
+[#2 Durable Agent Session](../glossary.md) is a pattern for persisting state, but "how frequently to take checkpoints" needs to be tuned as a parameter.
 
 - `[F1]` Reversibility is **Low** (many irreversible side effects) → Checkpoint **every step**
 - `[F1]` Reversibility is **High** (all steps can be redone) → **Every N minutes** is sufficient
@@ -31,7 +31,7 @@ In other words, `Checkpoint Frequency = f(F1, F7)`: the lower F1, the higher the
 
 ### Example 2: Sampling Rate for #32 Agent Trace
 
-[#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) is a pattern for logging every step, but recording 100% in production significantly inflates storage costs.
+[#32 Agent Trace](../glossary.md) is a pattern for logging every step, but recording 100% in production significantly inflates storage costs.
 
 - `[F8]` Accountability is **High** (regulated industry) → Sampling rate **100%** (full recording is mandatory)
 - `[F8]` is **Low** + `[F7]` Cost Sensitivity is **High** → Limit to **1–10%**
@@ -39,7 +39,7 @@ In other words, `Checkpoint Frequency = f(F1, F7)`: the lower F1, the higher the
 
 ### Example 3: Routing Threshold for #37 Semantic Gateway
 
-[#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) is a pattern that routes to different models based on difficulty, and "at what threshold to route to the larger model" becomes the parameter.
+[#37 Semantic Gateway](../glossary.md) is a pattern that routes to different models based on difficulty, and "at what threshold to route to the larger model" becomes the parameter.
 
 - `[F7]` Cost Sensitivity is **High** → **Raise** the threshold to reduce large model usage
 - `[F3]` Per-Request Value is **High** → **Lower** the threshold to prioritize quality
@@ -50,7 +50,7 @@ In other words, `Checkpoint Frequency = f(F1, F7)`: the lower F1, the higher the
 2. **Map driving variables**: Identify which `[F#]` affects each parameter
 3. **Set guideline values**: Determine starting points based on "High/Medium/Low" force ratings
 4. **Run the measure-and-adjust loop**: Update values based on production metrics
-5. **Record the rationale**: Document why each value was chosen in design documents or traces (→ [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md))
+5. **Record the rationale**: Document why each value was chosen in design documents or traces (→ [#32 Agent Trace](../glossary.md))
 
 ## Risks of Not Parameterizing
 

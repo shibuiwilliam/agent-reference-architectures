@@ -34,9 +34,9 @@ tags:
 
 ## 防波堤となるパターン
 
-- [#4 Agent Saga](../../patterns/01-execution/04-agent-saga.md) — 副作用の連鎖に補償トランザクションを組み込み、部分失敗時に巻き戻す
-- [#19 Dry-Run First](../../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) — 実行前に模擬実行で影響範囲を確認し、承認後に本実行する
-- [#31 Human Approval Checkpoint](../../patterns/06-reliability/31-human-approval-checkpoint.md) — 高リスクな副作用の前に人間の承認を挟む
+- [#4 Agent Saga](../../glossary.md) — 副作用の連鎖に補償トランザクションを組み込み、部分失敗時に巻き戻す
+- [#19 Dry-Run First](../../glossary.md) — 実行前に模擬実行で影響範囲を確認し、承認後に本実行する
+- [#31 Human Approval Checkpoint](../../glossary.md) — 高リスクな副作用の前に人間の承認を挟む
 
 ## 関連する設計判断
 

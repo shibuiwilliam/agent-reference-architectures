@@ -66,11 +66,11 @@ flowchart LR
 
 [最小構成](../reference-architectures/01-mvp.md) + キャッシュ層:
 
-- [#58 Sync Facade](../patterns/01-execution/58-sync-facade-over-async-core.md) — 同期/非同期ハイブリッド
-- [#24 Context Pack / Assembly](../patterns/05-memory-context/24-context-pack-assembly.md) — RAG
-- [#14 Structured Output Contract](../patterns/03-io-contract/14-structured-output-contract.md) — 出力構造化
-- [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) — 類似クエリ再利用
-- [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) — 最低限の観測
+- [#58 Sync Facade](../glossary.md) — 同期/非同期ハイブリッド
+- [#24 Context Pack / Assembly](../glossary.md) — RAG
+- [#14 Structured Output Contract](../glossary.md) — 出力構造化
+- [#38 Semantic Result Cache](../glossary.md) — 類似クエリ再利用
+- [#32 Agent Trace](../glossary.md) — 最低限の観測
 
 ### 再評価条件
 
@@ -132,14 +132,14 @@ flowchart LR
 
 [副作用重視構成](../reference-architectures/02-side-effect-first.md):
 
-- [#1 Request-to-Job Gateway](../patterns/01-execution/01-request-to-job-gateway.md) — 非同期受付
-- [#3 Workflow Backbone](../patterns/01-execution/03-workflow-backbone-agent-node.md) — 決定論的フロー
-- [#4 Agent Saga](../patterns/01-execution/04-agent-saga.md) — 補償トランザクション
-- [#15 Inverted Structured Output](../patterns/03-io-contract/15-inverted-structured-output.md) — LLMは判断のみ
-- [#19 Dry-Run First](../patterns/04-tools-mcp/19-dry-run-first-tool-execution.md) — 模擬実行
-- [#28 Verifier Agent](../patterns/06-reliability/28-verifier-agent-critic.md) — 別モデル検証
-- [#31 Human Approval](../patterns/06-reliability/31-human-approval-checkpoint.md) — 決済前承認
-- [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) + [#33 Version Pinning](../patterns/07-observability/33-version-pinning.md) — 監査証跡
+- [#1 Request-to-Job Gateway](../glossary.md) — 非同期受付
+- [#3 Workflow Backbone](../glossary.md) — 決定論的フロー
+- [#4 Agent Saga](../glossary.md) — 補償トランザクション
+- [#15 Inverted Structured Output](../glossary.md) — LLMは判断のみ
+- [#19 Dry-Run First](../glossary.md) — 模擬実行
+- [#28 Verifier Agent](../glossary.md) — 別モデル検証
+- [#31 Human Approval](../glossary.md) — 決済前承認
+- [#32 Agent Trace](../glossary.md) + [#33 Version Pinning](../glossary.md) — 監査証跡
 
 ### 再評価条件
 
@@ -203,14 +203,14 @@ flowchart LR
 
 [コスト重視構成](../reference-architectures/05-cost-first.md) + [信頼できない入力構成](../reference-architectures/03-untrusted-input.md):
 
-- [#37 Semantic Gateway](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — 難易度別ルーティング
-- [#38 Semantic Result Cache](../patterns/08-cost-scaling/38-semantic-result-cache.md) — FAQ類似クエリの再利用
-- [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) — 計算量調整
-- [#40 Fallback](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — 障害時の縮退
-- [#13 NL Boundary Adapter](../patterns/03-io-contract/13-natural-language-boundary-adapter.md) — 入力構造化
-- [#42 Data Boundary Firewall](../patterns/09-security/42-data-boundary-firewall.md) — PII検査
-- [#29 Guardrail Sidecar](../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) — 出力検査
-- [#7 Streaming Progress](../patterns/01-execution/07-streaming-progress.md) — 逐次応答
+- [#37 Semantic Gateway](../glossary.md) — 難易度別ルーティング
+- [#38 Semantic Result Cache](../glossary.md) — FAQ類似クエリの再利用
+- [#56 Adaptive Effort](../glossary.md) — 計算量調整
+- [#40 Fallback](../glossary.md) — 障害時の縮退
+- [#13 NL Boundary Adapter](../glossary.md) — 入力構造化
+- [#42 Data Boundary Firewall](../glossary.md) — PII検査
+- [#29 Guardrail Sidecar](../glossary.md) — 出力検査
+- [#7 Streaming Progress](../glossary.md) — 逐次応答
 
 ### 再評価条件
 

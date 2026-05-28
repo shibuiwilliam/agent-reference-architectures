@@ -38,7 +38,7 @@ tags:
 
 ## ハイブリッドアプローチ
 
-プッシュをメインに据えつつ、接続が切れた場合やWebhook配信失敗時のフォールバックとしてポーリングエンドポイントを用意します。[#7 Streaming Progress](../../patterns/01-execution/07-streaming-progress.md) はプッシュによる進捗配信の実装パターンで、ポーリング用のステータスAPIを併設するのが一般的。
+プッシュをメインに据えつつ、接続が切れた場合やWebhook配信失敗時のフォールバックとしてポーリングエンドポイントを用意します。[#7 Streaming Progress](../../glossary.md) はプッシュによる進捗配信の実装パターンで、ポーリング用のステータスAPIを併設するのが一般的。
 
 ## 判断フローチャート
 
@@ -52,7 +52,7 @@ flowchart TD
 
 ## 関連パターン
 
-- [#7 Streaming Progress](../../patterns/01-execution/07-streaming-progress.md) — プッシュによる進捗ストリーミングの設計パターン
+- [#7 Streaming Progress](../../glossary.md) — プッシュによる進捗ストリーミングの設計パターン
 
 ## 関連ダイヤル
 

@@ -129,6 +129,6 @@ response = llm.chat(
 
 ## 関連パターン
 
-- [#15 Inverted Structured Output](../patterns/03-io-contract/15-inverted-structured-output.md) — LLMに「何を実行するか」の構造化出力を生成させます
-- [#17 Tool / MCP Gateway](../patterns/04-tools-mcp/17-tool-mcp-gateway.md) — ツール呼び出しのゲートウェイ
-- [#11 Deterministic Core, Probabilistic Edge](../patterns/02-composition/11-deterministic-core-probabilistic-edge.md) — 計算は決定論的コアで行います
+- [#15 Inverted Structured Output](../glossary.md) — LLMに「何を実行するか」の構造化出力を生成させます
+- [#17 Tool / MCP Gateway](../glossary.md) — ツール呼び出しのゲートウェイ
+- [#11 Deterministic Core, Probabilistic Edge](../glossary.md) — 計算は決定論的コアで行います

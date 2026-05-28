@@ -34,9 +34,9 @@ tags:
 
 ## 防波堤となるパターン
 
-- [#14 Structured Output Contract](../../patterns/03-io-contract/14-structured-output-contract.md) — 出力をスキーマで制約し、構造レベルのばらつきを抑える
-- [#28 Verifier Agent / Critic](../../patterns/06-reliability/28-verifier-agent-critic.md) — 独立した検証器で出力品質を出荷前に検査する
-- [#34 Evaluation CI/CD](../../patterns/07-observability/34-evaluation-ci-cd.md) — 変更毎に統計的な品質評価を自動実行し回帰を検知する
+- [#14 Structured Output Contract](../../glossary.md) — 出力をスキーマで制約し、構造レベルのばらつきを抑える
+- [#28 Verifier Agent / Critic](../../glossary.md) — 独立した検証器で出力品質を出荷前に検査する
+- [#34 Evaluation CI/CD](../../glossary.md) — 変更毎に統計的な品質評価を自動実行し回帰を検知する
 
 ## 関連する設計判断
 

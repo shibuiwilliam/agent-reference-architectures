@@ -38,7 +38,7 @@ tags:
 
 ## ハイブリッドアプローチ
 
-軽量なルールベース検証（フォーマット、禁止語句、長さ）をインラインで実行し、重い意味的検証（事実整合性、推論の妥当性）は事後に回す二段構え。[#29 Guardrail Sidecar](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) はインライン、[#28 Verifier Agent](../../patterns/06-reliability/28-verifier-agent-critic.md) は事後寄りの検証に使い分けられます。
+軽量なルールベース検証（フォーマット、禁止語句、長さ）をインラインで実行し、重い意味的検証（事実整合性、推論の妥当性）は事後に回す二段構え。[#29 Guardrail Sidecar](../../glossary.md) はインライン、[#28 Verifier Agent](../../glossary.md) は事後寄りの検証に使い分けられます。
 
 ## 判断フローチャート
 
@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#28 Verifier Agent / Critic](../../patterns/06-reliability/28-verifier-agent-critic.md) — 独立した検証エージェントによる出荷前検査
-- [#29 Guardrail Sidecar + Self-Correction](../../patterns/06-reliability/29-guardrail-sidecar-self-correction.md) — サイドカー型のインライン検証と自己修正
+- [#28 Verifier Agent / Critic](../../glossary.md) — 独立した検証エージェントによる出荷前検査
+- [#29 Guardrail Sidecar + Self-Correction](../../glossary.md) — サイドカー型のインライン検証と自己修正
 
 ## 関連ダイヤル
 

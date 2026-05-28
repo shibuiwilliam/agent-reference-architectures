@@ -102,6 +102,6 @@ response = llm_client.chat(
 
 ## 関連パターン
 
-- [#37 Semantic Gateway & Cost-Aware Router](../patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md) — 難易度に応じてモデルを振り分けます
-- [#56 Adaptive Effort](../patterns/08-cost-scaling/56-adaptive-effort.md) — 投入計算量を動的に調整します
-- [#40 Fallback & Graceful Degradation](../patterns/08-cost-scaling/40-fallback-graceful-degradation.md) — 段階的なモデル切り替え
+- [#37 Semantic Gateway & Cost-Aware Router](../glossary.md) — 難易度に応じてモデルを振り分けます
+- [#56 Adaptive Effort](../glossary.md) — 投入計算量を動的に調整します
+- [#40 Fallback & Graceful Degradation](../glossary.md) — 段階的なモデル切り替え

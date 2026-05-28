@@ -52,8 +52,8 @@ flowchart TD
 
 ## 関連パターン
 
-- [#28 Verifier Agent / Critic](../../patterns/06-reliability/28-verifier-agent-critic.md) — 独立した検証エージェントの設計パターン
-- [#44 Dual-LLM Privilege Separation](../../patterns/09-security/44-dual-llm-privilege-separation.md) — セキュリティ観点で異なるLLMを使い分ける
+- [#28 Verifier Agent / Critic](../../glossary.md) — 独立した検証エージェントの設計パターン
+- [#44 Dual-LLM Privilege Separation](../../glossary.md) — セキュリティ観点で異なるLLMを使い分ける
 
 ## 関連ダイヤル
 

@@ -72,6 +72,6 @@ Either-or decisions about communication, state management, and build strategy.
 1. When facing a design either-or, find the matching row in the tables above
 2. Evaluate the forces listed in the "Decision Variable" column for your system
 3. Starting from the "Default," consider whether the "Hybrid Approach" on each detail page is applicable
-4. Record the selection rationale in [#32 Agent Trace](../patterns/07-observability/32-agent-trace.md) or design documents
+4. Record the selection rationale in [#32 Agent Trace](../glossary.md) or design documents
 
 Tradeoff selection is not a one-time decision. When force ranges change — for example, due to regulatory tightening or scale increases — re-evaluation is necessary. See [Pattern Parameterization](parameterization.md).
