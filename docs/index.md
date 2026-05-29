@@ -5,20 +5,17 @@
 !!! tip "コーディングエージェントの方へ"
     まず [エージェント向けガイド](for-agents/index.md) と [設計提案プロトコル](for-agents/decision-protocol.md) を読んでください。機械可読メタは [機械可読インデックス](reference/pattern-index.md) に集約しています。各ページの生マークダウンは `/llms.txt`・`/llms-full.txt`・各ページ `.md` から取得できます。
 
-## このサイトの構造（5層モデル）
+## このサイトの構成
 
-本サイトでは設計判断を、固定値ではなく「目盛り（程度）」と「二択（相反）」として扱います。少数の駆動変数から判断を導く構成になっています。
+本サイトは、設計判断を「なぜ必要か」→「何を使って決めるか」→「どう実装するか」の流れで整理しています。
 
-| 層 | 問い | ページ |
+| セクション | 内容 | ページ |
 |---|------|--------|
-| L0 なぜ難しいか | 普通のソフトと何が違うか | [設計力学 F1–F17](concepts/design-forces.md) |
-| L1 何を配分するか | 何をどれだけ使えるか | [7つの予算](concepts/budgets.md) |
-| L2 どう決めるか | 目盛り/二択を何が左右するか | [9つの駆動変数](concepts/driving-variables.md) |
-| L3 どこまで回すか | 各設計変数のちょうど | [程度（Degrees）](degrees/index.md) |
-| L4 どちらを採るか | 排他的な仕組みのどちら | [相反（Forks）](forks/index.md) |
-| L5 何を組むか | 実装する再利用部品 | [パターン（A–G）](patterns/index.md) |
-
-選定の手順は [意思決定フロー](decision/decision-flow.md) をご覧ください。
+| 地盤 | AIエージェント特有の難しさと、判断の枠組み | [設計力学 F1–F17](concepts/design-forces.md) / [7つの予算](concepts/budgets.md) / [9つの駆動変数](concepts/driving-variables.md) |
+| 程度 | 各設計変数をどこまで効かせるか（目盛りの調整） | [程度（Degrees）](degrees/index.md) |
+| 相反 | 排他的な仕組みのどちらを採るか（二者択一） | [相反（Forks）](forks/index.md) |
+| パターン | 実装に使う再利用可能な部品（A–G の7ドメイン） | [パターン・カタログ](patterns/index.md) |
+| 意思決定フロー | 駆動変数からパターン選定までの手順 | [意思決定フロー](decision/decision-flow.md) |
 
 ## 根本原則
 
