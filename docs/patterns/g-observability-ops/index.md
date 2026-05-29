@@ -1,6 +1,6 @@
 # G. 観測・評価・運用
 
-このドメインのパターン一覧（frontmatter から自動生成）。
+このドメインのパターン一覧です（frontmatter から自動生成）。
 
 | ID | パターン | forces | driving_variables | status |
 |---|---|---|---|---|

@@ -1,7 +1,7 @@
 # 機械可読パターンインデックス
 
-全パターンの frontmatter メタを1表に集約（`scripts/gen_indexes.py` で自動生成）。
-コーディングエージェントはこの表から候補を絞り、各 `.md` を読みに行くとよい。
+全パターンの frontmatter メタを1つの表に集約しています（`scripts/gen_indexes.py` で自動生成）。
+コーディングエージェントはこの表から候補を絞り、各 `.md` を読みに行くのがおすすめです。
 
 | ID | パターン | domain | forces | driving_variables | forks | status |
 |---|---|---|---|---|---|---|

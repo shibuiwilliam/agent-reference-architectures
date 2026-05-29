@@ -1,0 +1,2 @@
+/* 任意のテーマ微調整。frontmatter由来のメタ表などはここで装飾できる。 */
+.md-typeset table:not([class]) { font-size: .72rem; }

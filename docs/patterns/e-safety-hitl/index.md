@@ -1,6 +1,6 @@
 # E. 安全性・HITL・自律性
 
-このドメインのパターン一覧（frontmatter から自動生成）。
+このドメインのパターン一覧です（frontmatter から自動生成されています）。
 
 | ID | パターン | forces | driving_variables | status |
 |---|---|---|---|---|

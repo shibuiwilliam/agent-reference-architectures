@@ -1,367 +1,165 @@
+# ===== 公開前に置換すること =====
 site_name: AIエージェント本番アーキテクチャ・パターン
-site_description: 意思決定（フォース・程度・相反）を中心に、AIエージェントを本番システムへ組み込むアーキテクチャパターンの統合カタログ
-# GitHub Pages の公開URL。<user> と <repo> を自分のものに置き換える
-site_url: https://shibuiwilliam.github.io/agent-reference-architectures/
+site_description: >-
+  意思決定層（程度の調整・相反する仕組みの選定基準）を中心に、AIエージェントを
+  本番システムに組み込むためのソフトウェアアーキテクチャ・パターン集。
+# llmstxt プラグインは site_url 必須。<USER>/<REPO> を自分のものに置換。
+site_url: https://USER.github.io/agent-arch-patterns/
+repo_url: https://github.com/USER/agent-arch-patterns
+repo_name: USER/agent-arch-patterns
 docs_dir: docs
-
-# リポジトリ連携（右上の編集リンク・リポジトリリンク）
-repo_name: shibuiwilliam/agent-reference-architectures
-repo_url: https://github.com/shibuiwilliam/agent-reference-architectures
-edit_uri: edit/main/docs/
 
 theme:
   name: material
   language: ja
+  custom_dir: overrides
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.tracking
+    - toc.follow
+    - content.code.copy
+    - content.action.view   # 各ページに「ソース(.md)を見る」アクションを表示
+    - search.highlight
+    - search.suggest
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-night
-        name: ダークモードに切り替え
+      toggle: { icon: material/weather-night, name: ダークモードへ }
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-sunny
-        name: ライトモードに切り替え
-  features:
-    - navigation.tracking
-    - navigation.tabs
-    - navigation.sections
-    - navigation.top
-    - navigation.indexes
-    - toc.follow
-    - search.suggest
-    - search.highlight
-    - content.code.copy
-    - content.action.edit
+      toggle: { icon: material/weather-sunny, name: ライトモードへ }
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search:
-      lang:
-        - ja
-        - en
-  - redirects:
-      redirect_maps:
-        "glossary.md": "reference-architectures/index.md"
-        "pattern-index.md": "reference-architectures/index.md"
-        "patterns/01-execution/index.md": "reference-architectures/index.md"
-        "patterns/01-execution/01-request-to-job-gateway.md": "decisions/tradeoffs-catalog/sync-vs-async.md"
-        "patterns/01-execution/02-durable-agent-session.md": "decisions/tradeoffs-catalog/in-context-vs-external.md"
-        "patterns/01-execution/03-workflow-backbone-agent-node.md": "decisions/tradeoffs-catalog/workflow-vs-agent.md"
-        "patterns/01-execution/04-agent-saga.md": "decisions/dials/checkpoint-frequency.md"
-        "patterns/01-execution/05-time-budgeted-agent-loop.md": "decisions/dials/budget-cap.md"
-        "patterns/01-execution/06-interruptible-agent.md": "foundations/forces/f4-latency-budget.md"
-        "patterns/01-execution/07-streaming-progress.md": "decisions/tradeoffs-catalog/push-vs-pull.md"
-        "patterns/01-execution/55-deadline-budget-cascade.md": "decisions/dials/budget-cap.md"
-        "patterns/01-execution/58-sync-facade-over-async-core.md": "decisions/tradeoffs-catalog/sync-vs-async.md"
-        "patterns/01-execution/59-workflow-agent-spectrum-selector.md": "decisions/tradeoffs-catalog/workflow-vs-agent.md"
-        "patterns/02-composition/index.md": "reference-architectures/index.md"
-        "patterns/02-composition/08-planner-executor-reviewer.md": "decisions/tradeoffs-catalog/plan-vs-react.md"
-        "patterns/02-composition/09-supervisor-specialist-agents.md": "decisions/tradeoffs-catalog/single-vs-multi-agent.md"
-        "patterns/02-composition/10-agent-ensemble-debate.md": "decisions/tradeoffs-catalog/same-vs-different-model.md"
-        "patterns/02-composition/11-deterministic-core-probabilistic-edge.md": "decisions/tradeoffs-catalog/prompt-vs-code.md"
-        "patterns/02-composition/12-blackboard.md": "decisions/tradeoffs-catalog/orchestration-vs-choreography.md"
-        "patterns/03-io-contract/index.md": "reference-architectures/index.md"
-        "patterns/03-io-contract/13-natural-language-boundary-adapter.md": "foundations/forces/f5-input-trust.md"
-        "patterns/03-io-contract/14-structured-output-contract.md": "decisions/tradeoffs-catalog/structured-vs-freeform.md"
-        "patterns/03-io-contract/15-inverted-structured-output.md": "decisions/tradeoffs-catalog/llm-vs-tool.md"
-        "patterns/03-io-contract/16-ambiguity-negotiation.md": "foundations/forces/f1-reversibility.md"
-        "patterns/04-tools-mcp/index.md": "reference-architectures/index.md"
-        "patterns/04-tools-mcp/17-tool-mcp-gateway.md": "decisions/tradeoffs-catalog/llm-vs-tool.md"
-        "patterns/04-tools-mcp/18-least-privilege-tool-binding.md": "decisions/dials/exposed-tool-count.md"
-        "patterns/04-tools-mcp/19-dry-run-first-tool-execution.md": "foundations/forces/f1-reversibility.md"
-        "patterns/04-tools-mcp/20-sandboxed-tool-runtime.md": "foundations/forces/f5-input-trust.md"
-        "patterns/04-tools-mcp/21-mcp-adapter-isolation.md": "foundations/forces/f5-input-trust.md"
-        "patterns/04-tools-mcp/22-anti-corruption-layer.md": "foundations/forces/f8-accountability.md"
-        "patterns/05-memory-context/index.md": "reference-architectures/index.md"
-        "patterns/05-memory-context/23-layered-memory.md": "decisions/tradeoffs-catalog/in-context-vs-external.md"
-        "patterns/05-memory-context/24-context-pack-assembly.md": "decisions/tradeoffs-catalog/rag-vs-finetuning.md"
-        "patterns/05-memory-context/25-memory-write-gate.md": "decisions/dials/memory-write-eagerness.md"
-        "patterns/05-memory-context/26-forgetting-and-expiration.md": "decisions/dials/memory-ttl.md"
-        "patterns/06-reliability/index.md": "reference-architectures/index.md"
-        "patterns/06-reliability/27-evidence-first-answer.md": "decisions/tradeoffs-catalog/rag-vs-finetuning.md"
-        "patterns/06-reliability/28-verifier-agent-critic.md": "decisions/tradeoffs-catalog/inline-vs-post-verification.md"
-        "patterns/06-reliability/29-guardrail-sidecar-self-correction.md": "decisions/tradeoffs-catalog/inline-vs-post-verification.md"
-        "patterns/06-reliability/30-policy-as-code-guardrail.md": "decisions/tradeoffs-catalog/prompt-vs-code.md"
-        "patterns/06-reliability/31-human-approval-checkpoint.md": "decisions/dials/autonomy-level.md"
-        "patterns/06-reliability/57-autonomy-ladder.md": "decisions/dials/autonomy-level.md"
-        "patterns/07-observability/index.md": "reference-architectures/index.md"
-        "patterns/07-observability/32-agent-trace.md": "decisions/dials/trace-sampling-rate.md"
-        "patterns/07-observability/33-version-pinning.md": "decisions/dials/prompt-storage.md"
-        "patterns/07-observability/34-evaluation-ci-cd.md": "foundations/forces/f8-accountability.md"
-        "patterns/07-observability/35-production-replay.md": "foundations/forces/f8-accountability.md"
-        "patterns/07-observability/36-shadow-canary-deployment.md": "foundations/forces/f9-provider-reliability.md"
-        "patterns/07-observability/54-tiered-observability.md": "decisions/dials/trace-sampling-rate.md"
-        "patterns/08-cost-scaling/index.md": "reference-architectures/index.md"
-        "patterns/08-cost-scaling/37-semantic-gateway-cost-aware-router.md": "decisions/dials/model-tier-routing.md"
-        "patterns/08-cost-scaling/38-semantic-result-cache.md": "decisions/dials/cache-similarity.md"
-        "patterns/08-cost-scaling/39-prompt-cache-optimized-context.md": "foundations/forces/f7-cost-sensitivity.md"
-        "patterns/08-cost-scaling/40-fallback-graceful-degradation.md": "decisions/tradeoffs-catalog/fail-fast-vs-degradation.md"
-        "patterns/08-cost-scaling/56-adaptive-effort.md": "foundations/forces/f7-cost-sensitivity.md"
-        "patterns/09-security/index.md": "reference-architectures/index.md"
-        "patterns/09-security/41-tenant-isolated-agent-runtime.md": "foundations/forces/f5-input-trust.md"
-        "patterns/09-security/42-data-boundary-firewall.md": "foundations/forces/f5-input-trust.md"
-        "patterns/09-security/43-confused-deputy-damage-limitation.md": "foundations/forces/f5-input-trust.md"
-        "patterns/09-security/44-dual-llm-privilege-separation.md": "foundations/forces/f5-input-trust.md"
-        "patterns/10-deployment/index.md": "reference-architectures/index.md"
-        "patterns/10-deployment/45-agent-runtime-abstraction.md": "decisions/tradeoffs-catalog/build-vs-buy.md"
-        "patterns/10-deployment/46-model-behavior-compatibility-layer.md": "decisions/tradeoffs-catalog/single-vs-multi-provider.md"
-        "patterns/10-deployment/47-agent-capability-registry.md": "foundations/forces/f8-accountability.md"
-        "patterns/10-deployment/48-strangler-fig.md": "foundations/forces/f2-failure-cost.md"
-        "patterns/11-ux/index.md": "reference-architectures/index.md"
-        "patterns/11-ux/49-agent-workbench.md": "foundations/forces/f4-latency-budget.md"
-        "patterns/11-ux/50-editable-plan.md": "decisions/tradeoffs-catalog/plan-vs-react.md"
-        "patterns/11-ux/51-agent-to-human-escalation.md": "foundations/forces/f2-failure-cost.md"
-        "patterns/12-governance/index.md": "reference-architectures/index.md"
-        "patterns/12-governance/52-agent-constitution.md": "foundations/forces/f8-accountability.md"
-        "patterns/12-governance/53-agent-change-management.md": "foundations/forces/f8-accountability.md"
-  - i18n:
-      docs_structure: suffix
-      languages:
-        - locale: ja
-          default: true
-          name: 日本語
-          build: true
-        - locale: en
-          name: English
-          build: true
-          site_name: "AI Agent Production Architecture Patterns"
-          site_description: "An integrated catalog of architecture patterns for embedding AI agents into production systems, centered on decision-making (forces, dials, and tradeoffs)"
-          theme:
-            palette:
-              - media: "(prefers-color-scheme: light)"
-                scheme: default
-                primary: indigo
-                accent: indigo
-                toggle:
-                  icon: material/weather-night
-                  name: Switch to dark mode
-              - media: "(prefers-color-scheme: dark)"
-                scheme: slate
-                primary: indigo
-                accent: indigo
-                toggle:
-                  icon: material/weather-sunny
-                  name: Switch to light mode
-          nav:
-            - Introduction: index.md
-            - Decision Framework:
-                - How to Make Decisions: decisions/decision-flow.md
-                - AI Agent Characteristics:
-                    - foundations/characteristics.md
-                    - "[C1] Non-Deterministic Output": foundations/characteristics/c1-non-determinism.md
-                    - "[C2] Variable-Duration Execution": foundations/characteristics/c2-variable-duration.md
-                    - "[C3] Side Effects on External World": foundations/characteristics/c3-side-effects.md
-                    - "[C4] Hallucination": foundations/characteristics/c4-hallucination.md
-                    - "[C5] Finite Context Window": foundations/characteristics/c5-context-window.md
-                    - "[C6] External LLM Dependency": foundations/characteristics/c6-external-llm-dependency.md
-                    - "[C7] Natural Language as Attack Surface": foundations/characteristics/c7-attack-surface.md
-                    - "[C8] Token-Proportional Cost": foundations/characteristics/c8-token-cost.md
-                    - "[C9] Behavior Drift from Model Updates": foundations/characteristics/c9-model-update-drift.md
-                - Driving Variables (Forces):
-                    - foundations/forces.md
-                    - "[F1] Reversibility": foundations/forces/f1-reversibility.md
-                    - "[F2] Failure Cost": foundations/forces/f2-failure-cost.md
-                    - "[F3] Per-Request Value": foundations/forces/f3-request-value.md
-                    - "[F4] Latency Budget": foundations/forces/f4-latency-budget.md
-                    - "[F5] Input Trust": foundations/forces/f5-input-trust.md
-                    - "[F6] Task Variability": foundations/forces/f6-task-variability.md
-                    - "[F7] Cost Sensitivity & Scale": foundations/forces/f7-cost-sensitivity.md
-                    - "[F8] Accountability & Regulation": foundations/forces/f8-accountability.md
-                    - "[F9] Provider Reliability": foundations/forces/f9-provider-reliability.md
-                - Dials (Tuning Degrees):
-                    - decisions/tuning-dials.md
-                    - Timeout: decisions/dials/timeout.md
-                    - Retry Count: decisions/dials/retry-count.md
-                    - Self-Correction Loops: decisions/dials/self-correction-loops.md
-                    - Checkpoint Frequency: decisions/dials/checkpoint-frequency.md
-                    - Budget Cap: decisions/dials/budget-cap.md
-                    - Autonomy Level: decisions/dials/autonomy-level.md
-                    - HITL Frequency: decisions/dials/hitl-frequency.md
-                    - Guardrail Strictness: decisions/dials/guardrail-strictness.md
-                    - Model Tier Routing: decisions/dials/model-tier-routing.md
-                    - Best-of-N: decisions/dials/best-of-n.md
-                    - Temperature: decisions/dials/temperature.md
-                    - Cache Similarity Threshold: decisions/dials/cache-similarity.md
-                    - Retrieval Top-K: decisions/dials/retrieval-top-k.md
-                    - Memory TTL: decisions/dials/memory-ttl.md
-                    - Memory Write Eagerness: decisions/dials/memory-write-eagerness.md
-                    - Summarization Timing: decisions/dials/summarization-timing.md
-                    - Exposed Tool Count: decisions/dials/exposed-tool-count.md
-                    - Trace Sampling Rate: decisions/dials/trace-sampling-rate.md
-                    - Prompt Storage: decisions/dials/prompt-storage.md
-                    - Log Retention: decisions/dials/log-retention.md
-                - Tradeoffs (Binary Choices):
-                    - decisions/tradeoffs.md
-                    - Sync ↔ Async: decisions/tradeoffs-catalog/sync-vs-async.md
-                    - Single ↔ Multi-Agent: decisions/tradeoffs-catalog/single-vs-multi-agent.md
-                    - Orchestration ↔ Choreography: decisions/tradeoffs-catalog/orchestration-vs-choreography.md
-                    - Workflow ↔ Agent: decisions/tradeoffs-catalog/workflow-vs-agent.md
-                    - Plan ↔ ReAct: decisions/tradeoffs-catalog/plan-vs-react.md
-                    - Prompt ↔ Code Control: decisions/tradeoffs-catalog/prompt-vs-code.md
-                    - RAG ↔ Fine-Tuning: decisions/tradeoffs-catalog/rag-vs-finetuning.md
-                    - Single ↔ Multi-Provider: decisions/tradeoffs-catalog/single-vs-multi-provider.md
-                    - Inline ↔ Post-Verification: decisions/tradeoffs-catalog/inline-vs-post-verification.md
-                    - Same ↔ Different Model Verification: decisions/tradeoffs-catalog/same-vs-different-model.md
-                    - LLM Reasoning ↔ Tool Delegation: decisions/tradeoffs-catalog/llm-vs-tool.md
-                    - Fail-Fast ↔ Graceful Degradation: decisions/tradeoffs-catalog/fail-fast-vs-degradation.md
-                    - Push ↔ Pull: decisions/tradeoffs-catalog/push-vs-pull.md
-                    - In-Context ↔ External State: decisions/tradeoffs-catalog/in-context-vs-external.md
-                    - Build ↔ Buy: decisions/tradeoffs-catalog/build-vs-buy.md
-                    - Structured ↔ Freeform Output: decisions/tradeoffs-catalog/structured-vs-freeform.md
-                - Decision Rules (IF–THEN): decisions/rules.md
-                - Dial × Tradeoff Interactions: decisions/interactions.md
-                - Reverse Lookup by Force: decisions/by-force.md
-                - Architecture Decision Record (ADR): decisions/adr-template.md
-                - Worked Examples: decisions/worked-examples.md
-                - Pattern Parameterization: decisions/parameterization.md
-                - Composite Configurations: reference-architectures/index.md
-            - "[Reference] Reference Architectures":
-                - "MVP (Minimum Viable)": reference-architectures/01-mvp.md
-                - Side-Effect-First: reference-architectures/02-side-effect-first.md
-                - Untrusted Input: reference-architectures/03-untrusted-input.md
-                - Factuality-First: reference-architectures/04-factuality-first.md
-                - Cost-First: reference-architectures/05-cost-first.md
-                - Continuous Improvement: reference-architectures/06-continuous-improvement.md
-                - Anti-Patterns:
-                    - anti-patterns/index.md
-                    - "Infinite / Excessive Timeout": anti-patterns/01-infinite-timeout.md
-                    - Excessive Guardrails: anti-patterns/02-excessive-guardrails.md
-                    - Strongest Model Only: anti-patterns/03-strongest-model-only.md
-                    - Full Observability Overkill: anti-patterns/04-full-observability.md
-                    - Context Stuffing: anti-patterns/05-context-stuffing.md
-                    - No Rationale for Dial Settings: anti-patterns/06-no-rationale.md
-                    - "All-Sync / All-Async": anti-patterns/07-all-sync-or-async.md
-                    - Universal Multi-Agent: anti-patterns/08-universal-multi-agent.md
-                    - Retry Storm: anti-patterns/09-retry-storm.md
-                    - Prompt as Security Boundary: anti-patterns/10-prompt-as-security.md
-                    - LLM as Calculator: anti-patterns/11-llm-as-calculator.md
-            - Agent Integration:
-                - Coding Agent Guide: agent-guide.md
-                - Architecture Proposal Template: agent-proposal-template.md
+      lang: ja
+  # コーディングエージェント向け：/llms.txt・/llms-full.txt・各ページ .md を生成
+  - llmstxt:
+      markdown_description: >-
+        意思決定層（程度の調整・相反する仕組みの選定基準）を中心に、AIエージェントを
+        本番システムに組み込むためのアーキテクチャ・パターン集。各パターンは frontmatter に
+        forces / driving_variables / forks の機械可読メタを持つ。
+      full_output: llms-full.txt
+      sections:
+        Concepts (地盤):
+          - concepts/*.md
+        Degrees (程度):
+          - degrees/*.md
+        Forks (相反):
+          - forks/*.md
+        Decision & Anti-patterns:
+          - decision/*.md
+          - antipatterns/*.md
+        For Agents:
+          - for-agents/*.md
+        Patterns A - Execution:
+          - patterns/a-execution/*.md
+        Patterns B - Orchestration:
+          - patterns/b-orchestration/*.md
+        Patterns C - Tools & Security:
+          - patterns/c-tools-security/*.md
+        Patterns D - Memory & Context:
+          - patterns/d-memory-context/*.md
+        Patterns E - Safety & HITL:
+          - patterns/e-safety-hitl/*.md
+        Patterns F - Data Integrity:
+          - patterns/f-data-integrity/*.md
+        Patterns G - Observability & Ops:
+          - patterns/g-observability-ops/*.md
 
 markdown_extensions:
   - admonition
   - attr_list
   - md_in_html
   - tables
-  - footnotes
   - toc:
       permalink: true
+  - pymdownx.details
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
-  - pymdownx.details
-  - pymdownx.tabbed:
-      alternate_style: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
 
-extra_css:
-  - assets/stylesheets/extra.css
-
-# ── ナビゲーション（意思決定を背骨、パターンを語彙） ──
 nav:
-  - はじめに: index.md
-  - 意思決定:
-      - 意思決定の進め方: decisions/decision-flow.md
-      - AIエージェントの特性:
-          - foundations/characteristics.md
-          - "[C1] 非決定論的な出力": foundations/characteristics/c1-non-determinism.md
-          - "[C2] 長時間・可変長の実行": foundations/characteristics/c2-variable-duration.md
-          - "[C3] 外部世界への副作用": foundations/characteristics/c3-side-effects.md
-          - "[C4] ハルシネーション": foundations/characteristics/c4-hallucination.md
-          - "[C5] コンテキスト窓の有限性": foundations/characteristics/c5-context-window.md
-          - "[C6] 外部LLMへの依存": foundations/characteristics/c6-external-llm-dependency.md
-          - "[C7] 攻撃面としての自然言語": foundations/characteristics/c7-attack-surface.md
-          - "[C8] トークン比例コスト": foundations/characteristics/c8-token-cost.md
-          - "[C9] モデル更新による挙動変更": foundations/characteristics/c9-model-update-drift.md
-      - 駆動変数（フォース）:
-          - foundations/forces.md
-          - "[F1] 可逆性": foundations/forces/f1-reversibility.md
-          - "[F2] 失敗コスト": foundations/forces/f2-failure-cost.md
-          - "[F3] 1リクエストの価値": foundations/forces/f3-request-value.md
-          - "[F4] レイテンシ予算": foundations/forces/f4-latency-budget.md
-          - "[F5] 入力の信頼度": foundations/forces/f5-input-trust.md
-          - "[F6] タスクの変動性": foundations/forces/f6-task-variability.md
-          - "[F7] コスト感度・スケール": foundations/forces/f7-cost-sensitivity.md
-          - "[F8] 説明責任・規制": foundations/forces/f8-accountability.md
-          - "[F9] プロバイダ信頼度": foundations/forces/f9-provider-reliability.md
-      - 程度（ダイヤル）:
-          - decisions/tuning-dials.md
-          - タイムアウト: decisions/dials/timeout.md
-          - リトライ回数: decisions/dials/retry-count.md
-          - 自己修正ループ回数: decisions/dials/self-correction-loops.md
-          - チェックポイント頻度: decisions/dials/checkpoint-frequency.md
-          - 予算上限: decisions/dials/budget-cap.md
-          - 自律性レベル: decisions/dials/autonomy-level.md
-          - HITL頻度: decisions/dials/hitl-frequency.md
-          - ガードレール厳しさ: decisions/dials/guardrail-strictness.md
-          - モデル階層: decisions/dials/model-tier-routing.md
-          - Best-of-N: decisions/dials/best-of-n.md
-          - 温度: decisions/dials/temperature.md
-          - キャッシュ類似度閾値: decisions/dials/cache-similarity.md
-          - 検索 top-k: decisions/dials/retrieval-top-k.md
-          - メモリ TTL: decisions/dials/memory-ttl.md
-          - メモリ書き込み積極度: decisions/dials/memory-write-eagerness.md
-          - 要約タイミング: decisions/dials/summarization-timing.md
-          - 露出ツール数: decisions/dials/exposed-tool-count.md
-          - トレースサンプリング率: decisions/dials/trace-sampling-rate.md
-          - プロンプト保存先: decisions/dials/prompt-storage.md
-          - ログ保持期間: decisions/dials/log-retention.md
-      - 相反（二者択一）:
-          - decisions/tradeoffs.md
-          - 同期 ↔ 非同期: decisions/tradeoffs-catalog/sync-vs-async.md
-          - シングル ↔ マルチエージェント: decisions/tradeoffs-catalog/single-vs-multi-agent.md
-          - オーケストレーション ↔ コレオグラフィ: decisions/tradeoffs-catalog/orchestration-vs-choreography.md
-          - ワークフロー ↔ エージェント: decisions/tradeoffs-catalog/workflow-vs-agent.md
-          - Plan ↔ ReAct: decisions/tradeoffs-catalog/plan-vs-react.md
-          - プロンプト ↔ コード制御: decisions/tradeoffs-catalog/prompt-vs-code.md
-          - RAG ↔ Fine-Tuning: decisions/tradeoffs-catalog/rag-vs-finetuning.md
-          - 単一 ↔ マルチプロバイダ: decisions/tradeoffs-catalog/single-vs-multi-provider.md
-          - インライン ↔ 事後検証: decisions/tradeoffs-catalog/inline-vs-post-verification.md
-          - 同一 ↔ 別モデル検証: decisions/tradeoffs-catalog/same-vs-different-model.md
-          - LLM推論 ↔ ツール委譲: decisions/tradeoffs-catalog/llm-vs-tool.md
-          - Fail-fast ↔ 縮退運転: decisions/tradeoffs-catalog/fail-fast-vs-degradation.md
-          - プッシュ ↔ プル: decisions/tradeoffs-catalog/push-vs-pull.md
-          - 文脈内 ↔ 外部状態: decisions/tradeoffs-catalog/in-context-vs-external.md
-          - ビルド ↔ バイ: decisions/tradeoffs-catalog/build-vs-buy.md
-          - 構造化 ↔ 自由形式出力: decisions/tradeoffs-catalog/structured-vs-freeform.md
-      - 決定規則（IF–THEN）: decisions/rules.md
-      - ダイヤル×二者択一の相互作用: decisions/interactions.md
-      - フォース別逆引き: decisions/by-force.md
-      - 意思決定記録（ADR）: decisions/adr-template.md
-      - 通し例: decisions/worked-examples.md
-      - パターンのパラメータ化: decisions/parameterization.md
-      - 複合構成: reference-architectures/index.md
-  - "[参考] リファレンスアーキテクチャ":
-      - 最小構成（MVP）: reference-architectures/01-mvp.md
-      - 副作用重視構成: reference-architectures/02-side-effect-first.md
-      - 信頼できない入力構成: reference-architectures/03-untrusted-input.md
-      - 事実性重視構成: reference-architectures/04-factuality-first.md
-      - コスト重視構成: reference-architectures/05-cost-first.md
-      - 継続改善運用構成: reference-architectures/06-continuous-improvement.md
-      - アンチパターン:
-          - anti-patterns/index.md
-          - 無限・過大タイムアウト: anti-patterns/01-infinite-timeout.md
-          - 過剰ガードレール: anti-patterns/02-excessive-guardrails.md
-          - 最強モデル一択: anti-patterns/03-strongest-model-only.md
-          - 観測基盤フル投入: anti-patterns/04-full-observability.md
-          - コンテキスト詰め込みすぎ: anti-patterns/05-context-stuffing.md
-          - 目盛りの根拠を残さない: anti-patterns/06-no-rationale.md
-          - 何でも同期 / 何でも非同期: anti-patterns/07-all-sync-or-async.md
-          - 万能マルチエージェント: anti-patterns/08-universal-multi-agent.md
-          - リトライストーム: anti-patterns/09-retry-storm.md
-          - プロンプトをセキュリティ境界にする: anti-patterns/10-prompt-as-security.md
-          - LLMに算術や厳密検索をやらせる: anti-patterns/11-llm-as-calculator.md
-  - エージェント統合:
-      - コーディングエージェント向けガイド: agent-guide.md
-      - アーキテクチャ提案テンプレート: agent-proposal-template.md
+  - ホーム: index.md
+  - エージェント向け:
+      - for-agents/index.md
+      - 設計提案プロトコル: for-agents/decision-protocol.md
+  - 地盤 (Concepts):
+      - concepts/index.md
+      - 5層モデル: concepts/layer-model.md
+      - 設計力学 F1–F17: concepts/design-forces.md
+      - 7つの予算: concepts/budgets.md
+      - 9つの駆動変数: concepts/driving-variables.md
+  - 程度 (Degrees): degrees/index.md
+  - 相反 (Forks): forks/index.md
+  - 意思決定フロー: decision/decision-flow.md
+  - アンチパターン: antipatterns/index.md
+  - パターン (Patterns):
+      - patterns/index.md
+      - テンプレート: patterns/_template.md
+      - A. 実行方式:
+          - patterns/a-execution/index.md
+          - patterns/a-execution/a1-sync-edge-agent.md
+          - patterns/a-execution/a2-durable-async-agent.md
+          - patterns/a-execution/a3-sync-facade-async-core.md
+          - patterns/a-execution/a4-streaming-progressive-commit.md
+          - patterns/a-execution/a6-adaptive-timeout-retry.md
+          - patterns/a-execution/a7-deadline-budget-cascade.md
+      - B. オーケストレーション:
+          - patterns/b-orchestration/index.md
+          - patterns/b-orchestration/b1-deterministic-shell.md
+          - patterns/b-orchestration/b2-workflow-backbone.md
+          - patterns/b-orchestration/b3-agentic-loop-budget.md
+          - patterns/b-orchestration/b4-planner-executor-verifier.md
+          - patterns/b-orchestration/b5-supervisor-worker.md
+          - patterns/b-orchestration/b6-critic-judge-sampling.md
+          - patterns/b-orchestration/b7-model-router-adaptive-effort.md
+      - C. ツール・セキュリティ:
+          - patterns/c-tools-security/index.md
+          - patterns/c-tools-security/c1-tool-gateway-mcp-broker.md
+          - patterns/c-tools-security/c2-read-free-write-gated.md
+          - patterns/c-tools-security/c3-dry-run-commit.md
+          - patterns/c-tools-security/c4-idempotent-command-envelope.md
+          - patterns/c-tools-security/c5-capability-lease.md
+          - patterns/c-tools-security/c6-confused-deputy-defense.md
+          - patterns/c-tools-security/c7-sandboxed-execution.md
+          - patterns/c-tools-security/c8-saga-compensation.md
+      - D. メモリ・コンテキスト:
+          - patterns/d-memory-context/index.md
+          - patterns/d-memory-context/d1-tiered-memory.md
+          - patterns/d-memory-context/d2-context-budget-allocator.md
+          - patterns/d-memory-context/d3-memory-write-gate.md
+          - patterns/d-memory-context/d4-memory-decay-versioned-truth.md
+          - patterns/d-memory-context/d5-prompt-registry.md
+          - patterns/d-memory-context/d6-semantic-cache-nocache-zones.md
+      - E. 安全性・HITL:
+          - patterns/e-safety-hitl/index.md
+          - patterns/e-safety-hitl/e1-risk-based-approval.md
+          - patterns/e-safety-hitl/e2-policy-as-code.md
+          - patterns/e-safety-hitl/e3-guardrail-sandwich.md
+          - patterns/e-safety-hitl/e4-verified-structured-output.md
+          - patterns/e-safety-hitl/e5-autonomy-ladder.md
+      - F. データ整合性:
+          - patterns/f-data-integrity/index.md
+          - patterns/f-data-integrity/f1-short-tx-long-session.md
+          - patterns/f-data-integrity/f2-event-sourced-replayable.md
+      - G. 観測・運用:
+          - patterns/g-observability-ops/index.md
+          - patterns/g-observability-ops/g1-tiered-observability.md
+          - patterns/g-observability-ops/g2-end-to-end-tracing.md
+          - patterns/g-observability-ops/g3-shadow-canary.md
+          - patterns/g-observability-ops/g4-eval-harness.md
+          - patterns/g-observability-ops/g5-circuit-breaker-degradation.md
+  - リファレンス:
+      - 用語集: reference/glossary.md
+      - 機械可読インデックス: reference/pattern-index.md
