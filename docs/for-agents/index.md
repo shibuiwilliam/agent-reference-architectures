@@ -1,10 +1,10 @@
 # コーディングエージェント向けガイド
 
-このドキュメントは、**あなた（コーディングエージェント）が AIエージェントを含むソフトウェアを設計し、人間に提案する**ために最適化されています。ここを最初に読んでください。
+このドキュメントは、**あなた（コーディングエージェント）がAIエージェントを含むソフトウェアを設計し、人間に提案する**ために作られています。まずこのページから読み始めてください。
 
-## このドキュメントの構造を一言で
+## このドキュメントの構造
 
-設計判断を5層で扱います（詳細は [5層モデル](../concepts/layer-model.md)）。
+設計判断を5つの層で整理しています（詳細は [5層モデル](../concepts/layer-model.md)）。
 
 ```
 L0 設計力学(F1–F17)  なぜ普通の設計が通用しないか
@@ -15,13 +15,13 @@ L4 相反(forks)       排他的な仕組みのどちら
 L5 パターン(A–G)     実装する部品（frontmatter付き）
 ```
 
-## どこから情報を取るか（機械可読アクセス）
+## 情報の取得方法（機械可読アクセス）
 
-- **リポジトリ直読（推奨）**：`docs/**/*.md` を直接読みます。各パターンは frontmatter
-  （`id / forces / driving_variables / forks / related_patterns / alternatives`）を持っているので、
+- **リポジトリ直読（推奨）**：`docs/**/*.md` を直接読んでください。各パターンは frontmatter
+  （`id / forces / driving_variables / forks / related_patterns / alternatives`）を持っています。
   まず [機械可読インデックス](../reference/pattern-index.md) で候補を絞り、必要な `.md` を開いてください。
-- **公開サイト経由**：`/, llms.txt`（索引）、`/llms-full.txt`（全文連結）、各ページの `.md` URL から取得できます。
-  サイトは `mkdocs-llmstxt` がこれらを自動生成しています。
+- **公開サイト経由**：`/llms.txt`（索引）、`/llms-full.txt`（全文連結）、各ページの `.md` URL から取得できます。
+  これらは `mkdocs-llmstxt` が自動生成しています。
 
 ## 統制語彙（提案やメタ抽出で使う固定キー）
 
@@ -31,14 +31,14 @@ L5 パターン(A–G)     実装する部品（frontmatter付き）
   （[定義](../concepts/driving-variables.md)）
 - 相反ID：`F-1`–`F-18`（[定義](../forks/index.md)）
 
-## あなたがやること（要約）
+## あなたがやること（まとめ）
 
 1. [設計提案プロトコル](decision-protocol.md) に従ってください。
 2. **目盛りをハードコードしないでください。** 値は必ず駆動変数から導き、「なぜその値か」を添えてください。
-3. **単独で結論を出さないでください。** 人間に選択肢・トレードオフ・推奨と根拠を提示し、選んでもらいます。
-4. 不可逆・高失敗コスト・低入力信頼の箇所は、安全側のパターン（[E1](../patterns/e-safety-hitl/e1-risk-based-approval.md) /
+3. **単独で結論を出さず、人間に選んでもらってください。** 選択肢・トレードオフ・推奨と根拠を提示します。
+4. 不可逆・高失敗コスト・低入力信頼の箇所には、安全側のパターン（[E1](../patterns/e-safety-hitl/e1-risk-based-approval.md) /
    [C1](../patterns/c-tools-security/c1-tool-gateway-mcp-broker.md) /
-   [C3](../patterns/c-tools-security/c3-dry-run-commit.md)）を必ず併置提案してください。
+   [C3](../patterns/c-tools-security/c3-dry-run-commit.md)）を必ず一緒に提案してください。
 
 ## やってはいけないこと
 

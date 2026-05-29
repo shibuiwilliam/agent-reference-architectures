@@ -56,7 +56,7 @@ tags: [orchestration, workflow, dag, state-machine, deterministic]
 ## 相反における立ち位置（相反）
 
 - **[F-4 ワークフロー vs エージェント](../../forks/index.md) → ワークフロー側**。本パターンはフォーク F-4 のハイブリッド戦略「決定論骨格＋確率論ノード」そのものです。骨格がワークフロー、ノード内部がエージェントとなります。`[task_variability]` が低いノードは決定論コードで、高いノードだけ LLM/ミニエージェントで実装します。全ノードで `[task_variability]` が高くなったら [B3](b3-agentic-loop-budget.md) への移行を検討してください。
-- **[F-5 Plan-then-Execute vs ReAct](../../forks/index.md) → 計画先行**。DAG 定義が計画に相当し、実行時にはその計画を逸脱しません。環境が静的で手順を事前確定できるユースケースに適合します。動的に計画を変えたい場合は [B4 計画-実行-検証](b4-planner-executor-verifier.md) のパターンでDAG自体をLLMが生成・修正する構成も考えられます。
+- **[F-5 Plan-then-Execute vs ReAct](../../forks/index.md) → 計画先行**。DAG 定義が計画に相当し、実行時にはその計画から逸脱しません。環境が静的で手順を事前確定できるユースケースに適しています。動的に計画を変えたい場合は [B4 計画-実行-検証](b4-planner-executor-verifier.md) のパターンで DAG 自体を LLM が生成・修正する構成も考えられます。
 
 ## 構造
 

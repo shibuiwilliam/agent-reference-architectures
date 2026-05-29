@@ -1,9 +1,9 @@
 # パターン・カタログ（A–G）
 
-各パターンは「定数」ではなく**パラメータ付き関数**です。同じパターンでも [駆動変数](../concepts/driving-variables.md) が違えば目盛りが変わります。各ページは frontmatter に `forces / driving_variables / forks / related_patterns / alternatives` の機械可読メタを持っています（[機械可読インデックス](../reference/pattern-index.md) に集約）。
+各パターンは「定数」ではなく**パラメータ付き関数**です。同じパターンでも [駆動変数](../concepts/driving-variables.md) が違えば目盛りが変わります。各ページの frontmatter には `forces / driving_variables / forks / related_patterns / alternatives` の機械可読メタが含まれています（[機械可読インデックス](../reference/pattern-index.md) に集約）。
 
 - 記述様式は [テンプレート](_template.md) を参照してください。
-- 採否は各ページの「選定条件（When to use / When NOT）」で判定します。
+- 採否は各ページの「選定条件（When to use / When NOT）」で判定してください。
 
 | ドメイン | テーマ |
 |---|---|

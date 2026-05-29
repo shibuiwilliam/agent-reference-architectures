@@ -1,6 +1,6 @@
 # 意思決定フロー — 駆動変数から実装へ
 
-設計セッションは次の順で進めます。各分岐の根拠（効いた [駆動変数](../concepts/driving-variables.md)）を必ず書き残してください。コーディングエージェントは [設計提案プロトコル](../for-agents/decision-protocol.md) と併せてお使いください。
+設計セッションは以下の順で進めてください。各分岐で「どの [駆動変数](../concepts/driving-variables.md) が効いたか」を必ず書き残してください。コーディングエージェントは [設計提案プロトコル](../for-agents/decision-protocol.md) と併せてお使いください。
 
 ```mermaid
 flowchart TD
