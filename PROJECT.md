@@ -1,125 +1,97 @@
-# PROJECT.md
+# PROJECT.md — プロジェクト憲章
 
-This is the documentation site for **AI Agent Production Architecture Patterns** — 59 patterns across 12 categories for taking AI agents from prototype to production. Built with MkDocs (Material) and published to GitHub Pages.
+## 1. 目的
 
-The organizing principle: **decisions are the backbone, patterns are the vocabulary**. Rather than a flat pattern catalog, the site guides readers through force evaluation → tradeoff resolution → dial tuning → pattern selection → architecture composition.
+意思決定層（**程度の調整**と**相反する仕組みの選定基準**）を中心に据えた、**AIエージェントを本番システムに組み込むためのソフトウェアアーキテクチャ・パターン集**を作る。単なるパターンの羅列ではなく、「どのパターンを、どの目盛りで、どちらの仕組みで採るか」を**根拠（どの駆動変数が効いたか）とともに**決められるようにすることが主眼。
 
-**At a glance:**
+## 2. 想定読者と利用シナリオ
 
-- **Audience:** Architects and engineers shipping AI agents to production, plus coding agents that consume the catalog programmatically
-- **Scale:** 12 categories, 59 patterns, 9 forces, 20 dials, 16 tradeoffs, 6 reference architectures, 11 anti-patterns
-- **Source of truth:** [`patterns.yml`](patterns.yml) + [`decisions.yml`](decisions.yml) (characteristics, forces, dials, tradeoffs, rules) + [`anti-patterns.yml`](anti-patterns.yml)
-- **Writing rules:** [`CLAUDE.md`](CLAUDE.md)
-- **Agent integration:** [`AGENTS.md`](AGENTS.md)
+| 読者 | 利用シナリオ | 必要な配慮 |
+|------|--------------|------------|
+| 人間（設計者/レビュア） | 設計判断の根拠を引く、レビューの観点リストにする | 読みやすいHTML、検索、図 |
+| コーディングエージェント | 開発時に読み込み、AIエージェントを含む構成を設計し人間に提案 | frontmatterによる機械可読メタ、生マークダウン配信、明確な提案プロトコル |
 
----
+**最重要ゴール**：コーディングエージェントがこのドキュメントを読み込むだけで、(1) 程度を駆動変数から導き、(2) 相反を文脈で解き、(3) パターンを組み合わせ、(4) **目盛り値とその理由を添えて人間に提案**できること。
 
-## Tech Stack
+## 3. 設計思想（背骨）
 
-| Role | Tool |
-|------|------|
-| Static site generator | MkDocs |
-| Theme | Material for MkDocs |
-| Diagrams | Mermaid (via `pymdownx.superfences`) |
-| Hosting | GitHub Pages (`gh-pages` branch) |
-| CI/CD | GitHub Actions (`.github/workflows/deploy.yml`) |
-| Site language | Japanese (`theme.language: ja`) |
+全コンテンツは「設計判断を貫く5層モデル」の上に乗る。詳細は `docs/concepts/layer-model.md`。
 
----
+| 層 | 問い | 道具 | 置き場所 |
+|---|------|------|----------|
+| L0 なぜ難しいか | エージェントは普通のソフトと何が違うか | 設計力学 F1–F17 | `concepts/design-forces.md` |
+| L1 何を配分するか | この処理に何をどれだけ使えるか | 7つの予算 | `concepts/budgets.md` |
+| L2 どう決めるか | 目盛り・二択を何が左右するか | 9つの駆動変数 | `concepts/driving-variables.md` |
+| L3 どこまで回すか | 各設計変数の「ちょうど」 | 程度（ダイヤル） | `degrees/` |
+| L4 どちらを採るか | 排他的な仕組みのどちらか | 相反（フォーク） | `forks/` |
+| L5 何を組むか | 実装する再利用部品 | パターン（A–G） | `patterns/` |
 
-## Directory Layout
+根本原則：**確率的な核（LLM）を、決定論的な殻（コード）で包む。** 最終成果物は「値」ではなく「**なぜその値か＝どの駆動変数がどの力学に効いたか**」の記録。
 
-```text
-agent-architecture-patterns/
-├─ mkdocs.yml                  # Site config & nav (manually managed)
-├─ requirements.txt            # mkdocs-material, pymdown-extensions
-├─ patterns.yml                # ★ Source of truth: 59 patterns
-├─ decisions.yml               # ★ Source of truth: forces, dials, tradeoffs, rules
-├─ anti-patterns.yml           # ★ Source of truth: 11 anti-patterns
-├─ PROJECT.md                  # You are here
-├─ CLAUDE.md                   # Writing instructions for Claude Code
-├─ AGENTS.md                   # Coding agent integration guide
-├─ CHANGELOG.md                # Release history
-├─ schemas/                    # JSON Schema (patterns / decisions / catalog)
-├─ .github/workflows/deploy.yml
-├─ scripts/
-│  ├─ scaffold.py              # Stub generator from patterns.yml (idempotent)
-│  ├─ generate.py              # YAML → catalog.json, llms.txt, meta blocks, etc.
-│  ├─ check_links.py           # Bidirectional link audit (dials/tradeoffs ↔ patterns)
-│  └─ check_lang_parity.py     # JP/EN coverage check
-├─ mcp/
-│  ├─ server.py                # MCP server (reads catalog.json)
-│  ├─ smoke_test.py            # Smoke test for MCP server
-│  └─ README.md                # Setup and usage
-├─ templates/
-│  └─ pattern.md               # Writing template (not part of the build)
-└─ docs/                       # ★ Build target — everything the site serves
-   ├─ index.md                 # Landing page
-   ├─ foundations/
-   │  ├─ characteristics.md     # AI agent characteristics
-   │  └─ forces.md              # Driving variables F1–F9
-   ├─ patterns/
-   │  ├─ 01-execution/          # I. Execution (01–07, 55, 58, 59)
-   │  ├─ 02-composition/        # II. Composition (08–12)
-   │  ├─ 03-io-contract/        # III. I/O & Contract (13–16)
-   │  ├─ 04-tools-mcp/          # IV. Tools & MCP (17–22)
-   │  ├─ 05-memory-context/     # V. Memory & Context (23–26)
-   │  ├─ 06-reliability/        # VI. Reliability (27–31, 57)
-   │  ├─ 07-observability/      # VII. Observability (32–36, 54)
-   │  ├─ 08-cost-scaling/       # VIII. Cost & Scaling (37–40, 56)
-   │  ├─ 09-security/           # IX. Security (41–44)
-   │  ├─ 10-deployment/         # X. Deployment (45–48)
-   │  ├─ 11-ux/                 # XI. UI/UX (49–51)
-   │  └─ 12-governance/         # XII. Governance (52–53)
-   ├─ decisions/                # Decision framework pages
-   ├─ anti-patterns/            # 11 anti-patterns
-   ├─ reference-architectures/  # 6 composite configurations
-   ├─ pattern-index.md          # Quick-reference table (auto-generated)
-   ├─ agent-guide.md            # Guide for coding agents
-   ├─ agent-proposal-template.md
-   ├─ catalog.json              # Machine-readable manifest (generated)
-   ├─ llms.txt                  # llmstxt.org index (generated)
-   ├─ llms-core.txt             # Decision core, low-token (generated)
-   └─ llms-full.txt             # Full-text concatenation (generated)
+## 4. 情報アーキテクチャ（ディレクトリ）
+
+```
+.
+├─ CLAUDE.md                 作業規約（Claude Code が自動読込）
+├─ PROJECT.md                本ファイル
+├─ README.md                 リポジトリの入口
+├─ mkdocs.yml                サイト設定・nav・プラグイン
+├─ pyproject.toml            ビルド依存（uv で管理）
+├─ .github/workflows/deploy.yml  GitHub Pages 自動デプロイ
+├─ scripts/                  new_pattern / validate / gen_indexes
+└─ docs/
+   ├─ index.md               トップ（目的・5層モデル・読み方）
+   ├─ for-agents/            エージェント向け：使い方と提案プロトコル
+   ├─ concepts/              第I部 地盤（force/budget/variable/layer-model）
+   ├─ degrees/               第II部 程度（ダイヤル）
+   ├─ forks/                 第III部 相反（フォーク）
+   ├─ patterns/              第IV部 パターン（_template.md と A〜G）
+   ├─ decision/              第V部 意思決定フロー
+   ├─ antipatterns/          第VI部 アンチパターン
+   └─ reference/             用語集・機械可読インデックス
 ```
 
-Pattern filenames follow `NN-slug.md` (zero-padded number + hyphenated English slug). Numbers may skip (e.g., 55, 58, 59 in category I) because newer patterns were added to existing categories. **Numbers and slugs are immutable** — `patterns.yml` is the authority.
+## 5. パターン分類（ドメイン A–G）と一覧
 
----
+| ドメイン | テーマ | パターン |
+|---|---|---|
+| A | 実行方式・ライフサイクル | A1 同期エッジ / A2 耐久非同期 / A3 同期ファサード / A4 進捗ストリーミング / A6 適応タイムアウト・リトライ / A7 期限・予算カスケード |
+| B | オーケストレーション・制御フロー | B1 決定論的な殻 / B2 ワークフロー骨格 / B3 予算付き自律ループ / B4 計画-実行-検証 / B5 Supervisor-Worker / B6 Critic-Judge・多数決 / B7 モデルルーター・適応努力 |
+| C | ツール・副作用・セキュリティ | C1 ツールゲートウェイ/MCP仲介 / C2 読取自由・書込ゲート / C3 ドライラン・コミット / C4 冪等コマンド包装 / C5 Capability Lease / C6 Confused Deputy防御 / C7 サンドボックス実行 / C8 サーガ・補償 |
+| D | メモリ・コンテキスト | D1 階層化メモリ / D2 コンテキスト予算配分 / D3 メモリ書込ゲート / D4 記憶の減衰・版管理 / D5 Prompt Registry / D6 禁止領域付きキャッシュ |
+| E | 安全性・HITL・自律性 | E1 リスクベース承認 / E2 Policy-as-Code / E3 ガードレールサンドイッチ / E4 検証済み構造化出力 / E5 Autonomy Ladder |
+| F | データ整合性・状態 | F1 短トランザクション・長セッション / F2 イベントソーシング・リプレイ |
+| G | 観測・評価・運用 | G1 二層観測 / G2 全ホップトレース / G3 シャドウ・カナリア / G4 評価ハーネス / G5 サーキットブレーカ・縮退・抽象化 |
 
-## Setup
+## 6. 機械可読性の方針（コーディングエージェント対応）
 
-```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+1. **frontmatter スキーマ**を全パターンに付与（`id/forces/driving_variables/forks/related_patterns/...`）。統制語彙は CLAUDE.md と `concepts/` に定義。
+2. **生マークダウン配信**：`mkdocs-llmstxt` で `/llms.txt`（索引）・`/llms-full.txt`（全文）・各ページ `.md` を公開サイトに生成。
+3. **リポジトリ直読**：エージェントは公開サイトを待たず `docs/**.md` を直接読める。frontmatter 込みなのでメタ抽出が容易。
+4. **機械可読インデックス**：`docs/reference/pattern-index.md` に「id→ファイル→forces→driving_variables→forks」の表を `scripts/gen_indexes.py` で自動生成。
+5. **提案プロトコル**：`docs/for-agents/decision-protocol.md` に、エージェントが踏む決定手順と提案出力テンプレートを規定。
 
-python scripts/scaffold.py     # Create any missing stubs (safe to re-run)
-mkdocs serve                   # Preview at http://127.0.0.1:8000
-mkdocs build --strict          # Full build — catches broken links
-```
+## 7. 公開（MkDocs + GitHub Pages）
 
----
+- テーマ：Material for MkDocs。プラグイン：`search`, `llmstxt`。拡張：`admonition`, `pymdownx.superfences`(+mermaid), `pymdownx.highlight`, `tables`, `toc(permalink)`。
+- デプロイ：`main` への push で GitHub Actions がビルドし Pages へ公開（Pages の Source は **GitHub Actions**）。
+- セットアップ時に置換が必要：`mkdocs.yml` の `site_url` と `repo_url`。
 
-## Deploying to GitHub Pages
+## 8. 執筆ロードマップ（推奨順）
 
-1. Push to `main`.
-2. Make sure `site_url` / `repo_url` in `mkdocs.yml` point to your fork.
-3. The GitHub Actions workflow builds and deploys to the `gh-pages` branch automatically.
-4. In repo settings, set Pages source to **Deploy from branch → `gh-pages` / `(root)`**.
+1. **地盤を固める**：`concepts/`（force / budget / driving-variable / layer-model）→ `degrees/` → `forks/` → `decision/` → `antipatterns/`。意思決定層が主題なのでここを最優先で stable に。
+2. **基幹パターンを stable 化**：B1, A2, A3, E1, C1, C3, G1（提案で多用される土台）。
+3. **残りのパターン**をドメイン順に draft→review→stable。
+4. **横串の検証**：相互リンク、`validate.py`、`for-agents/decision-protocol.md` に沿った提案が実際に回るかをドッグフーディング。
 
-> Manual deploy: `mkdocs gh-deploy --force`
+各パターンの完成基準は CLAUDE.md §3.3「品質ゲート」。
 
----
+## 9. スコープ外（やらないこと）
 
-## Writing Workflow (with Claude Code)
+- 特定ベンダーSDKのAPIリファレンス（外部公式に委ねる。本書は設計判断に集中）。
+- 実行可能なサンプルアプリ一式（実装メモは断片に留める）。
+- モデル性能ベンチマーク（陳腐化が速い）。
 
-1. `python scripts/scaffold.py` — ensure the target stub exists.
-2. Write the `.md` following [`CLAUDE.md`](CLAUDE.md) rules and the [exemplar](docs/patterns/01-execution/01-request-to-job-gateway.md).
-3. `mkdocs build --strict` — verify clean build.
-4. Commit: one pattern per commit (e.g., `docs(#12): write Blackboard pattern`).
+## 10. 用語
 
----
-
-## Progress
-
-All 59 patterns, foundations, decision layer, anti-patterns, reference architectures, and pattern index are complete.
+`docs/reference/glossary.md` を単一の正とする。新語はまずここに追加してから本文で使う。

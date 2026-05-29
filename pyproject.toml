@@ -1,11 +1,9 @@
 [project]
-name = "agent-reference-architectures"
+name = "agent-arch-patterns"
 version = "0.1.0"
+description = "AIエージェント本番アーキテクチャ・パターン集"
 requires-python = ">=3.12"
 dependencies = [
     "mkdocs-material>=9.5",
-    "mkdocs-redirects>=1.2",
-    "mkdocs-static-i18n>=1.2",
-    "pymdown-extensions>=10.0",
-    "pyyaml>=6.0",
+    "mkdocs-llmstxt>=0.2",
 ]
