@@ -15,7 +15,7 @@
 
 ## 3. 設計思想（背骨）
 
-全コンテンツは「設計判断を貫く5層モデル」の上に乗る。詳細は `docs/concepts/layer-model.md`。
+全コンテンツは「設計判断を貫く5層モデル」の上に乗る。5層の構成は `docs/index.md` のトップページ表を参照。
 
 | 層 | 問い | 道具 | 置き場所 |
 |---|------|------|----------|
@@ -42,7 +42,7 @@
 └─ docs/
    ├─ index.md               トップ（目的・5層モデル・読み方）
    ├─ for-agents/            エージェント向け：使い方と提案プロトコル
-   ├─ concepts/              第I部 地盤（force/budget/variable/layer-model）
+   ├─ concepts/              第I部 地盤（force/budget/variable）
    ├─ degrees/               第II部 程度（ダイヤル）
    ├─ forks/                 第III部 相反（フォーク）
    ├─ patterns/              第IV部 パターン（_template.md と A〜G）
@@ -79,7 +79,7 @@
 
 ## 8. 執筆ロードマップ（推奨順）
 
-1. **地盤を固める**：`concepts/`（force / budget / driving-variable / layer-model）→ `degrees/` → `forks/` → `decision/` → `antipatterns/`。意思決定層が主題なのでここを最優先で stable に。
+1. **地盤を固める**：`concepts/`（force / budget / driving-variable）→ `degrees/` → `forks/` → `decision/` → `antipatterns/`。意思決定層が主題なのでここを最優先で stable に。
 2. **基幹パターンを stable 化**：B1, A2, A3, E1, C1, C3, G1（提案で多用される土台）。
 3. **残りのパターン**をドメイン順に draft→review→stable。
 4. **横串の検証**：相互リンク、`validate.py`、`for-agents/decision-protocol.md` に沿った提案が実際に回るかをドッグフーディング。
@@ -94,4 +94,4 @@
 
 ## 10. 用語
 
-`docs/reference/glossary.md` を単一の正とする。新語はまずここに追加してから本文で使う。
+主要な用語は各概念ページ（`docs/concepts/`）で定義している。統制語彙（forces / driving_variables / forks）は `CLAUDE.md` §3.1 に一覧がある。

@@ -96,7 +96,6 @@ nav:
       - 設計提案プロトコル: for-agents/decision-protocol.md
   - 地盤 (Concepts):
       - concepts/index.md
-      - 5層モデル: concepts/layer-model.md
       - 設計力学 F1–F17: concepts/design-forces.md
       - 7つの予算: concepts/budgets.md
       - 9つの駆動変数: concepts/driving-variables.md
@@ -161,5 +160,4 @@ nav:
           - patterns/g-observability-ops/g4-eval-harness.md
           - patterns/g-observability-ops/g5-circuit-breaker-degradation.md
   - リファレンス:
-      - 用語集: reference/glossary.md
       - 機械可読インデックス: reference/pattern-index.md

@@ -13,10 +13,9 @@
 新しいタスクを始める前に、必ずこの順で読む：
 
 1. `PROJECT.md` … 全体像・情報設計・執筆ロードマップ
-2. `docs/concepts/layer-model.md` … 5層モデル（背骨）
-3. `docs/concepts/design-forces.md`（F1–F17）/ `budgets.md`（7予算）/ `driving-variables.md`（9駆動変数）
-4. `docs/patterns/_template.md` … パターン記述の正準テンプレートと frontmatter スキーマ
-5. 着手するパターンの既存 `.md`（雛形）
+2. `docs/concepts/design-forces.md`（F1–F17）/ `budgets.md`（7予算）/ `driving-variables.md`（9駆動変数）
+3. `docs/patterns/_template.md` … パターン記述の正準テンプレートと frontmatter スキーマ
+4. 着手するパターンの既存 `.md`（雛形）
 
 ## 2. ディレクトリ構成（要点）
 

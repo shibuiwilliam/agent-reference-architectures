@@ -18,7 +18,7 @@
 | L4 どちらを採るか | 排他的な仕組みのどちら | [相反（Forks）](forks/index.md) |
 | L5 何を組むか | 実装する再利用部品 | [パターン（A–G）](patterns/index.md) |
 
-全体像は [5層モデル](concepts/layer-model.md)、選定の手順は [意思決定フロー](decision/decision-flow.md) をご覧ください。
+選定の手順は [意思決定フロー](decision/decision-flow.md) をご覧ください。
 
 ## 根本原則
 
