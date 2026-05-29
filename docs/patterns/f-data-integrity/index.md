@@ -4,5 +4,5 @@
 
 | ID | パターン | forces | driving_variables | status |
 |---|---|---|---|---|
-| F1 | [Short DB Transaction, Long Agent Session｜長セッション・短トランザクション](f1-short-tx-long-session.md) | `[F1, F3]` | `[reversibility]` | draft |
-| F2 | [Event-sourced / Replayable Runs｜イベントソーシングとリプレイ](f2-event-sourced-replayable.md) | `[F3, F15, F16]` | `[accountability]` | draft |
+| F1 | [Short DB Transaction, Long Agent Session｜長セッション・短トランザクション](f1-short-tx-long-session.md) | `[F1, F3]` | `[reversibility]` | stable |
+| F2 | [Event-sourced / Replayable Runs｜イベントソーシングとリプレイ](f2-event-sourced-replayable.md) | `[F3, F15, F16]` | `[accountability]` | stable |
