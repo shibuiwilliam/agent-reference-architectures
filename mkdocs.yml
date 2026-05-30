@@ -3,10 +3,9 @@ site_name: AIエージェント本番アーキテクチャ・パターン
 site_description: >-
   意思決定層（程度の調整・相反する仕組みの選定基準）を中心に、AIエージェントを
   本番システムに組み込むためのソフトウェアアーキテクチャ・パターン集。
-# llmstxt プラグインは site_url 必須。<USER>/<REPO> を自分のものに置換。
-site_url: https://USER.github.io/agent-arch-patterns/
-repo_url: https://github.com/USER/agent-arch-patterns
-repo_name: USER/agent-arch-patterns
+site_url: https://shibuiwilliam.github.io/agent-reference-architectures/
+repo_url: https://github.com/shibuiwilliam/agent-reference-architectures
+repo_name: shibuiwilliam/agent-reference-architectures
 docs_dir: docs
 
 theme:
