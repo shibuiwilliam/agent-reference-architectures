@@ -10,7 +10,7 @@ forces: [F6, F11]
 driving_variables: [cost_sensitivity]
 forks:
   - "F-7:rag"
-related_patterns: [D1, D4, D6, A7, B7]
+related_patterns: [D1, D6, A7, B7]
 alternatives: []
 tags: [memory, context, budget, allocation, rag, compression]
 ---
@@ -135,8 +135,7 @@ def allocate(window_size: int, slots: list[ContextSlot],
 
 ## 関連・代替
 
-- [D1 階層化メモリ](d1-tiered-memory.md)：D1 が「何をどの階層に保存するか」を決め、D2 が「保存された情報のうち何をどれだけ窓に載せるか」を決めます。D1 の出力が D2 の入力です。
-- [D4 記憶減衰・版管理](d4-memory-decay-versioned-truth.md)：古い記憶を要約・統合して容量を減らします。D2 の圧縮トリガーが D4 の減衰プロセスを起動する関係です。
+- [D1 階層化メモリ](d1-tiered-memory.md)：D1 が「何をどの階層に保存するか」を決め、D2 が「保存された情報のうち何をどれだけ窓に載せるか」を決めます。D1 の出力が D2 の入力です。D1 の記憶の減衰とバージョン管理機能で古い記憶を要約・統合して容量を減らし、D2 の圧縮トリガーが減衰プロセスを起動する関係です。
 - [D6 セマンティックキャッシュ](d6-semantic-cache-nocache-zones.md)：類似クエリのキャッシュヒットで検索・LLM 呼び出しをスキップし、窓の配分計算自体を省略できます。
 - [A7 期限・予算カスケード](../a-execution/a7-deadline-budget-cascade.md)：A7 がコスト・時間の全体予算を管理し、D2 はそのうち「コンテキスト窓」という特定リソースの配分を担います。A7 の残コスト予算が D2 の圧縮閾値に影響します。
 - [B7 モデルルーター](../b-orchestration/b7-model-router-adaptive-effort.md)：モデル選択によって窓サイズとトークン単価が変わるため、D2 の配分比率を再計算する必要があります。

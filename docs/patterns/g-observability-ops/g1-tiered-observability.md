@@ -9,7 +9,7 @@ summary: "観測データをホット層（メタ・構造化メトリクス）�
 forces: [F2, F3, F11, F15, F16]
 driving_variables: [accountability, cost_sensitivity]
 forks: []
-related_patterns: [A2, A7, G2, G3, G4, E1]
+related_patterns: [A2, A7, G2, G4, E1]
 alternatives: []
 tags: [observability, logging, metrics, hot-cold, audit]
 ---
@@ -164,11 +164,11 @@ def emit_observation(trace_id: str, span_id: str, prompt: str,
 - [A2 耐久非同期](../a-execution/a2-durable-async-agent.md)：チェックポイントの保存粒度とG1が連携します。チェックポイントに `trace_id` を埋め込むことで、再開後のスパンも同一トレースに紐付けられます。
 - [A7 予算カスケード](../a-execution/a7-deadline-budget-cascade.md)：予算消費メトリクス（consumed/limit比）はG1のホット層に流し、閾値超過でアラートを発火します。
 - [G2 全ホップトレース](g2-end-to-end-tracing.md)：G2がトレースの伝播構造（trace_id / span_id）を担い、G1がその各スパンに何を記録しどこに保存するかを担います。G1とG2は補完関係です。
-- [G3 シャドウ・カナリア](g3-shadow-canary.md)：シャドウテストの結果比較にはコールド層の出力全文が必要です。G1がデータソースを提供します。
+- [G4 評価ハーネス](g4-eval-harness.md)：シャドウテストの結果比較にはコールド層の出力全文が必要です。G1がデータソースを提供します。
 - [G4 評価ハーネス](g4-eval-harness.md)：定期的な品質評価にコールド層のプロンプト/出力ペアをサンプリングして供給します。G1の `cold_ref` 経由でデータを引きます。
 - [E1 リスクベース承認](../e-safety-hitl/e1-risk-based-approval.md)：HITL承認イベントは全量（サンプリング率100%）でホット・コールド両層に記録します。承認ログの欠損は監査上許されません。
 
-代替パターンは特にありません。G1は観測の基盤層であり、他の観測パターン（G2–G5）の前提として機能します。
+代替パターンは特にありません。G1は観測の基盤層であり、他の観測パターン（G2、G4）の前提として機能します。
 
 ## コーディングエージェント向け指示（machine-actionable）
 

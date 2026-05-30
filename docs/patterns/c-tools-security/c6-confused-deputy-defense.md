@@ -10,7 +10,7 @@ forces: [F14, F5]
 driving_variables: [input_trust]
 forks:
   - "F-6:code"
-related_patterns: [C1, C5, C7, E2, E3]
+related_patterns: [C1, E2, E3]
 alternatives: []
 tags: [security, confused-deputy, injection, trust-boundary, privilege]
 ---
@@ -127,8 +127,7 @@ def call_tool(tool_name: str, args: dict, context: RequestContext):
 ## 関連・代替
 
 - [C1 Tool Gateway / MCP Broker](c1-tool-gateway-mcp-broker.md)：ゲートウェイが権限検証の実施ポイントになります。本パターンはゲートウェイ内部で「誰の権限で実行するか」を決定するロジックに相当します。
-- [C5 Capability Lease](c5-capability-lease.md)：短命権限チケットにユーザの権限スコープを埋め込むことで、代理の混同をリース発行時点で防げます。長時間セッションでは併用を推奨します。
-- [C7 Sandboxed Execution](c7-sandboxed-execution.md)：仮にインジェクションで代理の混同が発生しても、サンドボックスにより被害範囲を限定します。防御の最終層として併用します。
+- [C1 Tool Gateway / MCP Broker](c1-tool-gateway-mcp-broker.md)：ゲートウェイの短命権限リース機能でユーザの権限スコープを埋め込むことで、代理の混同をリース発行時点で防げます。長時間セッションでは併用を推奨します。また、サンドボックスによる隔離実行により、仮にインジェクションで代理の混同が発生しても被害範囲を限定します。
 - [E2 Policy-as-Code](../e-safety-hitl/e2-policy-as-code.md)：権限検証ルールを OPA/Cedar 等のポリシーエンジンに外部化し、デプロイなしでルール変更可能にします。権限体系が複雑な場合に有効です。
 - [E3 ガードレールサンドイッチ](../e-safety-hitl/e3-guardrail-sandwich.md)：入力ガードレールで悪意ある命令を事前にフィルタし、代理の混同の発生確率を下げます。本パターンの前段防御として機能します。
 
@@ -141,7 +140,7 @@ def call_tool(tool_name: str, args: dict, context: RequestContext):
 - [ ] 権限検証がコード（決定論的）で行われることを確認し、LLM 判断に委ねていないか検証したか
 - [ ] 外部データのソース別信頼レベルを分類し、ラベリング方針を示したか
 - [ ] [C1 Tool Gateway](c1-tool-gateway-mcp-broker.md) を併せて提案し、権限検証の実施ポイントを設計したか
-- [ ] 長時間セッションがあるなら [C5 Capability Lease](c5-capability-lease.md) でユーザ権限スコープ付きリースの発行を検討したか
-- [ ] 被害限定のために [C7 Sandboxed Execution](c7-sandboxed-execution.md) の併置を検討したか
+- [ ] 長時間セッションがあるなら [C1 Tool Gateway](c1-tool-gateway-mcp-broker.md) の短命権限リース機能でユーザ権限スコープ付きリースの発行を検討したか
+- [ ] 被害限定のために [C1 Tool Gateway](c1-tool-gateway-mcp-broker.md) のサンドボックス隔離実行機能の併置を検討したか
 - [ ] 入力段の防御として [E3 ガードレールサンドイッチ](../e-safety-hitl/e3-guardrail-sandwich.md) を検討したか
 - [ ] 目盛り（上表）の値を `[駆動変数]` から導き、**理由を添えて**提示したか

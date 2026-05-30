@@ -6,12 +6,12 @@ domain: a-execution
 status: stable
 layer: L5-pattern
 summary: "長時間処理をジョブ化し状態を永続化、落ちても別ワーカーが最後のチェックポイントから再開できるようにする。"
-forces: [F1, F7, F15, F17]
+forces: [F1, F7, F15, F16, F17]
 driving_variables: [reversibility, latency_budget, accountability]
 forks:
   - "F-1:async"
   - "F-14:external-state"
-related_patterns: [A3, A6, A7, F1, F2, G1, E1]
+related_patterns: [A3, A6, A7, F1, G1, E1]
 alternatives: [A1]
 tags: [execution, durability, checkpoint, async]
 ---
@@ -99,20 +99,48 @@ flowchart LR
 - **LLM呼び出し中にDBトランザクションを開かないでください**（[F1](../f-data-integrity/f1-short-tx-long-session.md)）。チェックポイント書込は短い独立トランザクションで行います。
 - 再開時は副作用ツールを**冪等キー**で保護します（[C4](../c-tools-security/c4-idempotent-command-envelope.md)）。そうしないと再開が二重実行を生みます。
 - 承認待ち（[E1](../e-safety-hitl/e1-risk-based-approval.md)）の間はワーカーを占有せず、状態だけ残して解放してください。
-- 実行をイベント列で残すと再開・監査・評価が容易になります（[F2](../f-data-integrity/f2-event-sourced-replayable.md)）。
+- 実行をイベント列で残すと再開・監査・評価が容易になります（本パターンのイベントソーシングセクション参照）。
 
 LangGraph のチェックポイント（HITL・メモリ・タイムトラベル・障害復旧）が実装基盤として相性が良いです。
+
+## イベントソーシングとリプレイ
+
+耐久非同期セッションのチェックポイントは「ある時点のスナップショット」ですが、エージェントの全ステップを**不変のイベント列**として記録することで、監査・デバッグ・評価の能力が大幅に向上します。`[accountability]` が中以上の場合、チェックポイントとイベントソーシングの併用を推奨します。
+
+### イベント記録の基本
+
+エージェントが実行する各アクション（LLM 呼び出し、ツール実行、承認応答、チェックポイント保存）を追記専用ログに記録します。現在状態は「イベント列の左畳み込み（fold）」として導出されます。チェックポイントはリプレイの起点を短縮する最適化として位置づけられます。
+
+### リプレイによるデバッグと評価
+
+記録されたイベント列を再生することで、過去の実行を忠実に追体験できます。リプレイには2つのモードがあります。
+
+- **replay モード** — 記録済みの LLM 出力をそのまま差し込み、決定論的に再生します。デバッグや監査に適しています。
+- **re-execute モード** — 新しいモデルやプロンプトで再実行し、出力を比較します。回帰テストや改善評価に適しています。
+
+LLM は確率的なため、再現性を高めるにはモデルバージョン（スナップショット ID）、temperature、seed をイベントに記録しておきます。
+
+### 分岐（what-if 探索）
+
+任意のチェックポイント（イベント列の特定の seq 番号）から分岐し、別の判断を試す what-if 分析が可能になります。計画変更時にセッション全体をやり直す必要がなくなり、探索コストを大幅に削減できます。
+
+### イベントスキーマの要点
+
+各イベントには最低限、`event_id`、`run_id`、`trace_id`（[G2](../g-observability-ops/g2-end-to-end-tracing.md) との相互参照用）、`seq`（順序番号）、`timestamp`、`type`、`payload` を含めます。`schema_version` を付与し、将来のスキーマ進化に備えます。入出力本文はハッシュでイベントに記録し、全文は暗号化してコールド層（[G1](../g-observability-ops/g1-tiered-observability.md)）に退避することで、機密漏洩リスクとストレージコストを制御します。
+
+リプレイ時に副作用を持つツール呼び出しが再実行される場合は、[C4 冪等コマンド包装](../c-tools-security/c4-idempotent-command-envelope.md)と組み合わせて二重実行を防ぎます。
 
 ## 効かせる力学（forces）
 
 - **F1（長時間）**：実行をジョブ化し、同期境界の外で進めます。
 - **F7（不安定）**：障害から状態を起点に別ワーカーで再開します。
 - **F15（再現性低）**：seed・version・メッセージを保存しリプレイ可能にします。
+- **F16（監査対象）**：イベント列として全判断過程を保全し、事後の説明責任を果たします。
 - **F17（人間協働）**：承認待ちの長時間滞留に状態保持で耐えます。
 
 ## 関連・代替
 
-- 関連：[A3](a3-sync-facade-async-core.md), [A6](a6-adaptive-timeout-retry.md), [A7](a7-deadline-budget-cascade.md), [F1](../f-data-integrity/f1-short-tx-long-session.md), [F2](../f-data-integrity/f2-event-sourced-replayable.md), [G1](../g-observability-ops/g1-tiered-observability.md), [E1](../e-safety-hitl/e1-risk-based-approval.md)。
+- 関連：[A3](a3-sync-facade-async-core.md), [A6](a6-adaptive-timeout-retry.md), [A7](a7-deadline-budget-cascade.md), [F1](../f-data-integrity/f1-short-tx-long-session.md), [G1](../g-observability-ops/g1-tiered-observability.md), [E1](../e-safety-hitl/e1-risk-based-approval.md)。
 - 代替：[A1](a1-sync-edge-agent.md)（短時間・再開不要なら）。
 
 ## コーディングエージェント向け指示（machine-actionable）

@@ -9,7 +9,7 @@ summary: "意味的に類似した過去の応答をキャッシュで再利用�
 forces: [F2, F11]
 driving_variables: [cost_sensitivity, failure_cost]
 forks: []
-related_patterns: [A6, B7, D2, D4, G1]
+related_patterns: [A6, B7, D2, D1, G1]
 alternatives: []
 tags: [memory, cache, semantic, cost, nocache, risk]
 ---
@@ -141,7 +141,7 @@ def semantic_cache_lookup(query: str, risk_level: str) -> str | None:
 - [A6 適応タイムアウト](../a-execution/a6-adaptive-timeout-retry.md) — キャッシュヒット時はLLM呼び出しとリトライが不要になるため、タイムアウト・リトライ予算の消費を回避できます。キャッシュミス時のフォールバックとして A6 のリトライ戦略が働きます。
 - [B7 モデルルーター](../b-orchestration/b7-model-router-adaptive-effort.md) — キャッシュミス時にどのモデルを使うかの選択と組み合わせます。キャッシュ＋ルーターの二段階でコスト最適化が可能です。No-Cache Zone で毎回LLMを呼ぶ領域では、ルーターが適切なモデルを選ぶことでコストを抑えます。
 - [D2 コンテキスト予算配分](d2-context-budget-allocator.md) — キャッシュミス時のLLM呼び出しで、コンテキストに何をどれだけ入れるかを D2 が管理します。キャッシュヒット時はコンテキスト組立自体をスキップできるため、D2 の予算計算も不要になります。
-- [D4 記憶減衰](d4-memory-decay-versioned-truth.md) — キャッシュの TTL と長期メモリの減衰ポリシーを整合させます。キャッシュ TTL を D4 の記憶減衰より短く設定しないと、長期メモリでは消えた情報がキャッシュに残る矛盾が生じます。
+- [D1 階層化メモリ](d1-tiered-memory.md) — キャッシュの TTL と長期メモリの減衰ポリシー（D1の記憶の減衰とバージョン管理セクション）を整合させます。キャッシュ TTL を記憶減衰より短く設定しないと、長期メモリでは消えた情報がキャッシュに残る矛盾が生じます。
 - [G1 二層観測](../g-observability-ops/g1-tiered-observability.md) — キャッシュヒット率・No-Cache Zone 分類精度・類似度分布・TTL 失効率を計測し、閾値と Zone 定義のチューニングにフィードバックします。
 
 ## コーディングエージェント向け指示（machine-actionable）
@@ -150,7 +150,7 @@ def semantic_cache_lookup(query: str, risk_level: str) -> str | None:
 
 - [ ] No-Cache Zone の分類基準（PII依存・リアルタイム・安全判断）を当該ユースケースに具体化し、**漏れがないか**人間に確認したか
 - [ ] 類似度閾値を `[failure_cost]` から導き、リスクレベル別の値を**理由を添えて**提示したか
-- [ ] キャッシュ TTL を情報の変化頻度から設定し、[D4 記憶減衰](d4-memory-decay-versioned-truth.md)の減衰ポリシーと整合しているか確認したか
+- [ ] キャッシュ TTL を情報の変化頻度から設定し、[D1 階層化メモリ](d1-tiered-memory.md)の記憶の減衰ポリシーと整合しているか確認したか
 - [ ] キャッシュミス時の経路で [B7 モデルルーター](../b-orchestration/b7-model-router-adaptive-effort.md) や [D2 コンテキスト予算配分](d2-context-budget-allocator.md) との連携を設計したか
 - [ ] [G1 二層観測](../g-observability-ops/g1-tiered-observability.md) でヒット率・Zone分類精度・類似度分布を計測する方針を示したか
 - [ ] 埋め込みモデルのバージョン管理とキャッシュ無効化戦略を定義したか

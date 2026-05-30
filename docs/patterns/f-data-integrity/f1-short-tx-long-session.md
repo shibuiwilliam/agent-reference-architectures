@@ -10,7 +10,7 @@ forces: [F1, F3]
 driving_variables: [reversibility]
 forks:
   - "F-14:external-state"
-related_patterns: [A2, C4, C8, G2]
+related_patterns: [A2, C4, G2]
 alternatives: []
 tags: [data-integrity, transaction, session, deadlock, connection]
 ---
@@ -42,7 +42,7 @@ AIエージェントの場合、[1リクエストが秒〜数十分に及びま�
 - **使わない条件**
     - LLMを使わない従来のCRUD処理 → 通常のリクエストスコープトランザクションで十分です。
     - 単一トランザクション内でアトミックに完結しなければならない操作（銀行間送金の借方・貸方など） → 短トランザクションに分離すると整合性が崩れます。この場合は操作をLLM呼び出しと分離し、LLM推論後に単一の短トランザクションで全操作を実行する設計にします。
-    - 複数外部システム間の整合性が必要 → 本パターンだけでは不十分です。[C8 補償トランザクション](../c-tools-security/c8-saga-compensation.md)を併用し、サーガの各ステップを短トランザクションとして実装します。
+    - 複数外部システム間の整合性が必要 → 本パターンだけでは不十分です。[C4 冪等コマンド包装](../c-tools-security/c4-idempotent-command-envelope.md)の補償（Saga）機能を併用し、サーガの各ステップを短トランザクションとして実装します。
 
 ## 駆動変数とチューニング（程度）
 
@@ -129,7 +129,7 @@ class AgentSession:
 
 - [A2 耐久非同期](../a-execution/a2-durable-async-agent.md) — チェックポイントの書込は短トランザクションで行います。本パターンはA2のチェックポイント実装における基本原則を提供します。
 - [C4 冪等コマンド包装](../c-tools-security/c4-idempotent-command-envelope.md) — 短トランザクションへの分離でアトミック性を手放した分、冪等キーによるリトライ安全性で補います。各書込トランザクションに冪等キーを付与することで、セッション再開時の二重書込を防ぎます。
-- [C8 補償トランザクション](../c-tools-security/c8-saga-compensation.md) — 複数の短トランザクションを跨ぐ整合性をサーガで管理します。サーガの各ステップは本パターンの短トランザクションとして実装されます。
+- [C4 冪等コマンド���装](../c-tools-security/c4-idempotent-command-envelope.md) — 補償（Saga）機能により、複数の短トランザクションを跨ぐ整合性をサーガで管理します。サーガの各ステップは本パターンの短トランザクションと��て実装されます。
 - [G2 エンドツーエンドトレース](../g-observability-ops/g2-end-to-end-tracing.md) — セッション内の各短トランザクションをトレースIDで関連付け、分散した書込操作を一連のセッションとして追跡可能にします。
 
 ## コーディングエージェント向け指示（machine-actionable）
@@ -139,5 +139,5 @@ class AgentSession:
 - [ ] LLM推論中のデータ競合に対して楽観的ロックを実装する設計を提案したか
 - [ ] セッション状態の永続化先を選定し、`[reversibility]` に応じた耐久性要件を提示したか
 - [ ] 短トランザクション分離で失われるアトミック性を、[C4 冪等コマンド包装](../c-tools-security/c4-idempotent-command-envelope.md)で補完する設計を提案したか
-- [ ] 複数ステップ間の整合性が必要な場合、[C8 補償トランザクション](../c-tools-security/c8-saga-compensation.md)との併用を検討したか
+- [ ] 複数ステップ間の整合性が必要な場合、[C4 冪等コマンド包装](../c-tools-security/c4-idempotent-command-envelope.md)の補償（Saga）機能���の併用を検討したか
 - [ ] 目盛り（上表）の値を `[reversibility]` から導き、**理由を添えて**提示したか

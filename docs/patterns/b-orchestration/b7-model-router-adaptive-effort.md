@@ -10,7 +10,7 @@ forces: [F2, F12]
 driving_variables: [cost_sensitivity, request_value]
 forks:
   - "F-8:hybrid"
-related_patterns: [A6, A7, B1, B5, D6, G5]
+related_patterns: [A6, A7, B1, B3, D6]
 alternatives: []
 tags: [orchestration, routing, model-selection, cost, adaptive]
 ---
@@ -49,7 +49,7 @@ tags: [orchestration, routing, model-selection, cost, adaptive]
 
 ## 相反における立ち位置（相反）
 
-- **[F-8 単一プロバイダ vs マルチプロバイダ](../../forks/index.md) → ハイブリッド**。モデル段階化は本質的にマルチモデルであり、異なるプロバイダのモデルを組み合わせることでコスト最適化の幅が広がります。ただし抽象化層（共通インターフェース）を介して差替可能にしておくことが前提です。`[provider_trust]` が低い環境ではフォールバック先としても機能します（[G5](../g-observability-ops/g5-circuit-breaker-degradation.md) と連携）。
+- **[F-8 単一プロバイダ vs マルチプロバイダ](../../forks/index.md) → ハイブリッド**。モデル段階化は本質的にマルチモデルであり、異なるプロバイダのモデルを組み合わせることでコスト最適化の幅が広がります。ただし抽象化層（共通インターフェース）を介して差替可能にしておくことが前提です。`[provider_trust]` が低い環境ではフォールバック先としても機能します（[A6 適応タイムアウト](../a-execution/a6-adaptive-timeout-retry.md) のサーキットブレーカ機能と連携）。
 
 ## 構造
 
@@ -114,9 +114,9 @@ def route_and_execute(request: Request) -> Response:
 - [A6 適応タイムアウト・リトライ](../a-execution/a6-adaptive-timeout-retry.md)：リトライ時に上位モデルではなくあえて下位モデルにダウングレードする戦略と組み合わせられます（コスト制約下でのリトライ）。
 - [A7 予算カスケード](../a-execution/a7-deadline-budget-cascade.md)：エスカレーションを含む全体の時間・コスト予算を管理する枠組みです。B7 の各層が A7 の予算内で動作します。
 - [B1 決定論的な殻](b1-deterministic-shell.md)：殻がルーティング判定を担います。モデル選択ロジック自体は決定論的に実装し、殻に置きます。
-- [B5 Supervisor-Worker](b5-supervisor-worker.md)：Worker ごとに最適なモデルを割り当てます。Supervisor が B7 のルーター役を兼ねることもあります。
+- [B3 予算付き自律ループ](b3-agentic-loop-budget.md)：Supervisor-Worker 構成で Worker ごとに最適なモデルを割り当てます。Supervisor が B7 のルーター役を兼ねることもあります。
 - [D6 セマンティックキャッシュ](../d-memory-context/d6-semantic-cache-nocache-zones.md)：ルーティングの前段でキャッシュヒットすればモデル呼び出し自体を省略できます。コスト最適化の組み合わせとして有効です。
-- [G5 サーキットブレーカ](../g-observability-ops/g5-circuit-breaker-degradation.md)：特定モデル/プロバイダの障害時に、サーキットブレーカが自動的に別モデルへフォールバックします。B7 の階層構造がフォールバック経路を自然に提供します。
+- [A6 適応タイムアウト](../a-execution/a6-adaptive-timeout-retry.md)：サーキットブレーカ機能により、特定モデル/プロバイダの障害時に自動的に別モデルへフォールバックします。B7 の階層構造がフォールバック経路を自然に提供します。
 
 ## コーディングエージェント向け指示（machine-actionable）
 
@@ -125,7 +125,7 @@ def route_and_execute(request: Request) -> Response:
 - [ ] タスク種別の分類基準を定義し、各カテゴリにどのモデル層を割り当てるかを表で示したか
 - [ ] エスカレーション閾値を `[request_value]` から導き、**高価値リクエストでは閾値を下げる理由**を説明したか
 - [ ] `[cost_sensitivity]` が高いなら [D6 セマンティックキャッシュ](../d-memory-context/d6-semantic-cache-nocache-zones.md) との併用を提案したか
-- [ ] プロバイダ障害時のフォールバックとして [G5 サーキットブレーカ](../g-observability-ops/g5-circuit-breaker-degradation.md) を併置したか
+- [ ] プロバイダ障害時のフォールバックとして [A6 適応タイムアウト](../a-execution/a6-adaptive-timeout-retry.md) のサーキットブレーカ機能を併置したか
 - [ ] ルーティング判定を [B1 決定論的な殻](b1-deterministic-shell.md) に配置し、LLM に委ねていないか確認したか
 - [ ] モデル層ごとのコスト・レイテンシ見積もりを示し、月間コスト削減の試算を添えたか
 - [ ] 目盛り（上表）の値を `[駆動変数]` から導き、**理由を添えて**提示したか

@@ -9,7 +9,7 @@ summary: "ユーザーリクエストからLLM呼び出し・ツール実行・�
 forces: [F1, F15]
 driving_variables: [accountability]
 forks: []
-related_patterns: [A2, A3, A7, G1, G3, F2]
+related_patterns: [A2, A3, A7, G1, G4]
 alternatives: []
 tags: [observability, tracing, distributed, opentelemetry, debug]
 ---
@@ -118,7 +118,7 @@ def handle_request(request):
 - **非同期境界でのコンテキスト伝播**：キューやWebhookを介する場合、trace_id / span_id をメッセージヘッダに明示的に載せます。OpenTelemetry の `propagate.inject()` / `propagate.extract()` を使います。自前でヘッダを組むと形式不一致で途切れます。
 - **承認ゲートの長時間 span**：人間の承認待ちは数分〜数時間に及びます。span の duration が極端に長くなるため、「待機開始」と「承認完了」を別 span にし、待機時間を属性として記録する方が分析しやすくなります。
 - **入出力本文の記録**：プロンプトやレスポンス全文を span 属性に載せるとストレージが膨張し、機密漏洩リスクも高まります。本文は [G1 二層観測](g1-tiered-observability.md)のコールド層に退避し、span にはハッシュとトークン数だけを残します。
-- **モデルバージョンの記録**：`llm.model` 属性にモデル名だけでなくスナップショットIDやデプロイ日時を含めます。[G3 シャドウ・カナリア](g3-shadow-canary.md)でA/B比較する際、どのモデルバージョンの実行かを特定できなければ分析が成り立ちません。
+- **モデルバージョンの記録**：`llm.model` 属性にモデル名だけでなくスナップショットIDやデプロイ日時を含めます。[G4 評価ハーネス](g4-eval-harness.md)でA/B比較する際、どのモデルバージョンの実行かを特定できなければ分析が成り立ちません。
 
 ## 効かせる力学（forces）
 
@@ -131,8 +131,8 @@ def handle_request(request):
 - [A3 同期ファサード](../a-execution/a3-sync-facade-async-core.md)：同期から非同期への昇格時に trace コンテキストを引き継ぐ設計が必要です。昇格の切れ目でトレースが途切れる事故が頻発するため、伝播テストを書きます。
 - [A7 予算カスケード](../a-execution/a7-deadline-budget-cascade.md)：予算の消費量（consumed / limit 比）を各 span の属性に記録し、コスト帰属分析に使います。
 - [G1 二層観測](g1-tiered-observability.md)：トレースメタデータ（trace_id, span 名, duration, トークン数）はホット層に、入出力本文はコールド層に分離します。G2 が「何を記録するか」を定め、G1 が「どこに置くか」を定めます。
-- [G3 シャドウ・カナリア](g3-shadow-canary.md)：シャドウ実行とカナリア実行の A/B 比較は、両者のトレースを trace_id で突合することで成り立ちます。モデルバージョン属性が比較の軸になります。
-- [F2 イベントソーシング](../f-data-integrity/f2-event-sourced-replayable.md)：イベントストアの各イベントに trace_id を付与すると、トレースとイベントログの双方向参照が可能になります。障害分析で「トレースからイベントへ」「イベントからトレースへ」の両方向に辿れます。
+- [G4 評価ハーネス](g4-eval-harness.md)：シャドウ実行とカナリア実行の A/B 比較は、両者のトレースを trace_id で突合することで成り立ちます。モデルバージョン属性が比較の軸になります。
+- [A2 耐久非同期](../a-execution/a2-durable-async-agent.md)：イベントソーシング機能により、イベントストアの各イベントに trace_id を付与すると、トレースとイベントログの双方向参照が可能になります。障害分析で「トレースからイベントへ」「イベントからトレースへ」の両方向に辿れます。
 
 ## コーディングエージェント向け指示（machine-actionable）
 
@@ -144,4 +144,4 @@ def handle_request(request):
 - [ ] [A2 耐久非同期](../a-execution/a2-durable-async-agent.md)を使う場合、チェックポイントに trace_id / span_id を含めたか
 - [ ] [A7 予算カスケード](../a-execution/a7-deadline-budget-cascade.md)と連携し、各 span に budget_remaining を記録する設計にしたか
 - [ ] span 属性にプロンプト/レスポンス全文を載せず、ハッシュ化またはコールド層退避としたか（機密漏洩防止）
-- [ ] `llm.model` 属性にモデルバージョン（スナップショットID）を含め、[G3 シャドウ・カナリア](g3-shadow-canary.md)での比較に使えるようにしたか
+- [ ] `llm.model` 属性にモデルバージョン（スナップショットID）を含め、[G4 評価ハーネス](g4-eval-harness.md)での比較に使えるようにしたか

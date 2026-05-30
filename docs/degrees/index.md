@@ -16,7 +16,7 @@
 
 ## 自律性・人間介在
 
-自律性は有無ではなく段階で設計します（L0–L6）。固定せず、実績に基づいて昇格/降格させてください（[E5](../patterns/e-safety-hitl/e5-autonomy-ladder.md)）。
+自律性は有無ではなく段階で設計します（L0–L6）。固定せず、実績に基づいて昇格/降格させてください（[E1](../patterns/e-safety-hitl/e1-risk-based-approval.md)）。
 
 | Lv | 名前 | できること |
 |---|---|---|
@@ -30,7 +30,7 @@
 
 | ダイヤル | 効かなすぎ ⇔ 効きすぎ | 決め方 `[駆動変数]` | 目安 | 関連 |
 |---|---|---|---|---|
-| 自律性レベル | 価値が出ない ⇔ 被害半径拡大 | 可逆性×失敗コスト×信頼度で自動/要承認/禁止に三分 `[reversibility, failure_cost]` | 読取=自動、可逆な書込=信頼度で自動化、不可逆=常に承認 | [E1](../patterns/e-safety-hitl/e1-risk-based-approval.md), [E5](../patterns/e-safety-hitl/e5-autonomy-ladder.md) |
+| 自律性レベル | 価値が出ない ⇔ 被害半径拡大 | 可逆性×失敗コスト×信頼度で自動/要承認/禁止に三分 `[reversibility, failure_cost]` | 読取=自動、可逆な書込=信頼度で自動化、不可逆=常に承認 | [E1](../patterns/e-safety-hitl/e1-risk-based-approval.md) |
 | HITL承認頻度 | リスク放置 ⇔ 承認疲れ | 全件でなくリスクゲート。承認はバッチ化 `[failure_cost]` | 金銭/不可逆のみ事前承認、他は標本監査 | [E1](../patterns/e-safety-hitl/e1-risk-based-approval.md) |
 | ガードレールの厳しさ | 危険出力が漏れる ⇔ 誤検知でUX破壊・無限自己修正 | 高失敗コスト経路だけ厳格に。block と warn を使い分け `[failure_cost, latency_budget]` | 副作用前・外部公開前は block、内部補助は warn | [E3](../patterns/e-safety-hitl/e3-guardrail-sandwich.md) |
 
@@ -48,7 +48,7 @@
 | ダイヤル | 効かなすぎ ⇔ 効きすぎ | 決め方 `[駆動変数]` | 目安 | 関連 |
 |---|---|---|---|---|
 | 検索 top-k / 投入文脈量 | 文脈不足でハルシネーション ⇔ "lost in the middle"・コスト増 | 信号密度最大化、リランクで絞る `[cost_sensitivity]` | 3–8件＋リランク。窓の50–70%超で圧縮 | [D2](../patterns/d-memory-context/d2-context-budget-allocator.md) |
-| メモリTTL/保持量 | 継続性喪失 ⇔ 古い情報・矛盾・肥大 | 種別ごとにTTL `[failure_cost]` | 価格/状態=短期、嗜好=中期、不変知識=無期限 | [D4](../patterns/d-memory-context/d4-memory-decay-versioned-truth.md) |
+| メモリTTL/保持量 | 継続性喪失 ⇔ 古い情報・矛盾・肥大 | 種別ごとにTTL `[failure_cost]` | 価格/状態=短期、嗜好=中期、不変知識=無期限 | [D1](../patterns/d-memory-context/d1-tiered-memory.md) |
 | メモリ書込の積極度 | 学習しない ⇔ 記憶汚染 | 書込ゲート閾値。重複・低確信・機微は弾く `[input_trust]` | 明示的事実・反復確認のみ永続化 | [D3](../patterns/d-memory-context/d3-memory-write-gate.md) |
 | 露出ツール数 | 仕事ができない ⇔ 選択ミス・遅延 | 動的スコーピングで必要分だけ `[task_variability]` | 同時露出10–20以下、超過はルーティング | [C1](../patterns/c-tools-security/c1-tool-gateway-mcp-broker.md) |
 

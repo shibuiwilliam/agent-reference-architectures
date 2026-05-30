@@ -10,7 +10,7 @@ forces: [F6, F4, F14]
 driving_variables: [input_trust, failure_cost]
 forks:
   - "F-16:hybrid"
-related_patterns: [D1, D4, C2, E1, E2]
+related_patterns: [D1, C2, E1, E2]
 alternatives: []
 tags: [memory, write-gate, quarantine, trust, contamination]
 ---
@@ -128,7 +128,7 @@ def write_gate(candidate: MemoryCandidate, config: GateConfig) -> WriteDecision:
 
 ## 関連・代替
 
-- 関連：[D1 階層化メモリ](d1-tiered-memory.md)（D3は長期メモリ層への書込ゲートであり、D1が定義する階層の境界を守る門番です）、[D4 メモリ減衰](d4-memory-decay-versioned-truth.md)（書込後に古くなった記憶を減衰させます。D3が入口、D4が経年管理です）、[C2 Read-Free / Write-Gated](../c-tools-security/c2-read-free-write-gated.md)（ツール呼出の読み書き分離と同じ原則をメモリに適用したものです）、[E1 リスクベース承認](../e-safety-hitl/e1-risk-based-approval.md)（隔離→承認フローの実装に利用します）、[E2 Policy as Code](../e-safety-hitl/e2-policy-as-code.md)（書込ポリシーをコードで強制する手段です）。
+- 関連：[D1 階層化メモリ](d1-tiered-memory.md)（D3は長期メモリ層への書込ゲートであり、D1が定義する階層の境界を守る門番です。D1の記憶の減衰とバージョン管理セクションが書込後に古くなった記憶を減衰させます。D3が入口、D1の減衰機能が経年管理です）、[C2 Read-Free / Write-Gated](../c-tools-security/c2-read-free-write-gated.md)（ツール呼出の読み書き分離と同じ原則をメモリに適用したものです）、[E1 リスクベース承認](../e-safety-hitl/e1-risk-based-approval.md)（隔離→承認フローの実装に利用します）、[E2 Policy as Code](../e-safety-hitl/e2-policy-as-code.md)（書込ポリシーをコードで強制する手段です）。
 - 代替：なし。長期メモリを持つエージェントには原則として書込ゲートを設けるべきであり、「ゲート無しで全書込を許可する」選択は `[failure_cost]` が極めて低くかつ `[input_trust]` が十分高い場合にのみ正当化されます。
 
 ## コーディングエージェント向け指示（machine-actionable）
@@ -140,5 +140,5 @@ def write_gate(candidate: MemoryCandidate, config: GateConfig) -> WriteDecision:
 - [ ] 隔離領域のTTLと承認フローを設計し、[E1 リスクベース承認](../e-safety-hitl/e1-risk-based-approval.md) との連携を検討したか
 - [ ] PII/機微情報フィルタの要否と厳格度を規制要件から判断したか
 - [ ] メモリストアへの直接書込パスが残っていないか（ゲート迂回の防止）を確認したか
-- [ ] 古い記憶の管理として [D4 メモリ減衰](d4-memory-decay-versioned-truth.md) を併せて検討したか
+- [ ] 古い記憶の管理として [D1 階層化メモリ](d1-tiered-memory.md) の記憶の減衰とバージョン管理を併せて検討したか
 - [ ] 書込ポリシーを [E2 Policy as Code](../e-safety-hitl/e2-policy-as-code.md) でコード化し、プロンプトだけに依存しない強制を計画したか

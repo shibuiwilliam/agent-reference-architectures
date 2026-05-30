@@ -45,7 +45,7 @@ AIエージェントを含むアーキテクチャを設計し、人間に提案
 
 - 不可逆 or 高 failure_cost → [E1 リスクベース承認](../patterns/e-safety-hitl/e1-risk-based-approval.md) ＋ [C3 ドライラン](../patterns/c-tools-security/c3-dry-run-commit.md)
 - 副作用ツール/MCP → [C1 ツールゲートウェイ](../patterns/c-tools-security/c1-tool-gateway-mcp-broker.md) ＋ [C4 冪等](../patterns/c-tools-security/c4-idempotent-command-envelope.md)
-- 低 input_trust → [C6 Confused Deputy防御](../patterns/c-tools-security/c6-confused-deputy-defense.md) ＋ [C7 サンドボックス](../patterns/c-tools-security/c7-sandboxed-execution.md) ＋ [E2 Policy-as-Code](../patterns/e-safety-hitl/e2-policy-as-code.md)
+- 低 input_trust → [C6 Confused Deputy防御](../patterns/c-tools-security/c6-confused-deputy-defense.md) ＋ [C1 ツールゲートウェイ](../patterns/c-tools-security/c1-tool-gateway-mcp-broker.md)（サンドボックス含む） ＋ [E2 Policy-as-Code](../patterns/e-safety-hitl/e2-policy-as-code.md)
 - 自律ループ → [A7 予算カスケード](../patterns/a-execution/a7-deadline-budget-cascade.md)（予算上限）
 - 常時 → [G1 二層観測](../patterns/g-observability-ops/g1-tiered-observability.md) ＋ [G2 トレース](../patterns/g-observability-ops/g2-end-to-end-tracing.md)
 

@@ -10,7 +10,7 @@ forces: [F8]
 driving_variables: [reversibility, failure_cost]
 forks:
   - "F-15:hybrid"
-related_patterns: [B1, C1, C3, C5, E1]
+related_patterns: [B1, C1, C3, E1]
 alternatives: []
 tags: [tools, security, access-control, read-write, asymmetric]
 ---
@@ -145,7 +145,7 @@ def dispatch_tool(call: ToolCall, context: SessionContext):
 - [B1 決定論的な殻](../b-orchestration/b1-deterministic-shell.md)：殻が R/W 分類とゲート判定を担います。分類をコードで強制する構造的な基盤です。
 - [C1 Tool Gateway / MCP Broker](c1-tool-gateway-mcp-broker.md)：ゲートウェイ内部のポリシー戦略として本パターンを適用します。ゲートウェイが R/W 分類とゲート制御の実行基盤になります。
 - [C3 Dry-run & Commit](c3-dry-run-commit.md)：書込ゲートの具体的な実装手段です。不可逆な書込操作では dry-run で差分を提示してから実行します。
-- [C5 Capability Lease](c5-capability-lease.md)：書込権限を短命リースとして発行し、有効期間を限定します。長時間セッションで書込権限が拡散するのを防ぎます。
+- [C1 Tool Gateway / MCP Broker](c1-tool-gateway-mcp-broker.md)：ゲートウェイの短命権限リース機能で書込権限を短命リースとして発行し、有効期間を限定します。長時間セッションで書込権限が拡散するのを防ぎます。
 - [E1 リスクベース承認](../e-safety-hitl/e1-risk-based-approval.md)：書込ゲートにおける承認判定の詳細戦略です。リスクスコアに応じて自動承認・人間承認を振り分けます。
 
 ## コーディングエージェント向け指示（machine-actionable）
@@ -159,5 +159,5 @@ def dispatch_tool(call: ToolCall, context: SessionContext):
 - [ ] R/W 分類をコードで強制する構成を設計し、[B1 決定論的な殻](../b-orchestration/b1-deterministic-shell.md) との統合を示したか
 - [ ] 不可逆な書込には [C3 Dry-run & Commit](c3-dry-run-commit.md) の前段挿入を提案したか
 - [ ] [C1 Tool Gateway](c1-tool-gateway-mcp-broker.md) をゲートの実行基盤として併用する構成を示したか
-- [ ] 長時間セッションなら [C5 Capability Lease](c5-capability-lease.md) で書込権限の有効期間を限定したか
+- [ ] 長時間セッションなら [C1 Tool Gateway](c1-tool-gateway-mcp-broker.md) の短命権限リース機能で書込権限の有効期間を限定したか
 - [ ] 目盛り（上表）の値を `[駆動変数]` から導き、**理由を添えて**提示したか

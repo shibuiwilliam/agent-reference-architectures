@@ -9,7 +9,7 @@ summary: "deadlineとbudgetを呼出ツリーの根から末端へ伝播し全�
 forces: [F2, F13]
 driving_variables: [request_value, cost_sensitivity]
 forks: []
-related_patterns: [A2, A6, B3, B5, G1]
+related_patterns: [A2, A6, B3, G1]
 alternatives: []
 tags: [execution, budget, deadline, cascade, governance]
 ---
@@ -32,7 +32,7 @@ tags: [execution, budget, deadline, cascade, governance]
     - エージェントが**サブタスクを再帰的に生成**する、またはオーケストレータが複数ワーカーに並列委譲します。
     - 1リクエストのコストが予測困難で、上限を置かないと**請求事故**が起きえます（`[cost_sensitivity]` が中以上）。
     - タスク完了までの所要時間にSLAや期待値があります（`[request_value]` に応じた投資上限がある場合）。
-    - [B3 自律ループ](../b-orchestration/b3-agentic-loop-budget.md)や[B5 Supervisor-Worker](../b-orchestration/b5-supervisor-worker.md)を採用しており、ガバナンスの一環として予算制御が必要です。
+    - [B3 自律ループ](../b-orchestration/b3-agentic-loop-budget.md)（Supervisor-Worker 構成含む）を採用しており、ガバナンスの一環として予算制御が必要です。
 - **使わない条件**
     - 呼出ツリーが1段で完結し、タイムアウトだけで十分な場合は、[A6 適応タイムアウト](a6-adaptive-timeout-retry.md)単体で事足ります。
     - バッチジョブなど時間制約がなく、コストも固定的な場合は、予算伝播のオーバーヘッドが不要です。単純なステップ上限で済みます。
@@ -123,7 +123,7 @@ class BudgetContext:
 - [A2 耐久非同期](a2-durable-async-agent.md)：チェックポイントに `cost_so_far` を記録し、再開時に残予算を復元します。A7 が予算フレームを供給します。
 - [A6 適応タイムアウト](a6-adaptive-timeout-retry.md)：個別操作のタイムアウトとリトライ予算は A6 が担い、全体枠の伝播は A7 が担います。A6 は A7 の「残り deadline」内でタイムアウトを設定します。
 - [B3 自律ループ](../b-orchestration/b3-agentic-loop-budget.md)：ループガバナンスの予算制約として A7 が必須です。
-- [B5 Supervisor-Worker](../b-orchestration/b5-supervisor-worker.md)：Supervisor が子 Worker に予算を按分する際の分割ロジックが A7 の中核です。
+- [B3 自律ループ](../b-orchestration/b3-agentic-loop-budget.md)：Supervisor-Worker 構成で Supervisor が子 Worker に予算を按分する際の分割ロジックが A7 の中核です。
 - [G1 二層観測](../g-observability-ops/g1-tiered-observability.md)：予算消費率のメトリクス（consumed/limit 比）を観測し、閾値超過でアラートを飛ばします。
 
 代替パターンは特にありません。予算伝播はタイムアウト（A6）やループ上限（B3）と補完関係にあり、置き換えるものではなく併用するものです。
@@ -134,7 +134,7 @@ class BudgetContext:
 
 - [ ] ルートの予算値（deadline / cost / steps）を `[request_value]` と `[cost_sensitivity]` から導き、**根拠を添えて**提示したか
 - [ ] 枯渇時の振る舞い（部分結果返却 / 人間エスカレーション / 縮退モデル切替）を設計に含めたか
-- [ ] [B3 自律ループ](../b-orchestration/b3-agentic-loop-budget.md)または [B5 Supervisor-Worker](../b-orchestration/b5-supervisor-worker.md)を使うなら、子タスクへの分配比率を示したか
+- [ ] [B3 自律ループ](../b-orchestration/b3-agentic-loop-budget.md)（Supervisor-Worker 構成含む）を使うなら、子タスクへの分配比率を示したか
 - [ ] [A6 適応タイムアウト](a6-adaptive-timeout-retry.md)と組み合わせ、個別操作のリトライが全体予算を食い潰さない設計にしたか
 - [ ] [G1 二層観測](../g-observability-ops/g1-tiered-observability.md)で予算消費率の可視化・アラートを併置したか
 - [ ] deadline を絶対時刻で伝播する設計にしたか（相対秒の累積ズレ防止）

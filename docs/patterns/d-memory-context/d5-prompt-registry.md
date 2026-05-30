@@ -9,7 +9,7 @@ summary: "プロンプトをコードと同等の成果物（バージョン管�
 forces: [F9, F16]
 driving_variables: [accountability]
 forks: []
-related_patterns: [B1, D2, G3, G4, E2]
+related_patterns: [B1, D2, G4, E2]
 alternatives: []
 tags: [memory, prompt, registry, versioning, artifact, deployment]
 ---
@@ -117,8 +117,7 @@ def resolve_prompt(prompt_id: str, context: dict) -> str:
 
 - [B1 決定論的な殻](../b-orchestration/b1-deterministic-shell.md)：殻のプロンプトテンプレートもバージョン管理対象です。本パターンはその具体的な管理方法を提供します。
 - [D2 コンテキスト予算配分](d2-context-budget-allocator.md)：プロンプトテンプレートのトークン消費量は予算配分の固定枠として計上します。テンプレート変更時に予算配分の再計算が必要です。
-- [G3 シャドウ・カナリア](../g-observability-ops/g3-shadow-canary.md)：プロンプト変更のカナリアデプロイに利用します。新バージョンのプロンプトを少量トラフィックで検証し、品質指標を比較します。
-- [G4 評価ハーネス](../g-observability-ops/g4-eval-harness.md)：プロンプト変更の回帰テストを実施する基盤です。CI でプロンプト変更を検知し、自動的に eval を実行します。
+- [G4 評価ハーネス](../g-observability-ops/g4-eval-harness.md)：プロンプト変更の回帰テストを実施する基盤です。CI でプロンプト変更を検知し、自動的に eval を実行します。また、シャドウ実行・カナリアリリース機能によりプロンプト変更のカナリアデプロイにも利用できます。
 - [E2 Policy-as-Code](../e-safety-hitl/e2-policy-as-code.md)：ポリシー定義もプロンプトと同様にバージョン管理対象です。両者を同じレジストリで管理することで、プロンプトとポリシーの組み合わせの整合性を保てます。
 
 ## コーディングエージェント向け指示（machine-actionable）
@@ -127,7 +126,7 @@ def resolve_prompt(prompt_id: str, context: dict) -> str:
 
 - [ ] プロンプトの保存形式（YAML/Markdown/専用レジストリ）を `[accountability]` の水準から選定し、**理由を添えて**提示したか
 - [ ] [G4 評価ハーネス](../g-observability-ops/g4-eval-harness.md) をプロンプト変更の CI に組み込む設計を併せて提案したか
-- [ ] `[accountability]` が高いなら [G3 シャドウ・カナリア](../g-observability-ops/g3-shadow-canary.md) によるプロンプト変更の段階的デプロイを提案したか
+- [ ] `[accountability]` が高いなら [G4 評価ハーネス](../g-observability-ops/g4-eval-harness.md) のシャドウ・カナリア機能によるプロンプト変更の段階的デプロイを提案したか
 - [ ] 実行時ログにプロンプト ID とバージョンを記録する設計を含めたか
 - [ ] プロンプトテンプレートの変数にユーザ入力が含まれる場合、インジェクション対策を確認したか
 - [ ] [D2 コンテキスト予算配分](d2-context-budget-allocator.md) との連携（テンプレートのトークン消費量の計上）を説明したか
