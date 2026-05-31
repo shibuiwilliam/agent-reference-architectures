@@ -6,6 +6,7 @@ site_description: >-
 site_url: https://shibuiwilliam.github.io/agent-reference-architectures/
 repo_url: https://github.com/shibuiwilliam/agent-reference-architectures
 repo_name: shibuiwilliam/agent-reference-architectures
+edit_uri: blob/main/docs/
 docs_dir: docs
 
 theme:
