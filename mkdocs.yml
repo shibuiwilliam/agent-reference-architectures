@@ -99,8 +99,47 @@ nav:
       - 設計力学 F1–F17: concepts/design-forces.md
       - 7つの予算: concepts/budgets.md
       - 9つの駆動変数: concepts/driving-variables.md
-  - 程度 (Degrees): degrees/index.md
-  - 相反 (Forks): forks/index.md
+  - 程度 (Degrees):
+      - degrees/index.md
+      - タイムアウト: degrees/timeout.md
+      - ネットワーク/5xxリトライ: degrees/network-retry.md
+      - 自己修正リトライ: degrees/self-correction-retry.md
+      - チェックポイント頻度: degrees/checkpoint-frequency.md
+      - 予算上限: degrees/budget-cap.md
+      - 自律性レベル: degrees/autonomy-level.md
+      - HITL承認頻度: degrees/hitl-approval-frequency.md
+      - ガードレールの厳しさ: degrees/guardrail-strictness.md
+      - モデル階層: degrees/model-tier.md
+      - Best-of-N の N: degrees/best-of-n.md
+      - 温度: degrees/temperature.md
+      - キャッシュ類似度閾値: degrees/cache-similarity-threshold.md
+      - 検索 top-k / 投入文脈量: degrees/retrieval-top-k.md
+      - メモリTTL/保持量: degrees/memory-ttl.md
+      - メモリ書込の積極度: degrees/memory-write-eagerness.md
+      - 露出ツール数: degrees/exposed-tool-count.md
+      - トレース・サンプリング率: degrees/trace-sampling-rate.md
+      - プロンプト/出力の保存先・粒度: degrees/prompt-output-storage.md
+      - ログ保持期間: degrees/log-retention.md
+  - 相反 (Forks):
+      - forks/index.md
+      - F-1 同期 vs 非同期: forks/f1-sync-vs-async.md
+      - F-2 シングル vs マルチエージェント: forks/f2-single-vs-multi-agent.md
+      - F-3 オーケストレーション vs コレオグラフィ: forks/f3-orchestration-vs-choreography.md
+      - F-4 ワークフロー vs エージェント: forks/f4-workflow-vs-agent.md
+      - F-5 Plan-then-Execute vs ReAct: forks/f5-plan-then-execute-vs-react.md
+      - F-6 プロンプト制御 vs コード制御: forks/f6-prompt-vs-code-control.md
+      - F-7 RAG vs FT vs ロングコンテキスト: forks/f7-rag-vs-ft-vs-longcontext.md
+      - F-8 単一 vs マルチプロバイダ: forks/f8-single-vs-multi-provider.md
+      - F-9 インライン vs 事後検証: forks/f9-inline-vs-post-validation.md
+      - F-10 生成と検証を同一 vs 別系統: forks/f10-same-vs-separate-verifier.md
+      - F-11 LLM推論 vs コード委譲: forks/f11-llm-vs-code-delegation.md
+      - F-12 Fail-fast vs 縮退継続: forks/f12-fail-fast-vs-degradation.md
+      - F-13 プッシュ vs プル: forks/f13-push-vs-pull.md
+      - F-14 インコンテキスト vs 外部ステート: forks/f14-in-context-vs-external-state.md
+      - F-15 読取専用 vs 書込可能: forks/f15-read-only-vs-writable.md
+      - F-16 自動メモリ vs 承認型メモリ: forks/f16-auto-vs-approved-memory.md
+      - F-17 構造化出力 vs 自由出力: forks/f17-structured-vs-freeform-output.md
+      - F-18 ビルド vs バイ: forks/f18-build-vs-buy.md
   - 意思決定フロー: decision/decision-flow.md
   - アンチパターン: antipatterns/index.md
   - パターン (Patterns):
