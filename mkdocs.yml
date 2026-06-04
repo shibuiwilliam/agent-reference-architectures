@@ -141,7 +141,18 @@ nav:
       - F-17 構造化出力 vs 自由出力: forks/f17-structured-vs-freeform-output.md
       - F-18 ビルド vs バイ: forks/f18-build-vs-buy.md
   - 意思決定フロー: decision/decision-flow.md
-  - アンチパターン: antipatterns/index.md
+  - アンチパターン:
+      - antipatterns/index.md
+      - AP-01 幻の自律性: antipatterns/ap01-phantom-autonomy.md
+      - AP-02 能力天井の否認: antipatterns/ap02-capability-ceiling-denial.md
+      - AP-03 評価・本番キャズム: antipatterns/ap03-eval-production-gap.md
+      - AP-04 擬人化エラーバジェット: antipatterns/ap04-anthropomorphic-error-budget.md
+      - AP-05 ツール過剰装備: antipatterns/ap05-tool-sprawl.md
+      - AP-06 潜在的統合カップリング: antipatterns/ap06-latent-integration-coupling.md
+      - AP-07 フィードバックループの飢餓: antipatterns/ap07-feedback-loop-starvation.md
+      - AP-08 決定論の演劇: antipatterns/ap08-determinism-theater.md
+      - AP-09 コスト崖への無知: antipatterns/ap09-cost-cliff-ignorance.md
+      - AP-10 ロールバック健忘症: antipatterns/ap10-rollback-amnesia.md
   - パターン (Patterns):
       - patterns/index.md
       - テンプレート: patterns/_template.md
